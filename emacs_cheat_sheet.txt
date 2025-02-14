@@ -1,0 +1,39 @@
+Emacs Cheat Sheet
+
+Close Emacs			CTRL + X CTRL + c
+Open file	      		CTRL + c CTRL + f
+Open directory	      		CTRL + x d
+Save file	      		CTRL + x CTRL + s
+
+
+Copy				ALT + w
+Cut				CTRL + w
+Paste				CTRL + y
+Paste from history		ALT + y
+
+
+Select text			CTRL + space
+Select all			CTRL + x h
+
+
+Shell Mode			ALT + x shell
+Shell Command			ALT + !
+Async Shell Command		ALT + &
+
+
+Execute command			ALT + X
+Apropos				ALT + x apropos
+Command Completition		ALT + X <TAB>
+Delete duplicate lines		ALT + X delete-duplicate-lines
+
+
+Help   				CTRL + h ?
+Look function			CTRL + h f
+Look key bound			CTRL + h k
+Function key			CTRL + h w
+Help with variables		CTRL + h v
+List key bindings		CTRL + h b
+About page			CTRL + h CTRL + a
+
+
+Quit  				CTRL + g
