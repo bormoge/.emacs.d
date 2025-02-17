@@ -1,4 +1,3 @@
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -11,6 +10,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; Maximize Emacs on start
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 ;; Change focus of windows and frames using Alt+o and Alt+shift+o
 ;;(global-set-key (kbd "M-o") #'other-window)
 ;;(global-set-key (kbd "M-O") #'other-frame)
@@ -24,3 +27,16 @@
 
 ;; Show number of the lines
 (global-display-line-numbers-mode)
+
+;; Funtion for copying a line
+(defun copy-the-entire-line ()
+  "Execute the functions 'move-beginning-of-line', 'set-mark', 'move-end-of-line', and 'kill-ring-save'.
+Copies the entire line of text."
+  (interactive)
+  (move-beginning-of-line 1)
+  (set-mark (point))
+  ;; (next-line)
+  (move-end-of-line 1)
+  (kill-ring-save (point) (mark)))
+
+(global-set-key (kbd "M-s-w") 'copy-the-entire-line)
