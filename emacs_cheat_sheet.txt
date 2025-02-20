@@ -21,6 +21,7 @@ Move to end of line		CTRL + n
 
 Select text			CTRL + SPACE
 Select all			CTRL + x h
+Delete selected text		CTRL + SPACE <backspace>
 
 
 Shell Mode			ALT + x shell
@@ -43,7 +44,7 @@ Other window			CTRL + x o
 
 Incremental search forward	CTRL + s
 Incremental search backward	CTRL + r
-Word search 	   		ALT + s w
+Word search			ALT + s w
 
 
 Help				CTRL + h ?
@@ -64,3 +65,4 @@ Emacs Tricks
 
 
 Copy entire line		CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
+Emulate Hyper key		CTRL + x @ h
