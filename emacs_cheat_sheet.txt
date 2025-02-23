@@ -52,6 +52,7 @@ Look function			CTRL + h f
 Look key bound			CTRL + h k
 Function key			CTRL + h w
 Help with variables		CTRL + h v
+Emacs Compilation Flags		CTRL + h v system-configuration-options
 List key bindings		CTRL + h b
 About page			CTRL + h CTRL + a
 
