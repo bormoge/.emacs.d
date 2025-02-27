@@ -11,18 +11,8 @@
  ;; If there is more than one, they won't work right.
  )
 
-(defconst user-init-dir
-  (cond ((boundp 'user-emacs-directory)
-         user-emacs-directory)
-        ((boundp 'user-init-directory)
-         user-init-directory)
-        (t "~/.emacs.d/")))
-
-
-(defun load-user-file (file)
-  "Load a file in current user's configuration directory"
-  (interactive "f")
-  (load-file (expand-file-name file user-init-dir)))
+(load-file "~/.emacs.d/my-emacs-config/functions/load-user-file.el")
 
 (load-user-file "my-emacs-config/my-emacs-config.el")
 (load-user-file "my-emacs-config/functions/copy-the-entire-line.el")
+(load-user-file "my-emacs-config/functions/my-desktop-sessions.el")

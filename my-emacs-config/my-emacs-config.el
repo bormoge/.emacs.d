@@ -14,3 +14,6 @@
 
 ;; Show number of the lines
 (global-display-line-numbers-mode)
+
+;; Enable use of system clipboard
+;;(setq x-select-enable-clipboard t)

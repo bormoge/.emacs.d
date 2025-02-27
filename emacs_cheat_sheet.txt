@@ -11,6 +11,7 @@ Copy				ALT + w
 Cut				CTRL + w
 Paste				CTRL + y
 Paste from history		ALT + y
+Undo  	   			CTRL + /
 
 
 Move to beginning of file	ALT + <
