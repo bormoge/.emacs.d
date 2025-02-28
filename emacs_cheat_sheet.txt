@@ -11,7 +11,8 @@ Copy				ALT + w
 Cut				CTRL + w
 Paste				CTRL + y
 Paste from history		ALT + y
-Undo  	   			CTRL + /
+Undo				CTRL + /
+comment-region			ALT + ;
 
 
 Move to beginning of file	ALT + <
@@ -40,7 +41,16 @@ Whitespace mode			ALT + x whitespace-mode
 
 New vertical window		CTRL + x 2
 New horizontal window		CTRL + x 3
+Close focused window		CTRL + x 0
+CLose all unfocused windows	CTRL + x 1
 Other window			CTRL + x o
+
+
+New tab				CTRL + x t 2
+Close focused tab		CTRL + x t 0
+Close all unfocused tabs	CTRL + x t 1
+Next tab			CTRL + <TAB>
+Previous tab			CTRL + SHIFT + <TAB>
 
 
 Incremental search forward	CTRL + s
@@ -55,6 +65,7 @@ Function key			CTRL + h w
 Help with variables		CTRL + h v
 Emacs Compilation Flags		CTRL + h v system-configuration-options
 List key bindings		CTRL + h b
+Emacs License (GPL 3.0)		CTRL + h CTRL + c
 About page			CTRL + h CTRL + a
 
 

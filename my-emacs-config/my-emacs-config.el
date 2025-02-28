@@ -13,7 +13,34 @@
 (define-key (current-global-map) (kbd "M-s-<backspace>") 'delete-duplicate-lines)
 
 ;; Show number of the lines
-(global-display-line-numbers-mode)
+(global-display-line-numbers-mode 1)
 
 ;; Enable use of system clipboard
 ;;(setq x-select-enable-clipboard t)
+
+;; Tab Bars
+(tab-bar-mode 1)
+
+;; Window Tab Lines
+(global-tab-line-mode 1)
+
+;; No backup files
+(setq make-backup-files nil)
+
+;; Set backup directory
+;; (setq backup-directory-alist `(("." . "~/.saves")))
+
+;; Backup by copying instead of renaming original file
+;; (setq backup-by-copying t)
+
+;; More backups by default
+;; (setq delete-old-versions t
+;;   kept-new-versions 6
+;;   kept-old-versions 2
+;;   version-control t)
+
+;; Forced backups
+;; (defun force-backup-of-buffer ()
+;;   (setq buffer-backed-up nil))
+
+;; (add-hook 'before-save-hook  'force-backup-of-buffer)

@@ -22,3 +22,13 @@ Copies the entire line of text, creates a new line, and pastes the copied line i
   (yank))
 
 (global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
+
+
+
+;; (defun my-line-save ()
+;;   (interactive)
+;;   (let ((l(substring (thing-at-point 'line)0 -1)))
+;;     (kill-new l)
+;;     (message "saved : %s" l)))
+
+;; (local-set-key (kbd "C-c w") #'my-line-save)
