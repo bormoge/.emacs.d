@@ -1,5 +1,8 @@
 /auto-save-list
+/desktop-sessions
 /eln-cache
 /elpa
-/desktop-sessions
+/games
+
+/my-emacs-config/functions/tetris.el
 .git

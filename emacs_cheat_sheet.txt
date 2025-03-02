@@ -56,6 +56,12 @@ Previous tab			CTRL + SHIFT + <TAB>
 Incremental search forward	CTRL + s
 Incremental search backward	CTRL + r
 Word search			ALT + s w
+Replace word			ALT + x replace-string
+occur				ALT + s o
+grep				ALT + x grep
+
+
+Scroll lock			FN + s
 
 
 Help				CTRL + h ?

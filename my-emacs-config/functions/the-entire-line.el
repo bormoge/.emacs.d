@@ -9,8 +9,6 @@ Copies the entire line of text."
   (move-end-of-line 1)
   (kill-ring-save (point) (mark)))
 
-(global-set-key (kbd "M-s-w") 'copy-the-entire-line)
-
 ;; Funtion for copying and pasting a line
 (defun copy-paste-the-entire-line ()
   "Execute the functions `copy-the-entire-line', `open-line', `next-line', and `yank'.\n
@@ -21,8 +19,13 @@ Copies the entire line of text, creates a new line, and pastes the copied line i
   (next-line)
   (yank))
 
-(global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
-
+(defun delete-the-entire-line ()
+  "Execute the functions `kill-whole-line' and `left-char'.\n
+Deletes the entire line of text and goes back to the previous line, specifically after the last character."
+  (interactive)
+  ;; (backward-delete-char-untabify 1)
+  (kill-whole-line 1)
+  (left-char))
 
 
 ;; (defun my-line-save ()

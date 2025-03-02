@@ -4,13 +4,34 @@
 ;; Change focus of windows and frames using Alt+o and Alt+shift+o
 ;;(global-set-key (kbd "M-o") #'other-window)
 ;;(global-set-key (kbd "M-O") #'other-frame)
+
+;; DO NOT USE M-s-s
+
+;; To invoke Hyper key: CTRL + x @ h
+
+;; Set keys for changing window focus
 (define-key (current-global-map) (kbd "H-<left>") 'windmove-left)
 (define-key (current-global-map) (kbd "H-<right>") 'windmove-right)
 (define-key (current-global-map) (kbd "H-<up>") 'windmove-up)
 (define-key (current-global-map) (kbd "H-<down>") 'windmove-down)
 
-;; Delete duplicate lines using ALT + SUPER (normally Windows Key) + <backspace>
-(define-key (current-global-map) (kbd "M-s-<backspace>") 'delete-duplicate-lines)
+;; Set keys for my-desktop-sessions.el
+(define-key (current-global-map) (kbd "H-r") 'my-desktop-read)
+(define-key (current-global-map) (kbd "H-s") 'my-desktop-save)
+
+;; Set keys for copy-the-entire-line.el
+(global-set-key (kbd "M-s-w") 'copy-the-entire-line)
+(global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
+(global-set-key (kbd "M-s-d") 'delete-the-entire-line)
+
+;; Delete duplicate lines using Hyper + ALT + <backspace>
+(define-key (current-global-map) (kbd "H-M-<backspace>") 'delete-duplicate-lines)
+
+;; Set key for replace-string
+(define-key (current-global-map) (kbd "H-f") 'replace-string)
+
+;; Set key for grep
+(define-key (current-global-map) (kbd "H-g") 'grep)
 
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)

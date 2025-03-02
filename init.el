@@ -13,6 +13,11 @@
 
 (load-file "~/.emacs.d/my-emacs-config/functions/load-user-file.el")
 
-(load-user-file "my-emacs-config/my-emacs-config.el")
-(load-user-file "my-emacs-config/functions/copy-the-entire-line.el")
+(load-user-file "my-emacs-config/functions/the-entire-line.el")
 (load-user-file "my-emacs-config/functions/my-desktop-sessions.el")
+
+;; Apply configuration after loading .el files
+(load-user-file "my-emacs-config/my-emacs-config.el")
+
+;; Comment this if you don't have the file
+;; (load-user-file "my-emacs-config/functions/tetris.el")
