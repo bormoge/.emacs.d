@@ -33,6 +33,12 @@
 ;; Set key for grep
 (define-key (current-global-map) (kbd "H-g") 'grep)
 
+;; Set key for undo-only
+;;(define-key (current-global-map) (kbd "C-¿") 'undo-only)
+
+;; Set key for revert-buffer (discard all changes)
+;;(define-key (current-global-map) (kbd "H-?") 'revert-buffer)
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 
@@ -44,6 +50,19 @@
 
 ;; Window Tab Lines
 (global-tab-line-mode 1)
+
+;; Increase zoom
+(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+
+;; Change font
+(set-frame-font "Source Code Pro 10")
+
+;; Truncate long lines
+;;(setq-default truncate-lines t)
+(global-visual-line-mode t)
+
+;; Enable Horizontal Scroll Bar
+(horizontal-scroll-bar-mode 1)
 
 ;; No backup files
 (setq make-backup-files nil)

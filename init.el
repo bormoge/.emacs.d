@@ -1,3 +1,6 @@
+;; Check init speed
+;;(profiler-start 'cpu)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -21,3 +24,11 @@
 
 ;; Comment this if you don't have the file
 ;; (load-user-file "my-emacs-config/functions/tetris.el")
+
+;; A different way of loading files
+;; (let ((configuration-directory (concat user-emacs-directory "my-emacs-config/")))
+;;   (load (concat configuration-directory "the-entire-line.el")))
+
+;; Finish checking init speed
+;;(profiler-report)
+;;(profiler-stop)

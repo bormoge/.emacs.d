@@ -1,4 +1,4 @@
-Emacs Cheat Sheet
+## Emacs Cheat Sheet
 
 
 Close Emacs			CTRL + x CTRL + c
@@ -12,13 +12,23 @@ Cut				CTRL + w
 Paste				CTRL + y
 Paste from history		ALT + y
 Undo				CTRL + /
+undo-redo			CTRL + ?
+undo-only			ALT + x undo-only
+Revert buffer changes		CTRL + x x g
 comment-region			ALT + ;
 
 
-Move to beginning of file	ALT + <
+Move to start of file		ALT + <
 Move to end of file		ALT + >
 Move to start of line		CTRL + a
-Move to end of line		CTRL + n
+Move before first line char	ALT + m
+Move to previous line  		CTRL + p
+Move to end of line		CTRL + e
+Move to next line		CTRL + n
+
+
+Increase font size		CTRL + <wheel-up>
+Decrease font size		CTRL + <wheel-down>
 
 
 Select text			CTRL + SPACE
@@ -73,6 +83,9 @@ Emacs Compilation Flags		CTRL + h v system-configuration-options
 List key bindings		CTRL + h b
 Emacs License (GPL 3.0)		CTRL + h CTRL + c
 About page			CTRL + h CTRL + a
+Font info			ALT + x describe-fontset
+Face info			ALT + x describe-face
+Set font			ALT + x menu-set-font
 
 
 Quit				CTRL + g
@@ -80,8 +93,11 @@ Quit help			q
 Kill Buffer			CTRL + x k
 
 
-Emacs Tricks
+## Emacs Tricks
 
 
 Copy entire line		CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
 Emulate Hyper key		CTRL + x @ h
+
+
+## Emacs Functions (To be written...)
