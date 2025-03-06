@@ -5,6 +5,7 @@ Close Emacs			CTRL + x CTRL + c
 Open file			CTRL + c CTRL + f
 Open directory			CTRL + x d
 Save file			CTRL + x CTRL + s
+Universal argument		CTRL + u
 
 
 Copy				ALT + w
@@ -47,6 +48,7 @@ Apropos				ALT + x apropos
 Command completition		ALT + x <TAB>
 Delete duplicate lines		ALT + x delete-duplicate-lines
 Whitespace mode			ALT + x whitespace-mode
+Evaluate expression		ALT + :
 
 
 New vertical window		CTRL + x 2
@@ -75,10 +77,11 @@ Scroll lock			FN + s
 
 
 Help				CTRL + h ?
-Look function			CTRL + h f
+Describe function		CTRL + h f
 Look key bound			CTRL + h k
 Function key			CTRL + h w
-Help with variables		CTRL + h v
+Describe variables		CTRL + h v
+Describe buffer modes		CTRL + h m
 Emacs Compilation Flags		CTRL + h v system-configuration-options
 List key bindings		CTRL + h b
 Emacs License (GPL 3.0)		CTRL + h CTRL + c
@@ -101,3 +104,11 @@ Emulate Hyper key		CTRL + x @ h
 
 
 ## Emacs Functions (To be written...)
+
+
+
+
+## Emacs Variables
+
+
+Check directory native compilation	native-comp-eln-load-path

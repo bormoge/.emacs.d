@@ -43,7 +43,12 @@
 (global-display-line-numbers-mode 1)
 
 ;; Enable use of system clipboard
-;;(setq x-select-enable-clipboard t)
+;;(setq select-enable-clipboard t)
+
+;; Remove menu bar, tool bar, scroll bar
+;;(menu-bar-mode -1)
+;;(tool-bar-mode -1)
+;;(scroll-bar-mode -1)
 
 ;; Tab Bars
 (tab-bar-mode 1)
@@ -64,8 +69,22 @@
 ;; Enable Horizontal Scroll Bar
 (horizontal-scroll-bar-mode 1)
 
+;; Make it so you replace a selected area with typed text
+(delete-selection-mode 1)
+
+;; Change syntax behavior
+;; (modify-syntax-entry ?@ "w")
+;; (modify-syntax-entry ?. "w")
+;; (modify-syntax-entry ?/ "w")
+;; (modify-syntax-entry ?: "w")
+;; (modify-syntax-entry ?- "w")
+;; (modify-syntax-entry ?_ "w")
+
 ;; No backup files
 (setq make-backup-files nil)
+
+;; No auto-save files
+;;(setq auto-save-default nil)
 
 ;; Set backup directory
 ;; (setq backup-directory-alist `(("." . "~/.saves")))

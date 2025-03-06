@@ -12,7 +12,8 @@ git clone https://github.com/bormoge/.emacs.d
 ```
 cd ./.emacs.d
 ```
-3. Once inside **.emacs.d**, use the **make** command to copy the directory onto Home (~/.emacs.d).
+3. Once inside **.emacs.d**, use the **make** command to copy the directory to Home (~/.emacs.d).
+
 A warning, before you go any further: if you have an ~/.emacs.d directory it will get replaced with the contents of this repository.
 ```
 make
