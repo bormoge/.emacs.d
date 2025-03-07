@@ -76,6 +76,9 @@ grep				ALT + x grep
 Scroll lock			FN + s
 
 
+Search words on internet	ALT + s ALT + w
+
+
 Help				CTRL + h ?
 Describe function		CTRL + h f
 Look key bound			CTRL + h k
