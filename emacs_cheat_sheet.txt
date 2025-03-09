@@ -1,6 +1,4 @@
 ## Emacs Cheat Sheet
-
-
 Close Emacs			CTRL + x CTRL + c
 Open file			CTRL + c CTRL + f
 Open directory			CTRL + x d
@@ -23,7 +21,7 @@ Move to start of file		ALT + <
 Move to end of file		ALT + >
 Move to start of line		CTRL + a
 Move before first line char	ALT + m
-Move to previous line  		CTRL + p
+Move to previous line		CTRL + p
 Move to end of line		CTRL + e
 Move to next line		CTRL + n
 
@@ -65,10 +63,14 @@ Next tab			CTRL + <TAB>
 Previous tab			CTRL + SHIFT + <TAB>
 
 
+New frame			CTRL + x 5 2
+Delete frame			CTRL + x 5 0
+Change frame			CTRL + x 5 o
+
+
 Incremental search forward	CTRL + s
 Incremental search backward	CTRL + r
 Word search			ALT + s w
-Replace word			ALT + x replace-string
 occur				ALT + s o
 grep				ALT + x grep
 
@@ -85,13 +87,10 @@ Look key bound			CTRL + h k
 Function key			CTRL + h w
 Describe variables		CTRL + h v
 Describe buffer modes		CTRL + h m
-Emacs Compilation Flags		CTRL + h v system-configuration-options
+Messages buffer			CTRL + h e
 List key bindings		CTRL + h b
 Emacs License (GPL 3.0)		CTRL + h CTRL + c
 About page			CTRL + h CTRL + a
-Font info			ALT + x describe-fontset
-Face info			ALT + x describe-face
-Set font			ALT + x menu-set-font
 
 
 Quit				CTRL + g
@@ -100,18 +99,26 @@ Kill Buffer			CTRL + x k
 
 
 ## Emacs Tricks
+Copy entire line			CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
+Emulate Hyper key			CTRL + x @ h
 
 
-Copy entire line		CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
-Emulate Hyper key		CTRL + x @ h
-
-
-## Emacs Functions (To be written...)
-
-
+## Emacs Functions
+Emacs version				version
+Resize windows				window-divider-mode
+Undo window changes			winner-mode
+Check changes in file			diff-buffer-with-file
+Font info				describe-fontset
+Face info				describe-face
+Set font				menu-set-font
+Replace word				replace-string
+Man (Manual) pages			man, man-follow, woman
+The foundation of all modes		fundamental-mode
 
 
 ## Emacs Variables
-
-
 Check directory native compilation	native-comp-eln-load-path
+Move deleted files to trash		delete-by-moving-to-trash
+Emacs Compilation Flags			system-configuration-options
+Minor modes in buffer			minor-mode-alist
+Check active major mode			major-mode

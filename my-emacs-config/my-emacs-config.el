@@ -2,16 +2,6 @@
 (setq inhibit-startup-screen t)
 ;;(setq initial-buffer-choice 'my-desktop-buffer-list-sessions)
 
-;; Replace boring scratch with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using my-desktop-sessions.el
-(defun check-if-file-at-startup ()
-  "Check if a file is being opened at startup."
-  (if (or (buffer-file-name) load-file-name)
-      (message "A file is opened, skipping desktop sessions buffer.")
-    (my-desktop-open-buffer-list)))
-
-;; Run the check after Emacs initialization
-(add-hook 'emacs-startup-hook 'check-if-file-at-startup)
-
 ;; Maximize Emacs on start
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -89,6 +79,15 @@
 ;; Not sure if I should add lexical binding by default
 ;;(setq lexical-binding t)
 
+;; At startup, show the messages
+(view-echo-area-messages)
+(with-current-buffer (messages-buffer)
+  (enlarge-window 9)
+  )
+
+;; Highlight changes in file
+;;(global-highlight-changes-mode 1)
+
 ;; Change syntax behavior
 ;; (modify-syntax-entry ?@ "w")
 ;; (modify-syntax-entry ?. "w")
@@ -120,3 +119,13 @@
 ;;   (setq buffer-backed-up nil))
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
+
+;; Replace boring scratch with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using my-desktop-sessions.el
+(defun check-if-file-at-startup ()
+  "Check if a file is being opened at startup."
+  (if (or (buffer-file-name) load-file-name)
+      (message "A file is opened, skipping desktop sessions buffer.")
+    (my-desktop-open-buffer-list)))
+
+;; Run the check after Emacs initialization
+(add-hook 'emacs-startup-hook 'check-if-file-at-startup)

@@ -1,0 +1,17 @@
+(defun small-right-window ()
+  "Create a small right window."
+  (interactive)
+  (delete-other-windows)
+  (split-window-right)
+  (enlarge-window-horizontally 25)
+  (other-window 1)
+  (shrink-window-horizontally 25))
+
+(defun create-four-windows ()
+  (interactive)
+  (delete-other-windows)
+  (split-window-right)
+  (split-window-below)
+  (windmove-right)
+  (split-window-below)
+  (windmove-left))
