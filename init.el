@@ -14,10 +14,11 @@
  ;; If there is more than one, they won't work right.
  )
 
-(load-file "~/.emacs.d/my-emacs-config/functions/load-user-file.el")
+(load-file "~/.emacs.d/my-emacs-config/functions/el-user-files.el")
 
 (load-user-file "my-emacs-config/functions/the-entire-line.el")
 (load-user-file "my-emacs-config/functions/my-desktop-sessions.el")
+(load-user-file "my-emacs-config/load-packages.el")
 
 ;; Apply configuration after loading .el files
 (load-user-file "my-emacs-config/my-emacs-config.el")

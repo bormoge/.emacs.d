@@ -49,13 +49,15 @@
 	  ;; Explicitely set minor mode related to global mode
 	  ;; (If you don't set major mode, you need to set all minor mode variables)
 	  ;; (display-line-numbers-mode nil)
+	  (text-scale-set 5)
 	  (insert "Sessions saved:\n\n")
           (let ((dir-list (directory-files my-desktop-session-dir)))
             (dolist (value dir-list)
               (unless (member value '("." ".."))
 		(my-desktop-link-text (format "%s" value))
 		(insert "\n"))))
-          (read-only-mode 1)
+	  (previous-line)
+	  (read-only-mode 1)
           ;; (setq-local
           ;;  split-width-threshold 0
           ;;  split-height-threshold nil)

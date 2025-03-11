@@ -85,6 +85,9 @@
   (enlarge-window 9)
   )
 
+;; Display buffers as tabs
+;;(setq display-buffer-base-action '(display-buffer-in-tab))
+
 ;; Highlight changes in file
 ;;(global-highlight-changes-mode 1)
 

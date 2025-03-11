@@ -3,6 +3,8 @@ Close Emacs			CTRL + x CTRL + c
 Open file			CTRL + c CTRL + f
 Open directory			CTRL + x d
 Save file			CTRL + x CTRL + s
+New file (switch-to-buffer)	CTRL + x b
+Write file			CTRL + x CTRL + w
 Universal argument		CTRL + u
 
 
@@ -81,6 +83,7 @@ Scroll lock			FN + s
 Search words on internet	ALT + s ALT + w
 
 
+Emacs documentation		CTRL + h i
 Help				CTRL + h ?
 Describe function		CTRL + h f
 Look key bound			CTRL + h k
@@ -105,6 +108,7 @@ Emulate Hyper key			CTRL + x @ h
 
 ## Emacs Functions
 Emacs version				version
+Find library file(s)			find-library
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
 Check changes in file			diff-buffer-with-file
@@ -122,3 +126,6 @@ Move deleted files to trash		delete-by-moving-to-trash
 Emacs Compilation Flags			system-configuration-options
 Minor modes in buffer			minor-mode-alist
 Check active major mode			major-mode
+Determine major mode by start text	magic-mode-alist
+Check sources for treesit.el  		treesit-language-source-alist
+Path for treesit sources		treesit-extra-load-path

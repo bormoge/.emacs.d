@@ -3,6 +3,7 @@
 /eln-cache
 /elpa
 /games
+/tree-sitter
 
 /my-emacs-config/functions/tetris.el
 .git
