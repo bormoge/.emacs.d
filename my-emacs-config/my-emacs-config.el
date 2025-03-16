@@ -1,13 +1,8 @@
 ;; Remove startup screen
 (setq inhibit-startup-screen t)
-;;(setq initial-buffer-choice 'my-desktop-buffer-list-sessions)
 
 ;; Maximize Emacs on start
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-
-;; Change focus of windows and frames using Alt+o and Alt+shift+o
-;;(global-set-key (kbd "M-o") #'other-window)
-;;(global-set-key (kbd "M-O") #'other-frame)
 
 ;; DO NOT USE M-s-s
 
@@ -23,7 +18,7 @@
 (define-key (current-global-map) (kbd "H-r") 'my-desktop-read)
 (define-key (current-global-map) (kbd "H-s") 'my-desktop-save)
 
-;; Set keys for copy-the-entire-line.el
+;; Set keys for the-entire-line.el
 (global-set-key (kbd "M-s-w") 'copy-the-entire-line)
 (global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
 (global-set-key (kbd "M-s-d") 'delete-the-entire-line)
@@ -37,22 +32,11 @@
 ;; Set key for grep
 (define-key (current-global-map) (kbd "H-g") 'grep)
 
-;; Set key for undo-only
-;;(define-key (current-global-map) (kbd "C-¿") 'undo-only)
-
-;; Set key for revert-buffer (discard all changes)
-;;(define-key (current-global-map) (kbd "H-?") 'revert-buffer)
-
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 
 ;; Enable use of system clipboard
-;;(setq select-enable-clipboard t)
-
-;; Remove menu bar, tool bar, scroll bar
-;;(menu-bar-mode -1)
-;;(tool-bar-mode -1)
-;;(scroll-bar-mode -1)
+(setq select-enable-clipboard t)
 
 ;; Tab Bars
 (tab-bar-mode 1)
@@ -85,20 +69,6 @@
   (enlarge-window 9)
   )
 
-;; Display buffers as tabs
-;;(setq display-buffer-base-action '(display-buffer-in-tab))
-
-;; Highlight changes in file
-;;(global-highlight-changes-mode 1)
-
-;; Change syntax behavior
-;; (modify-syntax-entry ?@ "w")
-;; (modify-syntax-entry ?. "w")
-;; (modify-syntax-entry ?/ "w")
-;; (modify-syntax-entry ?: "w")
-;; (modify-syntax-entry ?- "w")
-;; (modify-syntax-entry ?_ "w")
-
 ;; No backup files
 (setq make-backup-files nil)
 
@@ -123,7 +93,7 @@
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
 
-;; Replace boring scratch with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using my-desktop-sessions.el
+;; Replace boring scratch buffer with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using my-desktop-sessions.el
 (defun check-if-file-at-startup ()
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
@@ -132,3 +102,11 @@
 
 ;; Run the check after Emacs initialization
 (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
+
+
+
+;; Package configs; maybe I'm putting it in another file.
+(global-diff-hl-mode)
+
+;; To integrate diff-hl with magit
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)

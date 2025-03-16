@@ -118,6 +118,16 @@ Set font				menu-set-font
 Replace word				replace-string
 Man (Manual) pages			man, man-follow, woman
 The foundation of all modes		fundamental-mode
+Recompile directory   			byte-recompile-directory
+List all packages			package-list-packages
+Undo, won't redo			undo-only
+Menu bar    				menu-bar-mode
+Tool bar				tool-bar-mode
+Scroll bar				scroll-bar-mode
+Display buffer in a tab			display-buffer-in-tab
+Highlight word changes			highlight-changes-mode
+Modify character's syntax		modify-syntax-entry
+Mouse behaviour	   			mouse-wheel-scroll-amount
 
 
 ## Emacs Variables
@@ -129,3 +139,7 @@ Check active major mode			major-mode
 Determine major mode by start text	magic-mode-alist
 Check sources for treesit.el  		treesit-language-source-alist
 Path for treesit sources		treesit-extra-load-path
+Contains installed packages		package-activated-list
+Lexical binding				lexical-binding
+Default action for display-buffer	display-buffer-base-action
+Mouse behaviour	   			scroll-step, scroll-conservatively, mouse-wheel-progressive-speed
