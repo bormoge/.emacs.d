@@ -16,6 +16,7 @@
 ;; (add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 ;; Necessary to avoid white flashing at startup
+;; If you want to return to default Emacs theme, delete this.
 (setq default-frame-alist '((background-color . "#000000")
 			    (ns-appearance . dark)
 			    (ns-transparent-titlebar . t)))

@@ -32,6 +32,9 @@
 ;; Set key for grep
 (define-key (current-global-map) (kbd "H-g") 'grep)
 
+;; Set key for finding built-in Emacs libraries / files
+(define-key (current-global-map) (kbd "H-h l") 'find-library)
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 
@@ -59,9 +62,6 @@
 
 ;; Replace a selected area with typed text
 (delete-selection-mode 1)
-
-;; Not sure if I should add lexical binding by default
-;;(setq lexical-binding t)
 
 ;; At startup, show the messages
 (view-echo-area-messages)
@@ -102,11 +102,3 @@
 
 ;; Run the check after Emacs initialization
 (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
-
-
-
-;; Package configs; maybe I'm putting it in another file.
-(global-diff-hl-mode)
-
-;; To integrate diff-hl with magit
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)

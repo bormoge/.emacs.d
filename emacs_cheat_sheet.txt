@@ -92,6 +92,7 @@ Describe variables		CTRL + h v
 Describe buffer modes		CTRL + h m
 Messages buffer			CTRL + h e
 List key bindings		CTRL + h b
+Show inputs			CTRL + h l
 Emacs License (GPL 3.0)		CTRL + h CTRL + c
 About page			CTRL + h CTRL + a
 
@@ -128,6 +129,8 @@ Display buffer in a tab			display-buffer-in-tab
 Highlight word changes			highlight-changes-mode
 Modify character's syntax		modify-syntax-entry
 Mouse behaviour	   			mouse-wheel-scroll-amount
+Add element to list			add-to-list
+Completition   				completion-at-point
 
 
 ## Emacs Variables
@@ -143,3 +146,12 @@ Contains installed packages		package-activated-list
 Lexical binding				lexical-binding
 Default action for display-buffer	display-buffer-base-action
 Mouse behaviour	   			scroll-step, scroll-conservatively, mouse-wheel-progressive-speed
+List of version control backends	vc-handled-backends
+Functions to complete text		completion-at-point-functions
+
+
+## Packages
+
+# Magit
+Available magit commands		magit-dispatch
+Git status				magit-status

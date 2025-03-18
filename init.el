@@ -6,7 +6,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(modus-vivendi))
+ ;; '(custom-enabled-themes '(doom-tomorrow-night))
+ '(custom-enabled-themes 'nil)
+ ;; '(custom-safe-themes
+ ;;   '("7e377879cbd60c66b88e51fad480b3ab18d60847f31c435f15f5df18bdb18184" default))
  '(package-selected-packages '(magit diff-hl)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -19,7 +22,7 @@
 
 (load-user-file "my-emacs-config/functions/the-entire-line.el")
 (load-user-file "my-emacs-config/functions/my-desktop-sessions.el")
-(load-user-file "my-emacs-config/load-packages.el")
+(load-user-file "my-emacs-config/my-packages-config.el")
 
 ;; Apply configuration after loading .el files
 (load-user-file "my-emacs-config/my-emacs-config.el")

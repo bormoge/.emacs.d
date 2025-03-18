@@ -67,7 +67,9 @@
 (defun my-desktop-open-buffer-list ()
   "Directly open the buffer to get a list of all sessions"
   (interactive)
-  (switch-to-buffer (my-desktop-buffer-list-sessions)))
+  (if (get-buffer "*List of sessions*")
+      (switch-to-buffer "*List of sessions*")
+    (switch-to-buffer (my-desktop-buffer-list-sessions))))
 
 (defun my-desktop-open-buffer-list-right ()
   "Get a list of all sessions in a split window."
