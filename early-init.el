@@ -6,6 +6,10 @@
 (setopt gc-cons-threshold 100000000 ;; most-positive-fixnum
 	gc-cons-percentage 0.6)
 
+;; Paraphrasing the emacs-lsp project:
+;; "plists provide better performance in deserialization and also put less presure than hash-tables."
+(setenv "LSP_USE_PLISTS" "true")
+
 ;; (defun my-minibuffer-setup-hook ()
 ;;   (setq gc-cons-threshold most-positive-fixnum))
 

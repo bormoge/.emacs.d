@@ -35,6 +35,13 @@
 (use-package magit
   :ensure t)
 
+(use-package lsp-mode
+  :ensure t
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+;;  :hook ((emacs-lisp-mode . lsp)) ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+  :commands lsp)
 
 ;; Packages configuration
 

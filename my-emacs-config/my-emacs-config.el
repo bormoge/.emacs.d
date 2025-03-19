@@ -14,9 +14,9 @@
 (define-key (current-global-map) (kbd "H-<up>") 'windmove-up)
 (define-key (current-global-map) (kbd "H-<down>") 'windmove-down)
 
-;; Set keys for my-desktop-sessions.el
-(define-key (current-global-map) (kbd "H-r") 'my-desktop-read)
-(define-key (current-global-map) (kbd "H-s") 'my-desktop-save)
+;; Set keys for tnwmt.el
+(define-key (current-global-map) (kbd "H-r") 'tnwmt-read)
+(define-key (current-global-map) (kbd "H-s") 'tnwmt-save)
 
 ;; Set keys for the-entire-line.el
 (global-set-key (kbd "M-s-w") 'copy-the-entire-line)
@@ -69,6 +69,10 @@
   (enlarge-window 9)
   )
 
+;; Nice to have if you are dealing with packages. Disables docstring warnings
+(setq byte-compile-warnings
+  '(not docstrings))
+
 ;; No backup files
 (setq make-backup-files nil)
 
@@ -93,12 +97,12 @@
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
 
-;; Replace boring scratch buffer with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using my-desktop-sessions.el
+;; Replace boring scratch buffer with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using tnwmt.el
 (defun check-if-file-at-startup ()
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
       (message "A file is opened, skipping desktop sessions buffer.")
-    (my-desktop-open-buffer-list)))
+    (tnwmt-open-buffer-list)))
 
 ;; Run the check after Emacs initialization
 (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
