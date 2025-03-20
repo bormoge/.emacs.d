@@ -59,7 +59,6 @@
               (unless (member value '("." ".."))
 		(tnwmt-link-text (format "%s" value))
 		(insert "\n"))))
-	  (previous-line)
 	  (read-only-mode 1)
           ;; (setq-local
           ;;  split-width-threshold 0
