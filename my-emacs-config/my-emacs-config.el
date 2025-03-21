@@ -48,7 +48,7 @@
 (global-tab-line-mode 1)
 
 ;; Increase zoom
-(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 
 ;; Change font
 (set-frame-font "Source Code Pro 10")

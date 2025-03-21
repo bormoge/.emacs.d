@@ -47,7 +47,7 @@ M-x package-upgrade-all
 ```
 package-vc-upgrade PACKAGE-NAME
 ```
-In this case PACKAGE-NAME is replaced with the name of the package you need to upgrade
+Where **PACKAGE-NAME** is replaced with the actual name of the package.
 
 If you want to upgrade all packages installed using the command **package-vc-install**:
 ```

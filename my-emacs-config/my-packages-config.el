@@ -41,7 +41,7 @@
   :ensure t
   :after magit)
 
-;; Allows linting, formatting, auto-completion, semantic editing, among other features.
+;; Allows linting, formatting, auto-completion, semantic editing, etc.
 (use-package lsp-mode
   :ensure t
   :init
@@ -149,7 +149,8 @@
       (`(t . _)
        (treemacs-git-mode 'simple)))
 
-    (treemacs-hide-gitignored-files-mode nil))
+;;    (treemacs-hide-gitignored-files-mode nil)
+    )
   :bind
   (:map global-map
         ("H-0"       . treemacs-select-window)
@@ -223,12 +224,40 @@
 (unless (package-installed-p 'pgmacs)
   (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
 
+(require 'pg)
+(require 'pgmacs)
+
+;; Package to fold code
+;; To upgrade use package-vc-upgrade
+(unless (package-installed-p 'treesit-fold)
+  (package-vc-install "https://github.com/emacs-tree-sitter/treesit-fold" nil nil 'treesit-fold))
+
+(require 'treesit-fold)
+
+;; Syntax checking using Flycheck
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
+;; Focus on selected text
+(use-package focus
+  :ensure t)
+
+(use-package lsp-focus
+  :ensure t)
+
+;; ledger-mode
+;; Note to self: it has a flycheck package
+
+;; TBW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
 ;; There is also TempEl, an alternative to YASnippet developed by minad.
+
+;; TBW
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,6 +297,16 @@
 (define-key yas-minor-mode-map (kbd "TAB") nil)
 (define-key yas-minor-mode-map (kbd "M-+") 'yas-expand)
 
+;; Treemacs
+;; Increase zoom for all modes except treemacs
+(add-hook 'after-change-major-mode-hook
+	  (lambda ()
+	    (unless (derived-mode-p 'treemacs-mode)
+	      (text-scale-set 3))))
+
+;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
+(add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
+(add-hook 'focus-mode-hook #'lsp-focus-mode)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -287,6 +326,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
 ;; Treesitter
 ;; Treesitter grammar repositories.
 (setq treesit-language-source-alist
@@ -295,3 +335,18 @@
 ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
 (setq major-mode-remap-alist
       '((java-mode . java-ts-mode)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Dap-mode
+;;(require 'dap-java)
+;; (dap-register-debug-template "Java Runner"
+;;                              (list :type "java"
+;;                                    :request "launch"
+;;                                    :args ""
+;;                                    :vmArgs "-ea -Dmyapp.instance.name=myapp_1"
+;;                                    :projectName "myapp"
+;;                                    :mainClass "com.domain.AppRunner"
+;;                                    :env '(("DEV" . "1"))))

@@ -140,6 +140,8 @@ Customize a package			customize-group
 Generate a diary			diary
 Open an sqlite database			sqlite-open
 Manage SQL Postgres			sql-postgres
+List appearance elements displayed	list-faces-display
+Mode for highlighting	 		hi-lock-mode
 
 
 ## Emacs Variables
