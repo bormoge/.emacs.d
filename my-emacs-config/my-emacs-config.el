@@ -71,7 +71,11 @@
 
 ;; Nice to have if you are dealing with packages. Disables docstring warnings
 (setq byte-compile-warnings
-  '(not docstrings))
+      '(not docstrings))
+
+;; Display time and date on the minibuffer (neat stuff)
+(setq display-time-day-and-date t)
+(display-time-mode t)
 
 ;; No backup files
 (setq make-backup-files nil)

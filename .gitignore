@@ -1,3 +1,5 @@
+/.cache
+/.git
 /auto-save-list
 /desktop-sessions
 /eln-cache
@@ -8,5 +10,6 @@
 /melpa
 
 /my-emacs-config/functions/tetris.el
-.git
 macro_example.el
+forge-database.sqlite
+projectile-bookmarks.eld

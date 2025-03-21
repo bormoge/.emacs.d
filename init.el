@@ -7,7 +7,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes 'nil)
- '(package-selected-packages '(yasnippet minimap dap-mode lsp-ui lsp-mode magit diff-hl)))
+ '(package-selected-packages
+   '(pgmacs pg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+ '(package-vc-selected-packages
+   '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
+     (pg :vc-backend Git :url "https://github.com/emarsden/pg-el"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

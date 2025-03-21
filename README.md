@@ -23,3 +23,33 @@ make
 cd ~/
 rm -rf ~/emacs_config
 ```
+
+## Upgrading packages
+
+1. For packages installed from ELPA and MELPA:
+```
+M-x list-packages
+U
+x
+```
+Alternatively:
+```
+M-x package-upgrade PACKAGE-NAME
+```
+Where **PACKAGE-NAME** is replaced with the actual name of the package.
+
+Also, if you want to upgrade all packages:
+```
+M-x package-upgrade-all
+```
+
+2. For packages installed from source using **package-vc-install**:
+```
+package-vc-upgrade PACKAGE-NAME
+```
+In this case PACKAGE-NAME is replaced with the name of the package you need to upgrade
+
+If you want to upgrade all packages installed using the command **package-vc-install**:
+```
+M-x package-vc-upgrade-all
+```

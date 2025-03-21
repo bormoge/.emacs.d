@@ -47,7 +47,6 @@ Execute command			ALT + x
 Apropos				ALT + x apropos
 Command completition		ALT + x <TAB>
 Delete duplicate lines		ALT + x delete-duplicate-lines
-Whitespace mode			ALT + x whitespace-mode
 Evaluate expression		ALT + :
 
 
@@ -95,6 +94,7 @@ Describe buffer modes		CTRL + h m
 Messages buffer			CTRL + h e
 List key bindings		CTRL + h b
 Show inputs			CTRL + h l
+Search word on documentation	CTRL + h d
 Emacs License (GPL 3.0)		CTRL + h CTRL + c
 About page			CTRL + h CTRL + a
 
@@ -112,6 +112,7 @@ Emulate Hyper key			CTRL + x @ h
 ## Emacs Functions
 Emacs version				version
 Find library file(s)			find-library
+Whitespace mode				whitespace-mode
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
 Check changes in file			diff-buffer-with-file
@@ -135,6 +136,10 @@ Add element to list			add-to-list
 Completition				completion-at-point
 List processes in Emacs			list-processes
 Kill process in Emacs			kill-process
+Customize a package			customize-group
+Generate a diary			diary
+Open an sqlite database			sqlite-open
+Manage SQL Postgres			sql-postgres
 
 
 ## Emacs Variables
@@ -151,6 +156,7 @@ Mouse behaviour				scroll-step, scroll-conservatively, mouse-wheel-progressive-s
 List of version control backends	vc-handled-backends
 Functions to complete text		completion-at-point-functions
 Shows major modes used on files		auto-mode-alist
+List all packages			package-activated-list
 
 
 ## Packages
