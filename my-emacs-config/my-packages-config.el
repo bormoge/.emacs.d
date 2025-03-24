@@ -39,25 +39,8 @@
 ;; Package used to manage git forges (GitHub, GitLab, Codeberg, etc...)
 (use-package forge
   :ensure t
+  :defer t
   :after magit)
-
-;; Allows linting, formatting, auto-completion, semantic editing, etc.
-(use-package lsp-mode
-  :ensure t
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-;;  :hook ((XXX-mode . lsp)) ;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-  :commands lsp)
-
-;; lsp-ui to show higher abtraction interfaces for lsp-mode
-(use-package lsp-ui
-  :ensure t
-  :commands lsp-ui-mode)
-
-;; Dap mode for debugging
-(use-package dap-mode
-  :ensure t)
 
 ;; Project manager
 (use-package projectile
@@ -202,7 +185,8 @@
 
 ;; Vim mode for Emacs
 (use-package evil
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; Minimap
 (use-package minimap
@@ -237,18 +221,41 @@
 ;; Syntax checking using Flycheck
 (use-package flycheck
   :ensure t
-  :init (global-flycheck-mode))
+  :init
+  (global-flycheck-mode))
 
 ;; Focus on selected text
 (use-package focus
   :ensure t)
 
 (use-package lsp-focus
-  :ensure t)
+  :ensure t
+  :after (lsp focus))
+
+;; Multiline cursors.
+(use-package multiple-cursors
+  :ensure t
+  :defer t)
+
+;; Loading, configuring, and ensuring that org-mode is installed.
+(use-package org
+  :ensure t
+  :defer t
+  ;;:config
+  ;; (setq org-startup-indented t
+  ;;       org-hide-emphasis-markers t
+  ;;       org-agenda-files '("~/org/"))
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((js . t)))
+  )
+
+;; avy
+;; Note to self: it has embark integration
+;; TBW
 
 ;; ledger-mode
 ;; Note to self: it has a flycheck package
-
 ;; TBW
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -257,8 +264,104 @@
 ;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
 ;; There is also TempEl, an alternative to YASnippet developed by minad.
 
-;; TBW
+;; Corfu
 
+(use-package corfu
+  :ensure t
+  :hook ((java-mode
+	  java-ts-mode
+	  emacs-lisp-mode) . corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-cycle t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.2)
+  (corfu-preselect 'first)
+  (corfu-preview-current 'insert)
+  ;; I'll activate this one once I have installed orderless
+  ;; (corfu-completion-styles '(orderless))
+  ;; For Emacs 30 and newer
+  ;; (text-mode-ispell-word-completion nil)
+  :bind
+  (:map corfu-map
+        ("TAB" . corfu-insert)
+        ([tab] . corfu-insert)
+        ("ESC" . corfu-quit)
+        ([esc] . corfu-quit)))
+
+;; Cape
+
+
+
+;; Vertico
+
+
+
+;; Consult
+
+
+
+;; Marginalia
+
+
+
+;; Orderless
+
+
+
+;; Embark
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Allows linting, formatting, auto-completion, semantic editing, etc.
+(use-package lsp-mode
+  :ensure t
+  :init
+  ;; Set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  ;; lsp-idle-delay determines how often lsp-mode will refresh.
+  (setq lsp-idle-delay 0.500)
+  :hook ((java-mode
+	  java-ts-mode) . lsp-deferred)
+  :commands lsp)
+
+;; lsp-ui to show higher abtraction interfaces for lsp-mode
+(use-package lsp-ui
+  :ensure t
+  :after lsp-mode
+  :commands lsp-ui-mode)
+
+;; lsp-java
+(use-package lsp-java
+  :ensure t
+  :after lsp-mode)
+
+;; Here you need a Java compiler to use the lsp server JDTLS. Also, you need to pass the absolute path, not relative.
+(setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
+(setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
+
+;; Dap mode for debugging
+(use-package dap-mode
+  :ensure t)
+
+;; lsp clients: To Be Installed
+;; lsp-python
+;; lsp-javascript / lsp-typescript
+
+;; (add-to-list 'lsp-client-packages 'lsp-XXX)
+
+;; Dap-mode
+;;(require 'dap-java)
+;; (dap-register-debug-template "Java Runner"
+;;                              (list :type "java"
+;;                                    :request "launch"
+;;                                    :args ""
+;;                                    :vmArgs "-ea -Dmyapp.instance.name=myapp_1"
+;;                                    :projectName "myapp"
+;;                                    :mainClass "com.domain.AppRunner"
+;;                                    :env '(("DEV" . "1"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -308,21 +411,16 @@
 (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
 (add-hook 'focus-mode-hook #'lsp-focus-mode)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; multiple-cursors.el
+;; Add a cursor to each line of an active region.
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 
-;; lsp clients: To Be Installed
-;; lsp-java
-;; lsp-python
-;; lsp-javascript / lsp-typescript
+;; Add multiple cursors not based on continuous lines, but based on keywords.
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-c C-<mouse-1>") 'mc/add-cursor-on-click)
 
-
-;; (add-hook 'java-mode-hook 'lsp)
-;; (add-hook 'java-ts-mode-hook 'lsp)
-
-;; (add-to-list 'lsp-client-packages 'lsp-XXX)
-
-;; lsp-idle-delay determines how often lsp-mode will refresh.
-(setq lsp-idle-delay 0.500)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -338,15 +436,3 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; Dap-mode
-;;(require 'dap-java)
-;; (dap-register-debug-template "Java Runner"
-;;                              (list :type "java"
-;;                                    :request "launch"
-;;                                    :args ""
-;;                                    :vmArgs "-ea -Dmyapp.instance.name=myapp_1"
-;;                                    :projectName "myapp"
-;;                                    :mainClass "com.domain.AppRunner"
-;;                                    :env '(("DEV" . "1"))))

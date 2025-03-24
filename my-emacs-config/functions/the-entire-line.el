@@ -11,12 +11,12 @@ Copies the entire line of text."
 
 ;; Funtion for copying and pasting a line
 (defun copy-paste-the-entire-line ()
-  "Execute the functions `copy-the-entire-line', `open-line', `next-line', and `yank'.\n
+  "Execute the functions `copy-the-entire-line', `open-line', `forward-line', and `yank'.\n
 Copies the entire line of text, creates a new line, and pastes the copied line in the new line."
   (interactive)
   (copy-the-entire-line)
   (open-line 1)
-  (next-line)
+  (forward-line 1)
   (yank))
 
 (defun delete-the-entire-line ()
@@ -28,10 +28,10 @@ Deletes the entire line of text and goes back to the previous line, specifically
   (left-char))
 
 
-;; (defun my-line-save ()
+;; (defun copy-current-line ()
 ;;   (interactive)
 ;;   (let ((l(substring (thing-at-point 'line)0 -1)))
 ;;     (kill-new l)
 ;;     (message "saved : %s" l)))
 
-;; (local-set-key (kbd "C-c w") #'my-line-save)
+;; (local-set-key (kbd "C-c w") #'copy-current-line)

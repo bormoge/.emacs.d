@@ -17,6 +17,7 @@ undo-redo			CTRL + ?
 undo-only			ALT + x undo-only
 Revert buffer changes		CTRL + x x g
 comment-region			ALT + ;
+Multiline rectangle		CTRL + x r t
 
 
 Move to start of file		ALT + <
@@ -28,8 +29,8 @@ Move to end of line		CTRL + e
 Move to next line		CTRL + n
 
 
-Increase font size		CTRL + <wheel-up>
-Decrease font size		CTRL + <wheel-down>
+Increase text scale		CTRL + <wheel-up>
+Decrease text scale		CTRL + <wheel-down>
 
 
 Select text			CTRL + SPACE
@@ -46,7 +47,6 @@ Async Shell Command		ALT + &
 Execute command			ALT + x
 Apropos				ALT + x apropos
 Command completition		ALT + x <TAB>
-Delete duplicate lines		ALT + x delete-duplicate-lines
 Evaluate expression		ALT + :
 
 
@@ -107,12 +107,14 @@ Kill Buffer			CTRL + x k
 ## Emacs Tricks
 Copy entire line			CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
 Emulate Hyper key			CTRL + x @ h
+Print Emacs version from terminal	emacs -batch -l <(echo "(message (version))")
 
 
 ## Emacs Functions
 Emacs version				version
 Find library file(s)			find-library
 Whitespace mode				whitespace-mode
+Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
 Check changes in file			diff-buffer-with-file
@@ -123,7 +125,8 @@ Replace word				replace-string
 Man (Manual) pages			man, man-follow, woman
 The foundation of all modes		fundamental-mode
 Recompile directory			byte-recompile-directory
-List all packages			package-list-packages
+List all packages			list-packages
+Refresh list of packages		package-refresh-contents
 Undo, won't redo			undo-only
 Menu bar				menu-bar-mode
 Tool bar				tool-bar-mode
@@ -141,7 +144,18 @@ Generate a diary			diary
 Open an sqlite database			sqlite-open
 Manage SQL Postgres			sql-postgres
 List appearance elements displayed	list-faces-display
-Mode for highlighting	 		hi-lock-mode
+Mode for highlighting			hi-lock-mode
+Manage compressed files			auto-compression-mode
+Displaying tar files as if dired	tar-mode
+Calendar				calendar
+Lunar phases				lunar-phases
+
+
+## Calc
+Calculator				calc				CTRL + x * c
+Calculator full screen			full-calc
+Toggle calc between big or small	calc-big-or-small		CTRL + x * b
+Reset calculator			calc-reset			CTRL + x * 0
 
 
 ## Emacs Variables
@@ -171,3 +185,9 @@ Git status				magit-status
 Check sources for treesit.el		treesit-language-source-alist
 Path for treesit sources		treesit-extra-load-path
 Install treesit grammar			treesit-install-language-grammar
+
+
+## Emacs tutorials
+https://www.gnu.org/software/emacs/tour/
+https://www.masteringemacs.org/article/beginners-guide-to-emacs
+https://midirus.com/emacs/tutorial

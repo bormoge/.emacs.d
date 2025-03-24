@@ -35,6 +35,9 @@
 ;; Set key for finding built-in Emacs libraries / files
 (define-key (current-global-map) (kbd "H-h l") 'find-library)
 
+;; Set key for undo-only
+(define-key (current-global-map) (kbd "C-S-/") 'undo-only)
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 

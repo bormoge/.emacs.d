@@ -2,14 +2,19 @@
 /.git
 /auto-save-list
 /desktop-sessions
+/eclipse.jdt.ls
 /eln-cache
 /elpa
 /games
+/melpa
 /transient
 /tree-sitter
-/melpa
+/workspace
+/java-lts
 
 /my-emacs-config/functions/tetris.el
 macro_example.el
 forge-database.sqlite
 projectile-bookmarks.eld
+.mc-lists.el
+.lsp-session-v1
