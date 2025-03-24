@@ -268,9 +268,11 @@
 
 (use-package corfu
   :ensure t
-  :hook ((java-mode
+  :hook (((java-mode
 	  java-ts-mode
 	  emacs-lisp-mode) . corfu-mode)
+	 ((corfu-mode) . corfu-encyclopedia-mode)
+	 )
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -289,7 +291,8 @@
         ("ESC" . corfu-quit)
         ([esc] . corfu-quit)
 	("H-<tab>" . yas-expand)
-	("H-d" . corfu-view-function-or-variable-documentation)))
+	("H-d" . corfu-encyclopedia-view-documentation)
+	))
 
 
 ;; Cape
