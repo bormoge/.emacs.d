@@ -287,7 +287,10 @@
         ("TAB" . corfu-insert)
         ([tab] . corfu-insert)
         ("ESC" . corfu-quit)
-        ([esc] . corfu-quit)))
+        ([esc] . corfu-quit)
+	("H-<tab>" . yas-expand)
+	("H-d" . corfu-view-function-or-variable-documentation)))
+
 
 ;; Cape
 
@@ -395,10 +398,10 @@
 (global-set-key (kbd "C-z") 'evil-mode)
 
 ;; YASnippets
-;; Remap the snippet expansion from TAB to M-+
+;; Remap the snippet expansion from TAB to H-TAB
 (define-key yas-minor-mode-map [(tab)] nil)
 (define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "M-+") 'yas-expand)
+(define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
 
 ;; Treemacs
 ;; Increase zoom for all modes except treemacs

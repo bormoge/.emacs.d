@@ -24,6 +24,7 @@
 
 (load-user-file "my-emacs-config/functions/the-entire-line.el")
 (load-user-file "my-emacs-config/functions/tnwmt.el")
+(load-user-file "my-emacs-config/functions/corfu-view-candidate-documentation.el")
 (load-user-file "my-emacs-config/my-packages-config.el")
 
 ;; Apply configuration after loading .el files
