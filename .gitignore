@@ -7,10 +7,10 @@
 /elpa
 /games
 /melpa
+/java-lts
 /transient
 /tree-sitter
 /workspace
-/java-lts
 
 /my-emacs-config/functions/tetris.el
 macro_example.el
@@ -18,3 +18,4 @@ forge-database.sqlite
 projectile-bookmarks.eld
 .mc-lists.el
 .lsp-session-v1
+history

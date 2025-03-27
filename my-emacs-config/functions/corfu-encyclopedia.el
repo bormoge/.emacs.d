@@ -3,7 +3,8 @@
 
 (require 'corfu)
 
-(defvar corfu-encyclopedia-selected-candidate nil)
+(defvar-local corfu-encyclopedia-selected-candidate nil)
+(defvar-local corfu-encyclopedia-documentation-flag nil)
 
 (defun corfu-encyclopedia-get-selected-candidate ()
   (setq corfu-encyclopedia-selected-candidate (concat corfu--base (nth corfu--index corfu--candidates)))
@@ -15,6 +16,7 @@
 
 (defun corfu-encyclopedia-view-documentation ()
   (interactive)
+  (setq corfu-encyclopedia-documentation-flag t)
   (corfu-encyclopedia-get-selected-candidate)
   (cond
    ((fboundp (intern corfu-encyclopedia-selected-candidate))
@@ -28,24 +30,31 @@
 (defun corfu-encyclopedia-go-down ()
   (interactive)
   (corfu-next 1)
-  (corfu-encyclopedia-view-documentation))
+  (when corfu-encyclopedia-documentation-flag
+    (corfu-encyclopedia-view-documentation)))
 
 (defun corfu-encyclopedia-go-up ()
   (interactive)
   (corfu-previous 1)
-  (corfu-encyclopedia-view-documentation))
+  (when corfu-encyclopedia-documentation-flag
+    (corfu-encyclopedia-view-documentation)))
 
 (defun corfu-encyclopedia-quit-list ()
   (interactive)
-  (when (get-buffer "*Help*")
+  (when corfu-encyclopedia-documentation-flag
+    (when (get-buffer "*Help*")
       (progn
 	(switch-to-buffer "*Help*")
-	(kill-buffer-and-window)))
+	(kill-buffer-and-window))))
+  (setq corfu-encyclopedia-documentation-flag nil)
   (corfu-quit))
 
-(defvar corfu-encyclopedia-store-down-key nil)
-(defvar corfu-encyclopedia-store-up-key nil)
-(defvar corfu-encyclopedia-store-escape-key nil)
+(defvar-local corfu-encyclopedia-store-down-key nil)
+(defvar-local corfu-encyclopedia-store-up-key nil)
+(defvar-local corfu-encyclopedia-store-escape-key nil)
+
+(defvar-keymap corfu-encyclopedia-mode-map
+  "H-d" #'corfu-encyclopedia-view-documentation)
 
 (defun corfu-encyclopedia-enable-package-hook ()
   "Enable keybindings for corfu-encyclopedia."

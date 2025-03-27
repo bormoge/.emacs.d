@@ -250,6 +250,15 @@
   ;;  '((js . t)))
   )
 
+(use-package kind-icon
+  :ensure t
+  :after corfu
+  ;:custom
+  ; (kind-icon-blend-background t)
+  ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
+  :config
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
+
 ;; avy
 ;; Note to self: it has embark integration
 ;; TBW
@@ -271,7 +280,7 @@
   :hook (((java-mode
 	  java-ts-mode
 	  emacs-lisp-mode) . corfu-mode)
-	 ((corfu-mode) . corfu-encyclopedia-mode)
+	 ;;((corfu-mode) . corfu-encyclopedia-mode)
 	 )
   :custom
   (corfu-auto t)
@@ -280,8 +289,6 @@
   (corfu-auto-delay 0.2)
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
-  ;; I'll activate this one once I have installed orderless
-  ;; (corfu-completion-styles '(orderless))
   ;; For Emacs 30 and newer
   ;; (text-mode-ispell-word-completion nil)
   :bind
@@ -291,31 +298,39 @@
         ("ESC" . corfu-quit)
         ([esc] . corfu-quit)
 	("H-<tab>" . yas-expand)
-	("H-d" . corfu-encyclopedia-view-documentation)
 	))
 
 
 ;; Cape
-
+;; TBW
 
 
 ;; Vertico
-
+;; TBW
 
 
 ;; Consult
-
+;; TBW
 
 
 ;; Marginalia
-
+;; TBW
 
 
 ;; Orderless
 
+(use-package orderless
+  :ensure t
+  :custom
+  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 
 
 ;; Embark
+;; TBW
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -348,6 +363,10 @@
 (setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
 (setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;; Dap mode for debugging
 (use-package dap-mode
   :ensure t)
@@ -371,6 +390,19 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;; Treesitter
+
+;; Treesitter grammar repositories.
+(setq treesit-language-source-alist
+      '((java "https://github.com/tree-sitter/tree-sitter-java")))
+
+;; Replace normal mode with its equivalent treesitter mode (ts-mode).
+(setq major-mode-remap-alist
+      '((java-mode . java-ts-mode)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; Packages configuration
 
@@ -426,19 +458,6 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-c C-<mouse-1>") 'mc/add-cursor-on-click)
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;; Treesitter
-;; Treesitter grammar repositories.
-(setq treesit-language-source-alist
-      '((java "https://github.com/tree-sitter/tree-sitter-java")))
-
-;; Replace normal mode with its equivalent treesitter mode (ts-mode).
-(setq major-mode-remap-alist
-      '((java-mode . java-ts-mode)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

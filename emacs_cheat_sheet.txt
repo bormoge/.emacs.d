@@ -1,107 +1,107 @@
 ## Emacs Cheat Sheet
-Close Emacs			CTRL + x CTRL + c
-Open file			CTRL + c CTRL + f
-Open directory			CTRL + x d
-Save file			CTRL + x CTRL + s
-New file (switch-to-buffer)	CTRL + x b
-Write file			CTRL + x CTRL + w
-Universal argument		CTRL + u
+Close Emacs				CTRL + x CTRL + c
+Open file				CTRL + c CTRL + f
+Open directory				CTRL + x d
+Save file				CTRL + x CTRL + s
+New file (switch-to-buffer)		CTRL + x b
+Write file				CTRL + x CTRL + w
+Universal argument			CTRL + u
 
 
-Copy				ALT + w
-Cut				CTRL + w
-Paste				CTRL + y
-Paste from history		ALT + y
-Undo				CTRL + /
-undo-redo			CTRL + ?
-undo-only			ALT + x undo-only
-Revert buffer changes		CTRL + x x g
-comment-region			ALT + ;
-Multiline rectangle		CTRL + x r t
+Copy					ALT + w
+Cut					CTRL + w
+Paste					CTRL + y
+Paste from history			ALT + y
+Undo					CTRL + /
+undo-redo				CTRL + ?
+undo-only				ALT + x undo-only
+Revert buffer changes			CTRL + x x g
+comment-region				ALT + ;
+Multiline rectangle			CTRL + x r t
 
 
-Move to start of file		ALT + <
-Move to end of file		ALT + >
-Move to start of line		CTRL + a
-Move before first line char	ALT + m
-Move to previous line		CTRL + p
-Move to end of line		CTRL + e
-Move to next line		CTRL + n
+Move to start of file			ALT + <
+Move to end of file			ALT + >
+Move to start of line			CTRL + a
+Move before first line char		ALT + m
+Move to previous line			CTRL + p
+Move to end of line			CTRL + e
+Move to next line			CTRL + n
 
 
-Increase text scale		CTRL + <wheel-up>
-Decrease text scale		CTRL + <wheel-down>
+Increase text scale			CTRL + <wheel-up>
+Decrease text scale			CTRL + <wheel-down>
 
 
-Select text			CTRL + SPACE
-Select all			CTRL + x h
-Delete selected text		CTRL + SPACE <backspace>
+Select text				CTRL + SPACE
+Select all				CTRL + x h
+Delete selected text			CTRL + SPACE <backspace>
 
 
-Shell Mode			ALT + x shell
-Full terminal emulation		ALT + x term
-Shell Command			ALT + !
-Async Shell Command		ALT + &
+Shell Mode				ALT + x shell
+Full terminal emulation			ALT + x term
+Shell Command				ALT + !
+Async Shell Command			ALT + &
 
 
-Execute command			ALT + x
-Apropos				ALT + x apropos
-Command completition		ALT + x <TAB>
-Evaluate expression		ALT + :
+Execute command				ALT + x
+Apropos					ALT + x apropos
+Command completition			ALT + x <TAB>
+Evaluate expression			ALT + :
 
 
-New vertical window		CTRL + x 2
-New horizontal window		CTRL + x 3
-Close focused window		CTRL + x 0
-CLose all unfocused windows	CTRL + x 1
-Other window			CTRL + x o
+New vertical window			CTRL + x 2
+New horizontal window			CTRL + x 3
+Close focused window			CTRL + x 0
+CLose all unfocused windows		CTRL + x 1
+Other window				CTRL + x o
 
 
-New tab				CTRL + x t 2
-Close focused tab		CTRL + x t 0
-Close all unfocused tabs	CTRL + x t 1
-Next tab			CTRL + <TAB>
-Previous tab			CTRL + SHIFT + <TAB>
+New tab					CTRL + x t 2
+Close focused tab			CTRL + x t 0
+Close all unfocused tabs		CTRL + x t 1
+Next tab				CTRL + <TAB>
+Previous tab				CTRL + SHIFT + <TAB>
 
 
-New frame			CTRL + x 5 2
-Delete frame			CTRL + x 5 0
-Change frame			CTRL + x 5 o
+New frame				CTRL + x 5 2
+Delete frame				CTRL + x 5 0
+Change frame				CTRL + x 5 o
 
 
-Incremental search forward	CTRL + s
-Incremental search backward	CTRL + r
-Word search			ALT + s w
-occur				ALT + s o
-Highlight word on whole file	ALT + s h .
-Unhighlight on whole file	ALT + s h u
-grep				ALT + x grep
+Incremental search forward		CTRL + s
+Incremental search backward		CTRL + r
+Word search				ALT + s w
+occur					ALT + s o
+Highlight word on whole file		ALT + s h .
+Unhighlight on whole file		ALT + s h u
+grep					ALT + x grep
 
 
-Scroll lock			FN + s
+Scroll lock				FN + s
 
 
-Search words on internet	ALT + s ALT + w
+Search words on internet		ALT + s ALT + w
 
 
-Emacs documentation		CTRL + h i
-Help				CTRL + h ?
-Describe function		CTRL + h f
-Look key bound			CTRL + h k
-Function key			CTRL + h w
-Describe variables		CTRL + h v
-Describe buffer modes		CTRL + h m
-Messages buffer			CTRL + h e
-List key bindings		CTRL + h b
-Show inputs			CTRL + h l
-Search word on documentation	CTRL + h d
-Emacs License (GPL 3.0)		CTRL + h CTRL + c
-About page			CTRL + h CTRL + a
+Emacs documentation			CTRL + h i
+Help					CTRL + h ?
+Describe function			CTRL + h f
+Look key bound				CTRL + h k
+Function key				CTRL + h w
+Describe variables			CTRL + h v
+Describe buffer modes			CTRL + h m
+Messages buffer				CTRL + h e
+List key bindings			CTRL + h b
+Show inputs				CTRL + h l
+Search word on documentation		CTRL + h d
+Emacs License (GPL 3.0)			CTRL + h CTRL + c
+About page				CTRL + h CTRL + a
 
 
-Quit				CTRL + g
-Quit help			q
-Kill Buffer			CTRL + x k
+Quit					CTRL + g
+Quit help				q
+Kill Buffer				CTRL + x k
 
 
 ## Emacs Tricks
@@ -149,6 +149,7 @@ Manage compressed files			auto-compression-mode
 Displaying tar files as if dired	tar-mode
 Calendar				calendar
 Lunar phases				lunar-phases
+Save minibuffer history			savehist-mode
 
 
 ## Calc
@@ -173,6 +174,8 @@ List of version control backends	vc-handled-backends
 Functions to complete text		completion-at-point-functions
 Shows major modes used on files		auto-mode-alist
 List all packages			package-activated-list
+Variables saved by savehist-mode	savehist-additional-variables
+Execute function before Emacs closes	kill-emacs-hook
 
 
 ## Packages
@@ -185,6 +188,9 @@ Git status				magit-status
 Check sources for treesit.el		treesit-language-source-alist
 Path for treesit sources		treesit-extra-load-path
 Install treesit grammar			treesit-install-language-grammar
+
+# LSP
+Shutdown lsp server			lsp-shutdown-workspace
 
 
 ## Emacs tutorials

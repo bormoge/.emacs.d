@@ -80,6 +80,9 @@
 (setq display-time-day-and-date t)
 (display-time-mode t)
 
+;; Save minibuffer history. By default it will be on ~/.emacs.d/history
+(savehist-mode)
+
 ;; No backup files
 (setq make-backup-files nil)
 
