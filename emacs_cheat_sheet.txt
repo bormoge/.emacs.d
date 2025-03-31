@@ -94,6 +94,7 @@ Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
 List key bindings			CTRL + h b
 Show inputs				CTRL + h l
+Show categories by keyword		CTRL + h p
 Search word on documentation		CTRL + h d
 Emacs License (GPL 3.0)			CTRL + h CTRL + c
 About page				CTRL + h CTRL + a
@@ -191,6 +192,14 @@ Install treesit grammar			treesit-install-language-grammar
 
 # LSP
 Shutdown lsp server			lsp-shutdown-workspace
+Find symbol definition			lsp-find-definition			C-c l g r
+Find symbol reference			lsp-find-references			C-c l g g
+Rename symbol				lsp-rename				C-c l r r
+Format the code				lsp-format-buffer
+Log all language server messages	lsp-log-io
+
+# Flycheck
+List errors detected by Flycheck	flycheck-list-errors
 
 
 ## Emacs tutorials

@@ -50,6 +50,13 @@
 ;; Window Tab Lines
 (global-tab-line-mode 1)
 
+;; Enable menus
+(menu-bar-mode t)
+(tool-bar-mode t)
+
+;; Enable tooltips
+(tooltip-mode t)
+
 ;; Increase zoom
 ;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 
@@ -60,17 +67,30 @@
 ;;(setq-default truncate-lines t)
 (global-visual-line-mode t)
 
+;; Enable Vertical Scroll Bar
+(scroll-bar-mode 'right)
+
 ;; Enable Horizontal Scroll Bar
 (horizontal-scroll-bar-mode 1)
 
 ;; Replace a selected area with typed text
 (delete-selection-mode 1)
 
+;; Add directory to desktop-path
+(with-eval-after-load 'desktop
+  (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory)))
+
+;; Turn off clickable text highlight
+(setq mouse-highlight nil)
+
 ;; At startup, show the messages
 (view-echo-area-messages)
 (with-current-buffer (messages-buffer)
   (enlarge-window 9)
   )
+
+;; Display warnings depending of level
+(setq warning-minimum-level :warning)
 
 ;; Nice to have if you are dealing with packages. Disables docstring warnings
 (setq byte-compile-warnings

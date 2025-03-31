@@ -181,7 +181,8 @@
 ;; Treemacs integration with LSP
 (use-package lsp-treemacs
   :ensure t
-  :after lsp)
+  :after lsp
+  :commands lsp-treemacs-errors-list)
 
 ;; Vim mode for Emacs
 (use-package evil
@@ -254,8 +255,9 @@
   :ensure t
   :after corfu
   ;:custom
-  ; (kind-icon-blend-background t)
-  ; (kind-icon-default-face 'corfu-default) ; only needed with blend-background
+  ;;(kind-icon-use-icons nil)
+  ;;(kind-icon-blend-background t)
+  ;;(kind-icon-default-face 'corfu-default) ; only needed with blend-background
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
@@ -264,8 +266,39 @@
 ;; TBW
 
 ;; ledger-mode
-;; Note to self: it has a flycheck package
-;; TBW
+(use-package ledger-mode
+  :ensure t
+  :defer t)
+
+;; flycheck intregration for ledger-mode
+(use-package flycheck-ledger
+  :ensure t
+  :after (flycheck ledger))
+
+;; Dashboard for Emacs
+;; (use-package dashboard
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (dashboard-setup-startup-hook)
+;;   (setq dashboard-startup-banner 'logo))
+
+;; Automatically show available commands
+(use-package which-key
+  :ensure t
+  :config
+  (setq which-key-idle-delay 10.0)
+  (which-key-setup-side-window-right-bottom)
+  (which-key-mode))
+
+;; Directory-specific environments
+(use-package direnv
+  :ensure t
+  :defer t
+  ;; :config
+  ;; (direnv-mode)
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -280,7 +313,6 @@
   :hook (((java-mode
 	  java-ts-mode
 	  emacs-lisp-mode) . corfu-mode)
-	 ;;((corfu-mode) . corfu-encyclopedia-mode)
 	 )
   :custom
   (corfu-auto t)
@@ -298,11 +330,29 @@
         ("ESC" . corfu-quit)
         ([esc] . corfu-quit)
 	("H-<tab>" . yas-expand)
+	("H-d" . corfu-popupinfo-mode)
+	("H-t" . corfu-popupinfo-toggle)
 	))
 
-
 ;; Cape
-;; TBW
+
+;; (use-package cape
+;;   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
+;;   ;; Press C-c p ? to for help.
+;;   :bind (("C-c C-r m" . cape-prefix-map)
+;; 	 ("C-c C-r d" . cape-dabbrev)
+;; 	 ("C-c C-r h" . cape-history)
+;; 	 ("C-c C-r f" . cape-file))
+;;   :init
+;;   ;; Add to the global default value of `completion-at-point-functions' which is
+;;   ;; used by `completion-at-point'.  The order of the functions matters, the
+;;   ;; first function returning a result wins.  Note that the list of buffer-local
+;;   ;; completion functions takes precedence over the global list.
+;;   (add-hook 'completion-at-point-functions #'cape-dabbrev)
+;;   (add-hook 'completion-at-point-functions #'cape-file)
+;;   (add-hook 'completion-at-point-functions #'cape-elisp-block)
+;;   (add-hook 'completion-at-point-functions #'cape-history)
+;; )
 
 
 ;; Vertico
@@ -321,12 +371,14 @@
 
 (use-package orderless
   :ensure t
+  ;;:after vertico
   :custom
   ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-  (completion-styles '(orderless basic))
+  (completion-styles '(orderless basic)) ;;partial-completion
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles partial-completion)))) ;;basic
+  )
 
 
 ;; Embark
@@ -342,11 +394,19 @@
   :init
   ;; Set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
-  ;; lsp-idle-delay determines how often lsp-mode will refresh.
-  (setq lsp-idle-delay 0.500)
-  :hook ((java-mode
-	  java-ts-mode) . lsp-deferred)
-  :commands lsp)
+  (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
+  (setq lsp-completion-provider :capf)
+  :config
+  (lsp-enable-which-key-integration t)
+  ;;(setq lsp-client-packages '(lsp-clients lsp-XXX))
+  :hook (((java-mode
+	   java-ts-mode) . lsp-deferred)
+	 (lsp-completion-mode-hook . corfu-mode)
+	 (lsp-completion-at-point-functions . lsp-completion-at-point)
+	 (lsp-mode . lsp-lens-mode)
+	 (lsp-mode . lsp-enable-which-key-integration)
+	 )
+  :commands (lsp lsp-deferred))
 
 ;; lsp-ui to show higher abtraction interfaces for lsp-mode
 (use-package lsp-ui
@@ -354,14 +414,58 @@
   :after lsp-mode
   :commands lsp-ui-mode)
 
+;; lsp clients: To Be Installed
+;; lsp-python
+;; lsp-javascript / lsp-typescript
+
+;; (add-to-list 'lsp-client-packages 'lsp-XXX)
+
 ;; lsp-java
 (use-package lsp-java
   :ensure t
-  :after lsp-mode)
+  :after lsp-mode
+  :config
+  ;; (add-hook 'java-mode-hook 'lsp)
+  ;; (add-hook 'java-ts-mode-hook 'lsp)
+  ;; (add-to-list 'lsp-language-id-configuration '(java-ts-mode . "java"))
+  )
 
 ;; Here you need a Java compiler to use the lsp server JDTLS. Also, you need to pass the absolute path, not relative.
 (setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
 (setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
+
+;; LSP booster
+(defun lsp-booster--advice-json-parse (old-fn &rest args)
+  "Try to parse bytecode instead of json."
+  (or
+   (when (equal (following-char) ?#)
+     (let ((bytecode (read (current-buffer))))
+       (when (byte-code-function-p bytecode)
+         (funcall bytecode))))
+   (apply old-fn args)))
+(advice-add (if (progn (require 'json)
+                       (fboundp 'json-parse-buffer))
+                'json-parse-buffer
+              'json-read)
+            :around
+            #'lsp-booster--advice-json-parse)
+
+(defun lsp-booster--advice-final-command (old-fn cmd &optional test?)
+  "Prepend emacs-lsp-booster command to lsp CMD."
+  (let ((orig-result (funcall old-fn cmd test?)))
+    (if (and (not test?)                             ;; for check lsp-server-present?
+             (not (file-remote-p default-directory)) ;; see lsp-resolve-final-command, it would add extra shell wrapper
+             lsp-use-plists
+             (not (functionp 'json-rpc-connection))  ;; native json-rpc
+             (executable-find "emacs-lsp-booster"))
+        (progn
+          (when-let ((command-from-exec-path (executable-find (car orig-result))))  ;; resolve command from exec-path (in case not found in $PATH)
+            (setcar orig-result command-from-exec-path))
+          (message "Using emacs-lsp-booster for %s!" orig-result)
+          (cons "emacs-lsp-booster" orig-result))
+      orig-result)))
+
+(advice-add 'lsp-resolve-final-command :around #'lsp-booster--advice-final-command)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -370,12 +474,6 @@
 ;; Dap mode for debugging
 (use-package dap-mode
   :ensure t)
-
-;; lsp clients: To Be Installed
-;; lsp-python
-;; lsp-javascript / lsp-typescript
-
-;; (add-to-list 'lsp-client-packages 'lsp-XXX)
 
 ;; Dap-mode
 ;;(require 'dap-java)
@@ -458,6 +556,14 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 (global-set-key (kbd "C-c C-<mouse-1>") 'mc/add-cursor-on-click)
+
+;; Dashboard
+;; Items to show
+;; (setq dashboard-items '((recents   . 30)
+;;                         (projects  . 5)))
+
+;; (setq dashboard-item-shortcuts '((recents   . "r")
+;;                                  (projects  . "p")))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
