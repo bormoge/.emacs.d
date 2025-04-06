@@ -7,12 +7,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes 'nil)
+ '(require-final-newline t)
+ '(diff-switches "-u")
  '(package-selected-packages
-   '(direnv flycheck-ledger ledger-mode orderless kind-icon lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
- '(package-vc-selected-packages
-   '((treesit-fold :vc-backend Git :url "https://github.com/emacs-tree-sitter/treesit-fold")
-     (pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
-     (pg :vc-backend Git :url "https://github.com/emarsden/pg-el"))))
+   '(which-key direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
