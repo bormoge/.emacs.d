@@ -230,12 +230,13 @@
   :after (flycheck ledger))
 
 ;; Automatically show available commands
-(use-package which-key
-  :ensure t
-  :config
-  (setq which-key-idle-delay 10.0)
-  (which-key-setup-side-window-right-bottom)
-  (which-key-mode))
+;; Already preinstalled in Emacs 30
+;; (use-package which-key
+;;   :ensure t
+;;   :config
+;;   (setq which-key-idle-delay 10.0)
+;;   (which-key-setup-side-window-right-bottom)
+;;   (which-key-mode))
 
 ;; Directory-specific environments
 (use-package direnv

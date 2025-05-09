@@ -1,6 +1,6 @@
 ## Emacs Cheat Sheet
 Close Emacs				CTRL + x CTRL + c
-Open file				CTRL + c CTRL + f
+Open file				CTRL + x CTRL + f
 Open directory				CTRL + x d
 Save file				CTRL + x CTRL + s
 New file (switch-to-buffer)		CTRL + x b
@@ -31,6 +31,8 @@ Move to next line			CTRL + n
 
 Increase text scale			CTRL + <wheel-up>
 Decrease text scale			CTRL + <wheel-down>
+Increase global text scale		CTRL + ALT + <wheel-up>
+Decrease global text scale		CTRL + ALT + <wheel-down>
 
 
 Select text				CTRL + SPACE

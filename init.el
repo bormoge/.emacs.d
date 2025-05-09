@@ -10,7 +10,7 @@
  '(require-final-newline t)
  '(diff-switches "-u")
  '(package-selected-packages
-   '(which-key direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
+   '(direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -18,8 +18,10 @@
  ;; If there is more than one, they won't work right.
  )
 
+(load-file "~/.emacs.d/my-emacs-config/functions/el-user-files.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/the-entire-line.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/tnwmt.el")
+(load-file "~/.emacs.d/my-emacs-config/functions/flnkf.el")
 ;;(load-user-file "my-emacs-config/functions/corfu-encyclopedia.el")
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 

@@ -32,6 +32,9 @@
 ;; Set key for grep
 (define-key (current-global-map) (kbd "H-g") 'grep)
 
+;; Count words in a region
+(define-key (current-global-map) (kbd "H-w") 'count-words)
+
 ;; Set key for finding built-in Emacs libraries / files
 (define-key (current-global-map) (kbd "H-h l") 'find-library)
 
