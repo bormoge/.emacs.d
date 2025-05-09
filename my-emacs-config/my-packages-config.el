@@ -43,15 +43,15 @@
   :after magit)
 
 ;; Project manager
-(use-package projectile
-  :ensure t
-  :init
-  (setq projectile-project-search-path '("~/projects/" "~/work/" "~/playground"))
-  :config
-  (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-  (global-set-key (kbd "C-c p") 'projectile-command-map)
-  (projectile-mode +1)
-  )
+;; (use-package projectile
+;;   :ensure t
+;;   :init
+;;   (setq projectile-project-search-path '("~/projects/" "~/work/" "~/playground"))
+;;   :config
+;;   (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
+;;   (global-set-key (kbd "C-c p") 'projectile-command-map)
+;;   (projectile-mode +1)
+;;   )
 
 ;; File and project explorer
 ;; Most of this config is taken from Alexander-Miller's repository
@@ -150,9 +150,9 @@
   :after (treemacs evil)
   :ensure t)
 
-(use-package treemacs-projectile
-  :after (treemacs projectile)
-  :ensure t)
+;; (use-package treemacs-projectile
+;;   :after (treemacs projectile)
+;;   :ensure t)
 
 (use-package all-the-icons ;; IMPORTANT: to see the icons you need to install them using all-the-icons-install-fonts
   :ensure t
@@ -300,6 +300,9 @@
   ;; (direnv-mode)
   )
 
+;; gnu-elpa-keyring-update
+(use-package gnu-elpa-keyring-update
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -11,6 +11,7 @@
 /transient
 /tree-sitter
 /workspace
+/flnkf
 
 /my-emacs-config/functions/tetris.el
 macro_example.el
