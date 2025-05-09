@@ -10,7 +10,7 @@
  '(require-final-newline t)
  '(diff-switches "-u")
  '(package-selected-packages
-   '(direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
+   '(gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

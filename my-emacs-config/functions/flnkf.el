@@ -10,7 +10,7 @@
 		((boundp 'user-init-directory)
 		 user-init-directory)
 		(t "~/.emacs.d/"))
-	  "flnkf-file.txt")
+	  "flnkf/flnkf-file.txt")
   "Base file with the necessary files to read and link.")
 
 (defun flnkf-file-reader ()
@@ -29,7 +29,8 @@
           (goto-char (point-min))
           (while (not (eobp))
             (let ((line (thing-at-point 'line t)))
-              (when (and line (file-regular-p (string-trim line)))
+	      ;; 'file-regular-p' for regular files // 'file-exists-p' for any type of file // 'file-directory-p' for directories
+              (when (and line (file-exists-p (string-trim line)))
                 ;; Replace the line with a linked version
                 (beginning-of-line)
                 (delete-region (line-beginning-position) (line-end-position))
@@ -39,11 +40,21 @@
 	  flnkf-buffer))
     (switch-to-buffer "*scratch*")))
 
+;; (defun flnkf-link-text (text-to-link)
+;;   "Put a clickable link in the text to open the file."
+;;   (let ((file-path (string-trim text-to-link)))
+;;     (insert-text-button file-path
+;;                         'action (lambda (x) (find-file file-path))
+;;                         'follow-link t)))
+
 (defun flnkf-link-text (text-to-link)
-  "Put a clickable link in the text to open the file."
+  "Put a clickable link in the text to open the file in a new tab."
   (let ((file-path (string-trim text-to-link)))
     (insert-text-button file-path
-                        'action (lambda (x) (find-file file-path))
+                        'action (lambda (x)
+                                  (let ((path file-path))
+                                    (tab-new)
+                                    (find-file path)))
                         'follow-link t)))
 
 (defun flnkf-open-buffer-list ()

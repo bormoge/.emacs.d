@@ -135,7 +135,9 @@
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
       (message "A file is opened, skipping desktop sessions buffer.")
-    (tnwmt-open-buffer-list)))
+    (flnkf-open-buffer-list)
+    (beginning-of-buffer)))
+;;    (tnwmt-open-buffer-list)))
 
 ;; Run the check after Emacs initialization
 (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
