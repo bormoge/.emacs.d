@@ -284,12 +284,13 @@
 ;;   (setq dashboard-startup-banner 'logo))
 
 ;; Automatically show available commands
-(use-package which-key
-  :ensure t
-  :config
-  (setq which-key-idle-delay 10.0)
-  (which-key-setup-side-window-right-bottom)
-  (which-key-mode))
+;; Already preinstalled in Emacs 30
+;; (use-package which-key
+;;   :ensure t
+;;   :config
+;;   (setq which-key-idle-delay 10.0)
+;;   (which-key-setup-side-window-right-bottom)
+;;   (which-key-mode))
 
 ;; Directory-specific environments
 (use-package direnv
@@ -397,7 +398,7 @@
   (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
   (setq lsp-completion-provider :capf)
   :config
-  (lsp-enable-which-key-integration t)
+;;  (lsp-enable-which-key-integration t)
   ;;(setq lsp-client-packages '(lsp-clients lsp-XXX))
   :hook (((java-mode
 	   java-ts-mode) . lsp-deferred)

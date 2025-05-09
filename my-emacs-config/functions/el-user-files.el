@@ -29,3 +29,9 @@
   Size: %s bytes
   Mode: %s"
      fname access mod change size mode)))
+
+
+(defun kill-all-buffers-except-current ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))

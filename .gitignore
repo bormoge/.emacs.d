@@ -16,7 +16,9 @@
 macro_example.el
 forge-database.sqlite
 projectile-bookmarks.eld
+projects
 .mc-lists.el
 .lsp-session-v1
 history
 recentf
+flnkf-file.txt
