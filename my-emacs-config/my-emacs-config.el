@@ -106,6 +106,13 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
 
+;; Modify the appearance of the region
+(custom-set-faces '(region ((t :extend t))))
+
+;; Change cursor's appearance
+(setq blink-cursor-mode t)
+(set-default 'cursor-type '(bar . 7))
+
 ;; No backup files
 (setq make-backup-files nil)
 
@@ -135,7 +142,7 @@
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
       (message "A file is opened, skipping desktop sessions buffer.")
-    (flnkf-open-buffer-list)
+    (flnkf-open-default-buffer-list)
     (beginning-of-buffer)))
 ;;    (tnwmt-open-buffer-list)))
 

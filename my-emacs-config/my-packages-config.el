@@ -325,8 +325,10 @@
   (corfu-auto-delay 0.2)
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
+  ;; If already indented, then try to complete at point
+  ;;(setopt tab-always-indent 'complete)
   ;; For Emacs 30 and newer
-  ;; (text-mode-ispell-word-completion nil)
+  (text-mode-ispell-word-completion nil)
   :bind
   (:map corfu-map
         ("TAB" . corfu-insert)
@@ -503,8 +505,13 @@
 (setq major-mode-remap-alist
       '((java-mode . java-ts-mode)))
 
+;; 16.13.2 Parser-based Font Lock
+;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
+(setopt treesit-font-lock-level 4)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Packages configuration
 

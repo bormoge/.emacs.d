@@ -1,8 +1,8 @@
 ;;; -*- lexical-binding: t; -*-
-;; Necessary for tnwmt-link-text
+;; Necessary for flnkf-link-text
 
 ;; flnkf (File linker)
-;; A file that exists for the purpose of outputting links to files.
+;; An elisp file that exists for the purpose of outputting links to files.
 
 (defvar flnkf-file
   (concat (cond ((boundp 'user-emacs-directory)
@@ -13,10 +13,23 @@
 	  "flnkf/flnkf-file.txt")
   "Base file with the necessary files to read and link.")
 
-(defun flnkf-file-reader ()
+(defvar flnkf-directory
+  (concat (cond ((boundp 'user-emacs-directory)
+		 user-emacs-directory)
+		((boundp 'user-init-directory)
+		 user-init-directory)
+		(t "~/.emacs.d/"))
+	  "flnkf/")
+  "Base directory with the files to read and link.")
+
+(defun flnkf-default-file-reader ()
+  (flnkf-file-reader flnkf-file)
+  )
+
+(defun flnkf-file-reader (path-of-file)
   "Reads flnkf-file and returns a buffer with the valid paths that exist inside flnkf-file-paths."
-  (if (file-regular-p flnkf-file)
-      (let ((flnkf-buffer (generate-new-buffer "*List of files*")))
+  (if (file-regular-p path-of-file)
+      (let ((flnkf-buffer (generate-new-buffer path-of-file)))
         (with-current-buffer flnkf-buffer
           (erase-buffer)
 	  ;; Implicitely set global minor modes assigning major mode (Inheritance of minor modes perhaps?)
@@ -25,7 +38,7 @@
 	  ;; (If you don't set major mode, you need to set all minor mode variables)
 	  ;; (display-line-numbers-mode nil)
 	  (text-scale-set 5)
-          (insert-file-contents flnkf-file)
+          (insert-file-contents path-of-file)
           (goto-char (point-min))
           (while (not (eobp))
             (let ((line (thing-at-point 'line t)))
@@ -40,34 +53,63 @@
 	  flnkf-buffer))
     (switch-to-buffer "*scratch*")))
 
-;; (defun flnkf-link-text (text-to-link)
-;;   "Put a clickable link in the text to open the file."
-;;   (let ((file-path (string-trim text-to-link)))
-;;     (insert-text-button file-path
-;;                         'action (lambda (x) (find-file file-path))
-;;                         'follow-link t)))
-
 (defun flnkf-link-text (text-to-link)
   "Put a clickable link in the text to open the file in a new tab."
   (let ((file-path (string-trim text-to-link)))
     (insert-text-button file-path
                         'action (lambda (x)
                                   (let ((path file-path))
-                                    (tab-new)
-                                    (find-file path)))
+				    ;; Change relative path for absolute path
+                                    (let ((expanded-path (expand-file-name path)))
+                                      ;; Check if the path is inside ~/.emacs.d/flnkf/
+                                      (if (string-prefix-p (expand-file-name flnkf-directory) expanded-path)
+                                          (progn
+					    (tab-new)
+					    (let ((flnkf-buffer (flnkf-file-reader path)))
+					      (switch-to-buffer flnkf-buffer)))
+                                        (progn
+					  (tab-new)
+					  (find-file path)
+					  )))))
                         'follow-link t)))
 
-(defun flnkf-open-buffer-list ()
+(defun flnkf-open-default-buffer-list ()
   "Directly open the buffer to get a list of all sessions"
   (interactive)
-  (if (get-buffer "*List of files*")
-      (switch-to-buffer "*List of files*")
-    (switch-to-buffer (flnkf-file-reader))))
+  (switch-to-buffer (flnkf-default-file-reader)))
+  ;; (if (get-buffer "*List of files*")
+  ;;     (switch-to-buffer "*List of files*")
+  ;;   (switch-to-buffer (flnkf-default-file-reader))))
 
-(defun flnkf-open-buffer-list-right ()
+(defun flnkf-open-default-buffer-list-right ()
   "Get a list of all sessions in a split window."
   (interactive)
   (split-window-right)
   (other-window 1)
-  (flnkf-open-buffer-list)
+  (flnkf-default-open-buffer-list)
   (other-window 1))
+
+(defun flnkf-open-buffer-list (&optional path-of-file)
+  "Directly open the buffer to get a list of all sessions"
+  (interactive)
+  (when (not path-of-file)
+    (setq path-of-file (read-file-name "Enter value: ")))
+  (if (and (file-exists-p path-of-file) (file-regular-p path-of-file))
+      (switch-to-buffer (flnkf-file-reader (expand-file-name path-of-file)))
+    (message "Not a file.")))
+  ;; (if (get-buffer "*List of files*")
+  ;;     (switch-to-buffer "*List of files*")
+  ;;   (switch-to-buffer (flnkf-default-file-reader))))
+
+(defun flnkf-open-buffer-list-right (&optional path-of-file)
+  "Get a list of all sessions in a split window."
+  (interactive)
+  (when (not path-of-file)
+    (setq path-of-file (read-file-name "Enter value: ")))
+  (if (and (file-exists-p path-of-file) (file-regular-p path-of-file))
+      (progn
+	(split-window-right)
+	(other-window 1)
+	(flnkf-open-buffer-list path-of-file)
+	(other-window 1))
+    (message "Not a file.")))

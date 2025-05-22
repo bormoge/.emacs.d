@@ -166,6 +166,7 @@ Reset calculator			calc-reset			CTRL + x * 0
 Check directory native compilation	native-comp-eln-load-path
 Move deleted files to trash		delete-by-moving-to-trash
 Emacs Compilation Flags			system-configuration-options
+Emacs Compilation Flags			system-configuration-features
 Minor modes in buffer			minor-mode-alist
 Check active major mode			major-mode
 Determine major mode by start text	magic-mode-alist
@@ -191,6 +192,7 @@ Git status				magit-status
 Check sources for treesit.el		treesit-language-source-alist
 Path for treesit sources		treesit-extra-load-path
 Install treesit grammar			treesit-install-language-grammar
+A list of lists of feature symbols	treesit-font-lock-feature-list
 
 # LSP
 Shutdown lsp server			lsp-shutdown-workspace
