@@ -23,13 +23,14 @@
   "Base directory with the files to read and link.")
 
 (defun flnkf-default-file-reader ()
+  "Default file flnkf-file.txt inside ~/.emacs.d/flnkf/"
   (flnkf-file-reader flnkf-file)
   )
 
 (defun flnkf-file-reader (path-of-file)
-  "Reads flnkf-file and returns a buffer with the valid paths that exist inside flnkf-file-paths."
-  (if (file-regular-p path-of-file)
-      (let ((flnkf-buffer (generate-new-buffer path-of-file)))
+  "Reads a regular file and returns a buffer with links to the valid file paths found inside the read file."
+  (if (file-regular-p (expand-file-name path-of-file))
+      (let ((flnkf-buffer (switch-to-buffer path-of-file)))
         (with-current-buffer flnkf-buffer
           (erase-buffer)
 	  ;; Implicitely set global minor modes assigning major mode (Inheritance of minor modes perhaps?)
@@ -50,11 +51,12 @@
                 (flnkf-link-text (string-trim line))))
             (forward-line 1))
 	  (read-only-mode 1)
+	  (beginning-of-buffer)
 	  flnkf-buffer))
     (switch-to-buffer "*scratch*")))
 
 (defun flnkf-link-text (text-to-link)
-  "Put a clickable link in the text to open the file in a new tab."
+  "Put a clickable link in the text to open the file in a new tab.\nIf the path includes `flnkf-directory', it uses `flnkf-file-reader'."
   (let ((file-path (string-trim text-to-link)))
     (insert-text-button file-path
                         'action (lambda (x)
@@ -74,7 +76,7 @@
                         'follow-link t)))
 
 (defun flnkf-open-default-buffer-list ()
-  "Directly open the buffer to get a list of all sessions"
+  "Directly open the buffer in current window to get links of found paths.\nIt uses `flnkf-file' as default."
   (interactive)
   (switch-to-buffer (flnkf-default-file-reader)))
   ;; (if (get-buffer "*List of files*")
@@ -82,7 +84,7 @@
   ;;   (switch-to-buffer (flnkf-default-file-reader))))
 
 (defun flnkf-open-default-buffer-list-right ()
-  "Get a list of all sessions in a split window."
+  "Open the buffer in a split window to get links of found paths.\nIt uses `flnkf-file' as default."
   (interactive)
   (split-window-right)
   (other-window 1)
@@ -90,19 +92,19 @@
   (other-window 1))
 
 (defun flnkf-open-buffer-list (&optional path-of-file)
-  "Directly open the buffer to get a list of all sessions"
+  "Directly open the buffer in current window to get links of found paths in a chosen file.\nHas an optional argument, otherwise it asks for user input."
   (interactive)
   (when (not path-of-file)
     (setq path-of-file (read-file-name "Enter value: ")))
   (if (and (file-exists-p path-of-file) (file-regular-p path-of-file))
       (switch-to-buffer (flnkf-file-reader (expand-file-name path-of-file)))
-    (message "Not a file.")))
+    (message "Not a regular file.")))
   ;; (if (get-buffer "*List of files*")
   ;;     (switch-to-buffer "*List of files*")
   ;;   (switch-to-buffer (flnkf-default-file-reader))))
 
 (defun flnkf-open-buffer-list-right (&optional path-of-file)
-  "Get a list of all sessions in a split window."
+  "Open the buffer in a split window to get links of found paths in a chosen file.\nHas an optional argument, otherwise it asks for user input."
   (interactive)
   (when (not path-of-file)
     (setq path-of-file (read-file-name "Enter value: ")))
@@ -112,4 +114,4 @@
 	(other-window 1)
 	(flnkf-open-buffer-list path-of-file)
 	(other-window 1))
-    (message "Not a file.")))
+    (message "Not a regular file.")))

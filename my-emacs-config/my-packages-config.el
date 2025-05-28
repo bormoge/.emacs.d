@@ -231,12 +231,13 @@
 
 ;; Automatically show available commands
 ;; Already preinstalled in Emacs 30
-;; (use-package which-key
-;;   :ensure t
-;;   :config
-;;   (setq which-key-idle-delay 10.0)
-;;   (which-key-setup-side-window-right-bottom)
-;;   (which-key-mode))
+(use-package which-key
+  :ensure t
+  :config
+  (setq which-key-idle-delay 5.0)
+  (which-key-setup-side-window-right-bottom)
+  ;;(which-key-mode)
+  )
 
 ;; Directory-specific environments
 (use-package direnv
@@ -279,13 +280,6 @@
 (define-key yas-minor-mode-map [(tab)] nil)
 (define-key yas-minor-mode-map (kbd "TAB") nil)
 (define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
-
-;; Treemacs
-;; Increase zoom for all modes except treemacs
-(add-hook 'after-change-major-mode-hook
-	  (lambda ()
-	    (unless (derived-mode-p 'treemacs-mode)
-	      (text-scale-set 3))))
 
 ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
 ;; (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))

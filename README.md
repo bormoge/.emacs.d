@@ -45,7 +45,7 @@ M-x package-upgrade-all
 
 2. For packages installed from source using **package-vc-install**:
 ```
-package-vc-upgrade PACKAGE-NAME
+M-x package-vc-upgrade PACKAGE-NAME
 ```
 Where **PACKAGE-NAME** is replaced with the actual name of the package.
 
