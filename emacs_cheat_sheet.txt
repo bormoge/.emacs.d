@@ -89,8 +89,9 @@ Search words on internet		ALT + s ALT + w
 Emacs documentation			CTRL + h i
 Help					CTRL + h ?
 Describe function			CTRL + h f
-Look key bound				CTRL + h k
-Function key				CTRL + h w
+Describe key				CTRL + h k
+Describe key briefly			CTRL + h c
+Key location				CTRL + h w
 Describe variables			CTRL + h v
 Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
@@ -153,6 +154,7 @@ Displaying tar files as if dired	tar-mode
 Calendar				calendar
 Lunar phases				lunar-phases
 Save minibuffer history			savehist-mode
+Count words inside a region		count-words
 
 
 ## Calc
@@ -180,6 +182,9 @@ Shows major modes used on files		auto-mode-alist
 List all packages			package-activated-list
 Variables saved by savehist-mode	savehist-additional-variables
 Execute function before Emacs closes	kill-emacs-hook
+Display active major mode		major-mode
+Display active minor modes		minor-mode-list
+Mode line displayed minor modes		minor-mode-alist
 
 
 ## Packages

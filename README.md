@@ -45,11 +45,18 @@ M-x package-upgrade-all
 
 2. For packages installed from source using **package-vc-install**:
 ```
-package-vc-upgrade PACKAGE-NAME
+M-x package-vc-upgrade PACKAGE-NAME
 ```
 Where **PACKAGE-NAME** is replaced with the actual name of the package.
 
 If you want to upgrade all packages installed using the command **package-vc-install**:
 ```
 M-x package-vc-upgrade-all
+```
+
+### lsp-java
+
+To update the Eclipse JDT Language Server use the following command inside Emacs:
+```
+M-x lsp-java-update-server
 ```

@@ -49,6 +49,7 @@
 
 ;; Tab Bars
 (tab-bar-mode 1)
+(setq tab-bar-history-mode nil)
 
 ;; Window Tab Lines
 (global-tab-line-mode 1)
@@ -62,6 +63,10 @@
 
 ;; Increase zoom
 ;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+(add-hook 'after-change-major-mode-hook
+	  (lambda ()
+	    (unless (derived-mode-p 'treemacs-mode)
+	      (text-scale-set 3))))
 
 ;; Change font
 (set-frame-font "Source Code Pro 10")
@@ -105,6 +110,12 @@
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
+(setq savehist-file "~/.emacs.d/history"
+  history-length 100
+  history-delete-duplicates t
+  savehist-save-minibuffer-history t
+  ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+  )
 
 ;; Modify the appearance of the region
 (custom-set-faces '(region ((t :extend t))))
@@ -112,6 +123,9 @@
 ;; Change cursor's appearance
 (setq blink-cursor-mode t)
 (set-default 'cursor-type '(bar . 7))
+
+;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
+(global-auto-revert-mode nil) ;; Nil by default
 
 ;; No backup files
 (setq make-backup-files nil)
@@ -137,13 +151,22 @@
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
 
-;; Replace boring scratch buffer with custom buffer that contains links to sessions (~/.emacs.d/desktop-sessions) using tnwmt.el
+;; Dired config
+;; (defun dired-mode-personal-setup ()
+;;   "My personal config for 'dired-mode'."
+;;   (dired-hide-details-mode t) ;; Set to 't' to hide permissions, authors, timestamps, etc.
+;;   (dired-omit-mode t) ;; Set to 't' to hide . and ..
+;;   )
+
+;; (add-hook 'dired-mode-hook #'dired-mode-personal-config)
+
+;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
 (defun check-if-file-at-startup ()
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
       (message "A file is opened, skipping desktop sessions buffer.")
     (flnkf-open-default-buffer-list)
-    (beginning-of-buffer)))
+    ))
 ;;    (tnwmt-open-buffer-list)))
 
 ;; Run the check after Emacs initialization

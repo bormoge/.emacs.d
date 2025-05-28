@@ -24,7 +24,7 @@
 
 (load-file "~/.emacs.d/my-emacs-config/functions/el-user-files.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/the-entire-line.el")
-(load-file "~/.emacs.d/my-emacs-config/functions/tnwmt.el")
+;;(load-file "~/.emacs.d/my-emacs-config/functions/tnwmt.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/flnkf.el")
 ;;(load-user-file "my-emacs-config/functions/corfu-encyclopedia.el")
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
