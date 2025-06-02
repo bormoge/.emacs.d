@@ -24,7 +24,7 @@
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
-  (setq doom-themes-treemacs-theme "doom-atom")
+  (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 
@@ -120,6 +120,7 @@
     ;;(treemacs-resize-icons 44)
 
     (treemacs-follow-mode t)
+    ;;(treemacs-project-follow-mode t)
     (treemacs-filewatch-mode t)
     (treemacs-fringe-indicator-mode 'always)
     (when treemacs-python-executable
