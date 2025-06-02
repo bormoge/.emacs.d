@@ -14,6 +14,13 @@
 (define-key (current-global-map) (kbd "H-<up>") 'windmove-up)
 (define-key (current-global-map) (kbd "H-<down>") 'windmove-down)
 
+;; Set keys for shell, eshell, term
+(define-key (current-global-map) (kbd "H-c e b") 'eshell)
+(define-key (current-global-map) (kbd "H-c e c") 'eshell-command)
+(define-key (current-global-map) (kbd "H-c s b") 'shell)
+(define-key (current-global-map) (kbd "H-c s c") 'shell-command)
+(define-key (current-global-map) (kbd "H-c t b") 'term)
+
 ;; Set keys for tnwmt.el
 (define-key (current-global-map) (kbd "H-r") 'tnwmt-read)
 (define-key (current-global-map) (kbd "H-s") 'tnwmt-save)
@@ -111,7 +118,7 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
 (setq savehist-file "~/.emacs.d/history"
-  history-length 100
+  history-length 50
   history-delete-duplicates t
   savehist-save-minibuffer-history t
   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
@@ -125,7 +132,13 @@
 (set-default 'cursor-type '(bar . 7))
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
-(global-auto-revert-mode nil) ;; Nil by default
+(global-auto-revert-mode t) ;; Nil by default
+
+;; Scroll settings
+(setq scroll-conservatively 100)
+(setq scroll-margin 1)
+(setq scroll-step 1)
+(setq scroll-preserve-screen-position nil)
 
 ;; No backup files
 (setq make-backup-files nil)

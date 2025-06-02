@@ -6,10 +6,13 @@ Save file				CTRL + x CTRL + s
 New file (switch-to-buffer)		CTRL + x b
 Write file				CTRL + x CTRL + w
 Universal argument			CTRL + u
+List of buffers				CTRL + x CTRL + b
 
 
 Copy					ALT + w
 Cut					CTRL + w
+Cut previous word			ALT + DEL
+Cut next word				ALT + d
 Paste					CTRL + y
 Paste from history			ALT + y
 Undo					CTRL + /
@@ -27,6 +30,8 @@ Move before first line char		ALT + m
 Move to previous line			CTRL + p
 Move to end of line			CTRL + e
 Move to next line			CTRL + n
+Move to previous word			ALT + b
+Move to next word			ALT + f
 
 
 Increase text scale			CTRL + <wheel-up>
@@ -108,6 +113,9 @@ Quit help				q
 Kill Buffer				CTRL + x k
 
 
+Switch to project			CTRL + x p p
+
+
 ## Emacs Tricks
 Copy entire line			CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
 Emulate Hyper key			CTRL + x @ h
@@ -155,6 +163,7 @@ Calendar				calendar
 Lunar phases				lunar-phases
 Save minibuffer history			savehist-mode
 Count words inside a region		count-words
+Time Emacs has been open		emacs-uptime
 
 
 ## Calc

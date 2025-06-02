@@ -6,6 +6,7 @@
 /eln-cache
 /elpa
 /games
+/image-dired
 /melpa
 /java-lts
 /transient
@@ -14,7 +15,6 @@
 /flnkf
 
 /my-emacs-config/functions/tetris.el
-macro_example.el
 forge-database.sqlite
 projectile-bookmarks.eld
 projects
@@ -22,4 +22,5 @@ projects
 .lsp-session-v1
 history
 recentf
+tramp
 flnkf-file.txt

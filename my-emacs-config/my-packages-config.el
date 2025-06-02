@@ -24,7 +24,7 @@
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
-  (setq doom-themes-treemacs-theme "doom-atom")
+  (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 
@@ -120,6 +120,7 @@
     ;;(treemacs-resize-icons 44)
 
     (treemacs-follow-mode t)
+    ;;(treemacs-project-follow-mode t)
     (treemacs-filewatch-mode t)
     (treemacs-fringe-indicator-mode 'always)
     (when treemacs-python-executable
@@ -310,6 +311,7 @@
 
 ;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
 ;; There is also TempEl, an alternative to YASnippet developed by minad.
+;; prescient.el will be used as the sorting algorithm of this stack.
 
 ;; Corfu
 
@@ -328,8 +330,7 @@
   (corfu-preview-current 'insert)
   ;; If already indented, then try to complete at point
   ;;(setopt tab-always-indent 'complete)
-  ;; For Emacs 30 and newer
-  (text-mode-ispell-word-completion nil)
+  (text-mode-ispell-word-completion nil) ;; For Emacs 30 and newer
   :bind
   (:map corfu-map
         ("TAB" . corfu-insert)
@@ -339,27 +340,28 @@
 	("H-<tab>" . yas-expand)
 	("H-d" . corfu-popupinfo-mode)
 	("H-t" . corfu-popupinfo-toggle)
+	("S-<down>" . corfu-popupinfo-scroll-up)
+	("S-<up>" . corfu-popupinfo-scroll-down)
 	))
 
 ;; Cape
 
-;; (use-package cape
-;;   ;; Bind prefix keymap providing all Cape commands under a mnemonic key.
-;;   ;; Press C-c p ? to for help.
-;;   :bind (("C-c C-r m" . cape-prefix-map)
-;; 	 ("C-c C-r d" . cape-dabbrev)
-;; 	 ("C-c C-r h" . cape-history)
-;; 	 ("C-c C-r f" . cape-file))
-;;   :init
-;;   ;; Add to the global default value of `completion-at-point-functions' which is
-;;   ;; used by `completion-at-point'.  The order of the functions matters, the
-;;   ;; first function returning a result wins.  Note that the list of buffer-local
-;;   ;; completion functions takes precedence over the global list.
-;;   (add-hook 'completion-at-point-functions #'cape-dabbrev)
-;;   (add-hook 'completion-at-point-functions #'cape-file)
-;;   (add-hook 'completion-at-point-functions #'cape-elisp-block)
-;;   (add-hook 'completion-at-point-functions #'cape-history)
-;; )
+(use-package cape
+  :ensure t
+  :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        etc...)
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-dict)
+  (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; etc...
+)
 
 
 ;; Vertico
@@ -367,7 +369,17 @@
 
 
 ;; Consult
-;; TBW
+
+(use-package consult
+  :ensure t)
+
+(when (package-installed-p 'consult)
+  (use-package consult-dir
+    :ensure t
+    :after consult)
+  (use-package consult-flycheck
+    :ensure t
+    :after consult))
 
 
 ;; Marginalia
@@ -380,13 +392,15 @@
   :ensure t
   ;;:after vertico
   :custom
-  ;; (orderless-style-dispatchers '(orderless-affix-dispatch))
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
   (completion-styles '(orderless basic)) ;;partial-completion
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))) ;;basic
   )
 
+;; Prescient
+;; TBW
 
 ;; Embark
 ;; TBW
@@ -404,7 +418,7 @@
   (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
   (setq lsp-completion-provider :capf)
   :config
-  ;;(lsp-enable-which-key-integration t)
+  (lsp-enable-which-key-integration t)
   ;;(setq lsp-client-packages '(lsp-clients lsp-XXX))
   :hook (((java-mode
 	   java-ts-mode) . lsp-deferred)
@@ -416,10 +430,11 @@
   :commands (lsp lsp-deferred))
 
 ;; lsp-ui to show higher abtraction interfaces for lsp-mode
-(use-package lsp-ui
+(when (package-installed-p 'lsp-mode)
+  (use-package lsp-ui
   :ensure t
   :after lsp-mode
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode))
 
 ;; lsp clients: To Be Installed
 ;; lsp-python
