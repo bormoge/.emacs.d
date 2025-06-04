@@ -215,10 +215,12 @@
 
 ;; Package to fold code
 ;; To upgrade use package-vc-upgrade
-(unless (package-installed-p 'treesit-fold)
-  (package-vc-install "https://github.com/emacs-tree-sitter/treesit-fold" nil nil 'treesit-fold))
-
-(require 'treesit-fold)
+;; (unless (package-installed-p 'treesit-fold)
+;;   (package-vc-install "https://github.com/emacs-tree-sitter/treesit-fold" nil nil 'treesit-fold))
+;; (require 'treesit-fold)
+(use-package treesit-fold
+  :ensure t
+  :defer t)
 
 ;; Syntax checking using Flycheck
 (use-package flycheck
@@ -306,6 +308,10 @@
 (use-package gnu-elpa-keyring-update
   :ensure t)
 
+;; vundo
+(use-package vundo
+  :ensure t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -379,6 +385,9 @@
     :after consult)
   (use-package consult-flycheck
     :ensure t
+    :after consult)
+  (use-package consult-lsp
+    :ensure t
     :after consult))
 
 
@@ -408,6 +417,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;;;; LSP configuration
 
 ;; Allows linting, formatting, auto-completion, semantic editing, etc.
 (use-package lsp-mode
@@ -529,6 +540,49 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+;;;; LaTeX and pdf configuration
+
+;; AUCTeX
+(use-package auctex
+  :ensure t
+  :defer t
+  :config
+  (setq TeX-auto-save t)
+  (setq TeX-parse-self t)
+  ;; (setq TeX-view-program-selection '(((output-dvi has-no-display-manager) "dvi2tty")
+  ;; 				     ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
+  ;; 				     (output-pdf "PDF Tools") (output-html "xdg-open"))
+  ;; 	) ;; changed (output-pdf "Evince") to (output-pdf "PDF Tools")
+  ;; (setq TeX-source-correlate-start-server t)
+  ;; (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  ;; (setq TeX-PDF-mode t) ;; use PDFTeX by default
+  ;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  ;; (setq reftex-plug-into-AUCTeX t)
+  )
+
+;; RefTeX
+(use-package reftex ;; Not necessary, just a formality
+  :defer t)
+
+;; pdf-tools
+(use-package pdf-tools
+  :ensure t
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :config
+  (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
+  (setq pdf-info-epdfinfo-program "~/.emacs.d/elpa/pdf-tools-1.1.0/epdfinfo")
+  ;;(setq-default pdf-view-display-size 'fit-page)
+  ;;(setq pdf-annot-activate-created-annotations t)
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;; Org configuration
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 ;;;; Packages configuration
 
 ;; diff-hl
@@ -585,5 +639,8 @@
 ;; (setq dashboard-item-shortcuts '((recents   . "r")
 ;;                                  (projects  . "p")))
 
+;; vundo
+;; Map the `undo' function onto C-x u
+(define-key (current-global-map) (kbd "C-x u") 'vundo)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

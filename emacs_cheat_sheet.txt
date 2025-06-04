@@ -125,6 +125,7 @@ Print Emacs version from terminal	emacs -batch -l <(echo "(message (version))")
 ## Emacs Functions
 Emacs version				version
 Find library file(s)			find-library
+Describe package keymap			describe-keymap
 Whitespace mode				whitespace-mode
 Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
