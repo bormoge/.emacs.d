@@ -147,9 +147,9 @@
   
   ) ;; Yes, this is the end of the use-package treemacs.
 
-(use-package treemacs-evil
-  :after (treemacs evil)
-  :ensure t)
+;; (use-package treemacs-evil
+;;   :after (treemacs evil)
+;;   :ensure t)
 
 ;; (use-package treemacs-projectile
 ;;   :after (treemacs projectile)
@@ -186,9 +186,9 @@
   :commands lsp-treemacs-errors-list)
 
 ;; Vim mode for Emacs
-(use-package evil
-  :ensure t
-  :defer t)
+;; (use-package evil
+;;   :ensure t
+;;   :defer t)
 
 ;; Minimap
 (use-package minimap
@@ -320,7 +320,6 @@
 ;; prescient.el will be used as the sorting algorithm of this stack.
 
 ;; Corfu
-
 (use-package corfu
   :ensure t
   :hook (((java-mode
@@ -351,7 +350,6 @@
 	))
 
 ;; Cape
-
 (use-package cape
   :ensure t
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
@@ -371,11 +369,41 @@
 
 
 ;; Vertico
-;; TBW
+(use-package vertico
+  :ensure t
+  :custom
+  (vertico-scroll-margin 1) ;; Different scroll margin
+  (vertico-count 8) ;; Show more candidates
+  (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
+  (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :bind (:map vertico-map
+             ("TAB" . minibuffer-complete)
+             ("M-g M-c" . switch-to-completions)
+             ("s-<tab>" . vertico-insert)
+	     ("C-M-n" . vertico-next-group)
+	     ("C-M-p" . vertico-previous-group)
+	     )
+  :init
+  (vertico-mode))
+
+;; List of vertico extensions found in github@minad/vertico.
+
+;; vertico-buffer
+;; vertico-directory
+;; vertico-flat
+;; vertico-grid
+;; vertico-indexed
+;; vertico-mouse
+;; vertico-multiform
+;; vertico-quick
+;; vertico-repeat
+;; vertico-reverse
+;; vertico-sort
+;; vertico-suspend
+;; vertico-unobtrusive
 
 
 ;; Consult
-
 (use-package consult
   :ensure t)
 
@@ -392,11 +420,18 @@
 
 
 ;; Marginalia
-;; TBW
+(use-package marginalia
+  :ensure t
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle))
+  :custom
+  (marginalia-max-relative-age 1209600) ;; Can be set to 1209600 or 0
+  (marginalia-align 'center) ;; Can be set right, left, or center
+  :init
+  (marginalia-mode))
 
 
 ;; Orderless
-
 (use-package orderless
   :ensure t
   ;;:after vertico
@@ -608,8 +643,8 @@
 
 ;; evil-mode
 ;; Set C-z for evil-mode
-(global-unset-key (kbd "C-z")) ;; Originally suspend-frame, it also uses C-x C-z
-(global-set-key (kbd "C-z") 'evil-mode)
+;; (global-unset-key (kbd "C-z")) ;; Originally suspend-frame, it also uses C-x C-z
+;; (global-set-key (kbd "C-z") 'evil-mode)
 
 ;; YASnippets
 ;; Remap the snippet expansion from TAB to H-TAB

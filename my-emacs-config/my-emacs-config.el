@@ -143,6 +143,12 @@
 ;; No backup files
 (setq make-backup-files nil)
 
+;; Config for vertico package
+(setq enable-recursive-minibuffers t)
+(setq read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
+(setq minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
+
 ;; No auto-save files
 ;;(setq auto-save-default nil)
 
