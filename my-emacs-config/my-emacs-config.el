@@ -125,7 +125,7 @@
   )
 
 ;; Modify the appearance of the region
-(custom-set-faces '(region ((t :extend t))))
+(custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
 
 ;; Change cursor's appearance
 (setq blink-cursor-mode t)

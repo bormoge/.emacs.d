@@ -340,8 +340,6 @@
   (:map corfu-map
         ("TAB" . corfu-insert)
         ([tab] . corfu-insert)
-        ("ESC" . corfu-quit)
-        ([esc] . corfu-quit)
 	("H-<tab>" . yas-expand)
 	("H-d" . corfu-popupinfo-mode)
 	("H-t" . corfu-popupinfo-toggle)
@@ -444,7 +442,58 @@
   )
 
 ;; Prescient
-;; TBW
+(use-package prescient
+  :ensure t
+  :custom
+  (prescient-aggressive-file-save nil) ;; default: nil
+  (prescient-sort-length-enable nil) ;; default: t
+  (prescient-sort-full-matches-first t) ;; default: nil
+  (prescient-history-length 50) ;; default: 100
+  (prescient-frequency-decay 0.997) ;; default: 0.997
+  (prescient-frequency-threshold 0.05) ;; default: 0.05
+  (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
+  :config
+  (prescient-persist-mode 1))
+
+(use-package corfu-prescient
+  :ensure t
+  :demand t
+  :after corfu prescient
+  :custom
+  ;; Sorting.
+  (corfu-prescient-enable-sorting t) ;; default: t
+  ;; Don't override `display-sort-function'
+  (corfu-prescient-override-sorting nil) ;; default: nil
+
+  ;; Filtering
+  ;; Telling corfu-prescient not to use prescient to do the filtering
+  (corfu-prescient-enable-filtering nil) ;; default: t
+  ;; See also `corfu-prescient-completion-styles',
+  ;; `corfu-prescient-completion-category-overrides' and
+  ;; `prescient--completion-recommended-overrides'.  Those options apply only
+  ;; when `corfu-prescient-enable-filtering' is non-nil.
+  :config
+  (corfu-prescient-mode 1))
+
+(use-package vertico-prescient
+  :ensure t
+  :demand t
+  :after vertico prescient
+  :custom
+  ;; Sorting.
+  (vertico-prescient-enable-sorting t) ;; default: t
+  ;; Don't override `display-sort-function'
+  (vertico-prescient-override-sorting nil) ;; default: nil
+
+  ;; Filtering
+  ;; Telling vertico-prescient not to use prescient to do the filtering
+  (vertico-prescient-enable-filtering nil) ;; default: t
+  ;; See also `vertico-prescient-completion-styles',
+  ;; `vertico-prescient-completion-category-overrides', and
+  ;; `prescient--completion-recommended-overrides'.  Those options apply only
+  ;; when when `vertico-prescient-enable-filtering' is non-nil.
+  :config
+  (vertico-prescient-mode 1))
 
 ;; Embark
 ;; TBW
