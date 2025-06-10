@@ -10,7 +10,7 @@
  '(require-final-newline t)
  '(diff-switches "-u")
  '(package-selected-packages
-   '(gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired treemacs-projectile treemacs-evil forge projectile evil yasnippet treemacs doom-themes magit diff-hl)))
+   '(gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet treemacs doom-themes magit diff-hl)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -18,18 +18,15 @@
  ;; If there is more than one, they won't work right.
  )
 
-(load-file "~/.emacs.d/my-emacs-config/functions/el-user-files.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/the-entire-line.el")
-;;(load-file "~/.emacs.d/my-emacs-config/functions/tnwmt.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/flnkf.el")
-;;(load-user-file "my-emacs-config/functions/corfu-encyclopedia.el")
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
 ;; Apply configuration after loading .el files
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
 
 ;; Comment this if you don't have the file
-;; (load-user-file "my-emacs-config/functions/tetris.el")
+;; (load-file "~/.emacs.d/my-emacs-config/functions/tetris.el")
 
 ;; A different way of loading files
 ;; (let ((configuration-directory (concat user-emacs-directory "my-emacs-config/")))

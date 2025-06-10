@@ -1,5 +1,6 @@
 ## Emacs Cheat Sheet
 Close Emacs				CTRL + x CTRL + c
+Minimize Emacs				CTRL + z
 Open file				CTRL + x CTRL + f
 Open directory				CTRL + x d
 Save file				CTRL + x CTRL + s
@@ -55,6 +56,7 @@ Execute command				ALT + x
 Apropos					ALT + x apropos
 Command completition			ALT + x <TAB>
 Evaluate expression			ALT + :
+Repeat previous command			CTRL + x z
 
 
 New vertical window			CTRL + x 2
@@ -80,9 +82,11 @@ Incremental search forward		CTRL + s
 Incremental search backward		CTRL + r
 Word search				ALT + s w
 occur					ALT + s o
-Highlight word on whole file		ALT + s h .
-Unhighlight on whole file		ALT + s h u
 grep					ALT + x grep
+Highlight word on whole file		ALT + s h r
+Highlight selected word on whole file	ALT + s h .
+Unhighlight on whole file		ALT + s h u
+Unhighlight all on whole file		CTRL + u ALT + s h u
 
 
 Scroll lock				FN + s
@@ -125,6 +129,7 @@ Print Emacs version from terminal	emacs -batch -l <(echo "(message (version))")
 ## Emacs Functions
 Emacs version				version
 Find library file(s)			find-library
+Describe package keymap			describe-keymap
 Whitespace mode				whitespace-mode
 Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
@@ -164,6 +169,9 @@ Lunar phases				lunar-phases
 Save minibuffer history			savehist-mode
 Count words inside a region		count-words
 Time Emacs has been open		emacs-uptime
+List available colors			list-colors-display
+Repeat mode				repeat-mode
+Describe Repeat mode keymap		describe-repeat-maps
 
 
 ## Calc
@@ -223,4 +231,3 @@ List errors detected by Flycheck	flycheck-list-errors
 ## Emacs tutorials
 https://www.gnu.org/software/emacs/tour/
 https://www.masteringemacs.org/article/beginners-guide-to-emacs
-https://midirus.com/emacs/tutorial
