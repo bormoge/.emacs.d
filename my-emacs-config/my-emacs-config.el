@@ -54,6 +54,9 @@
 ;; Enable use of system clipboard
 (setq select-enable-clipboard t)
 
+;; Disable use of system trash
+(setq delete-by-moving-to-trash nil)
+
 ;; Tab Bars
 (tab-bar-mode 1)
 (setq tab-bar-history-mode nil)
@@ -148,6 +151,9 @@
 (setq read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
 (setq minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
+
+;; Show character name in ‘what-cursor-position’
+(setq what-cursor-show-names t)
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)

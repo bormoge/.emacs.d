@@ -312,6 +312,30 @@
 (use-package vundo
   :ensure t)
 
+;; Highlight cursor line
+(use-package hl-line
+  :ensure nil
+  :config
+  ;; Gray, with disabled underline and overline
+  ;;(set-face-background 'hl-line "#303030")
+  ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
+  (set-face-attribute 'hl-line nil
+                      :background "#303030"
+		      :underline nil
+                      :overline nil)
+  (global-hl-line-mode t)
+  :hook ((eshell-mode
+          ;;eat-mode
+          shell-mode
+          term-mode
+	  ;;vterm-mode
+          comint-mode
+          cfrs-input-mode
+          image-mode
+	  magit-diff-mode)
+         ;; Disable hl-line for some modes
+         . (lambda () (setq-local global-hl-line-mode nil))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

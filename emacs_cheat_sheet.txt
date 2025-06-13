@@ -1,5 +1,6 @@
 ## Emacs Cheat Sheet
 Close Emacs				CTRL + x CTRL + c
+Minimize Emacs				CTRL + z
 Open file				CTRL + x CTRL + f
 Open directory				CTRL + x d
 Save file				CTRL + x CTRL + s
@@ -30,8 +31,11 @@ Move before first line char		ALT + m
 Move to previous line			CTRL + p
 Move to end of line			CTRL + e
 Move to next line			CTRL + n
-Move to previous word			ALT + b
-Move to next word			ALT + f
+Move to previous word			ALT + b, CTRL + <key-left>
+Move to next word			ALT + f, CTRL + <key-right>
+Move to previous blank line		CTRL + <key-up>
+Move to next blank line			CTRL + <key-down>
+Go to line				ALT + g g
 
 
 Increase text scale			CTRL + <wheel-up>
@@ -43,6 +47,7 @@ Decrease global text scale		CTRL + ALT + <wheel-down>
 Select text				CTRL + SPACE
 Select all				CTRL + x h
 Delete selected text			CTRL + SPACE <backspace>
+Select text while moving cursor		SHIFT + <key-up>, SHIFT + <key-down>, SHIFT + <key-left>, SHIFT + <key-right>
 
 
 Shell Mode				ALT + x shell
@@ -55,6 +60,7 @@ Execute command				ALT + x
 Apropos					ALT + x apropos
 Command completition			ALT + x <TAB>
 Evaluate expression			ALT + :
+Repeat previous command			CTRL + x z
 
 
 New vertical window			CTRL + x 2
@@ -77,12 +83,24 @@ Change frame				CTRL + x 5 o
 
 
 Incremental search forward		CTRL + s
+Incremental regex search forward	CTRL + ALT + s
 Incremental search backward		CTRL + r
+Incremental regex search backward	CTRL + ALT + r
 Word search				ALT + s w
+Exact word search			ALT + s w ENTER ALT + c
 occur					ALT + s o
-Highlight word on whole file		ALT + s h .
-Unhighlight on whole file		ALT + s h u
 grep					ALT + x grep
+
+
+Highlight word on whole file		ALT + s h r
+Highlight selected word on whole file	ALT + s h .
+Unhighlight on whole file		ALT + s h u
+Unhighlight all on whole file		CTRL + u ALT + s h u
+
+
+Count words on a region			ALT + =
+Count words on a buffer			CTRL + u ALT + =
+Cursor position	 			CTRL + x =
 
 
 Scroll lock				FN + s
@@ -165,6 +183,10 @@ Lunar phases				lunar-phases
 Save minibuffer history			savehist-mode
 Count words inside a region		count-words
 Time Emacs has been open		emacs-uptime
+List available colors			list-colors-display
+Repeat mode				repeat-mode
+Describe Repeat mode keymap		describe-repeat-maps
+Describe major mode on buffer		describe-mode
 
 
 ## Calc
@@ -224,4 +246,3 @@ List errors detected by Flycheck	flycheck-list-errors
 ## Emacs tutorials
 https://www.gnu.org/software/emacs/tour/
 https://www.masteringemacs.org/article/beginners-guide-to-emacs
-https://midirus.com/emacs/tutorial
