@@ -265,8 +265,8 @@
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 ;; avy
-;; Note to self: it has embark integration
-;; TBW
+(use-package avy
+  :ensure t)
 
 ;; ledger-mode
 (use-package ledger-mode
@@ -452,6 +452,35 @@
   :init
   (marginalia-mode))
 
+;; Embark
+(use-package embark
+  :ensure t
+  :bind
+  (("C-, ." . embark-act)
+   ("C-, ," . embark-dwim)
+   ("C-, b" . embark-bindings))
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc
+  ;;(add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;;(setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package embark-consult
+  :ensure t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+(use-package avy-embark-collect
+  :ensure t
+  :after (embark avy))
 
 ;; Orderless
 (use-package orderless
@@ -518,9 +547,6 @@
   ;; when when `vertico-prescient-enable-filtering' is non-nil.
   :config
   (vertico-prescient-mode 1))
-
-;; Embark
-;; TBW
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -750,5 +776,28 @@
 ;; vundo
 ;; Map the `undo' function onto C-x u
 (define-key (current-global-map) (kbd "C-x u") 'vundo)
+
+;; avy
+;; Mapping keys for avy
+(global-set-key (kbd "C-: c 1") 'avy-goto-char)
+(global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
+(global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
+(global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
+
+;; embark
+;; Change the value of prefix-help-command. Default: describe-prefix-bindings
+(defun change-between-describe-prefix-and-embark-prefix ()
+  "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
+  (interactive)
+  (if (equal prefix-help-command 'describe-prefix-bindings)
+      (progn
+	(setq prefix-help-command #'embark-prefix-help-command)
+	(message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
+    (progn
+      (setq prefix-help-command #'describe-prefix-bindings)
+      (message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
+    ))
+
+(global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

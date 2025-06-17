@@ -89,7 +89,7 @@
 (scroll-bar-mode 'right)
 
 ;; Enable Horizontal Scroll Bar
-(horizontal-scroll-bar-mode 1)
+;;(horizontal-scroll-bar-mode t)
 
 ;; Replace a selected area with typed text
 (delete-selection-mode 1)
@@ -154,6 +154,10 @@
 
 ;; Show character name in ‘what-cursor-position’
 (setq what-cursor-show-names t)
+
+;; Enable right click menu
+(when (display-graphic-p)
+  (context-menu-mode))
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)
