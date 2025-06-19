@@ -48,6 +48,13 @@
 ;; Set key for undo-only
 (define-key (current-global-map) (kbd "C-S-/") 'undo-only)
 
+;; Define help keys for `find-library' and `describe-keymap'
+(define-key (current-global-map) (kbd "C-h M-l") 'find-library)
+(define-key (current-global-map) (kbd "C-h M-k") 'describe-keymap)
+
+;; Enable syntax highlighting
+(global-font-lock-mode t)
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 

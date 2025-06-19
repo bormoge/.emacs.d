@@ -24,6 +24,9 @@ comment-region				ALT + ;
 Multiline rectangle			CTRL + x r t
 
 
+Comment a text line			ALT + ;
+
+
 Move to start of file			ALT + <
 Move to end of file			ALT + >
 Move to start of line			CTRL + a
@@ -228,8 +231,8 @@ Compile .elc files asynchronously	native-comp-jit-compilation
 ## Packages
 
 # Magit
-Available magit commands		magit-dispatch
-Git status				magit-status
+Available magit commands		magit-dispatch				CTRL + x ALT + g
+Git status				magit-status				CTRL + x g
 
 # Treesitter
 Check sources for treesit.el		treesit-language-source-alist
@@ -239,9 +242,9 @@ A list of lists of feature symbols	treesit-font-lock-feature-list
 
 # LSP
 Shutdown lsp server			lsp-shutdown-workspace
-Find symbol definition			lsp-find-definition			C-c l g r
-Find symbol reference			lsp-find-references			C-c l g g
-Rename symbol				lsp-rename				C-c l r r
+Find symbol definition			lsp-find-definition			SUPER + l g r
+Find symbol reference			lsp-find-references			SUPER + l g g
+Rename symbol				lsp-rename				SUPER + l r r
 Format the code				lsp-format-buffer
 Log all language server messages	lsp-log-io
 

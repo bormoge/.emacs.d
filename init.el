@@ -10,7 +10,7 @@
  '(require-final-newline t)
  '(diff-switches "-u")
  '(package-selected-packages
-   '(embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless kind-icon lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+   '(cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless kind-icon lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
  '(package-vc-selected-packages
    '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
      (pg :vc-backend Git :url "https://github.com/emarsden/pg-el"))))

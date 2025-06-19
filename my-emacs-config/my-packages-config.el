@@ -102,7 +102,7 @@
           treemacs-silent-refresh                  nil
           treemacs-sorting                         'alphabetic-asc
           treemacs-select-when-already-in-treemacs 'move-back
-          treemacs-space-between-root-nodes        t
+          treemacs-space-between-root-nodes        nil ;;default: t
           treemacs-tag-follow-cleanup              t
           treemacs-tag-follow-delay                1.5
           treemacs-text-scale                      nil
@@ -241,19 +241,6 @@
   :ensure t
   :defer t)
 
-;; Loading, configuring, and ensuring that org-mode is installed.
-(use-package org
-  :ensure t
-  :defer t
-  ;;:config
-  ;; (setq org-startup-indented t
-  ;;       org-hide-emphasis-markers t
-  ;;       org-agenda-files '("~/org/"))
-  ;; (org-babel-do-load-languages
-  ;;  'org-babel-load-languages
-  ;;  '((js . t)))
-  )
-
 (use-package kind-icon
   :ensure t
   :after corfu
@@ -335,6 +322,14 @@
 	  magit-diff-mode)
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
+
+;; nerd-icons
+(use-package nerd-icons
+  :ensure t
+  ;; :custom
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  ;; (nerd-icons-install-fonts)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -560,13 +555,16 @@
   :init
   ;; Set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   (setq lsp-keymap-prefix "C-c l")
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (define-key lsp-mode-map (kbd "s-l") nil)
   (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
   (setq lsp-completion-provider :capf)
   :config
   (lsp-enable-which-key-integration t)
   ;;(setq lsp-client-packages '(lsp-clients lsp-XXX))
-  :hook (((java-mode
-	   java-ts-mode) . lsp-deferred)
+  :hook (
+	 ((java-mode java-ts-mode) . lsp-deferred)
+	 ((clojure-mode clojure-ts-mode) . lsp-deferred)
 	 (lsp-completion-mode-hook . corfu-mode)
 	 (lsp-completion-at-point-functions . lsp-completion-at-point)
 	 (lsp-mode . lsp-lens-mode)
@@ -600,6 +598,10 @@
 ;; Here you need a Java compiler to use the lsp server JDTLS. Also, you need to pass the absolute path, not relative.
 (setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
 (setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
+
+;; lsp-clojure
+(use-package lsp-clojure
+  :after lsp-mode)
 
 ;; LSP booster
 (defun lsp-booster--advice-json-parse (old-fn &rest args)
@@ -655,16 +657,41 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;; Clojure config
+
+;; clojure-mode / clojure-ts-mode
+(use-package clojure-mode
+  :ensure t
+  :defer t
+  :commands (clojure-mode))
+
+(use-package clojure-ts-mode
+  :ensure t
+  :defer t
+  :commands (clojure-ts-mode))
+
+(use-package cider
+  :ensure t
+  :defer t
+  :commands (cider-jack-in))
+
+;; Other packages to consider: clj-refactor.el, inf-clojure
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Treesitter
 
 ;; Treesitter grammar repositories.
 (setq treesit-language-source-alist
-      '((java "https://github.com/tree-sitter/tree-sitter-java")))
+      '((java "https://github.com/tree-sitter/tree-sitter-java")
+	(clojure "https://github.com/sogaiu/tree-sitter-clojure"))
+      )
 
 ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
 (setq major-mode-remap-alist
-      '((java-mode . java-ts-mode)))
+      '((java-mode . java-ts-mode)
+	(clojure-mode . clojure-ts-mode))
+      )
 
 ;; 16.13.2 Parser-based Font Lock
 ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
@@ -713,6 +740,19 @@
 
 
 ;;;; Org configuration
+
+;; Loading, configuring, and ensuring that org-mode is installed.
+(use-package org
+  :ensure t
+  :defer t
+  ;;:config
+  ;; (setq org-startup-indented t
+  ;;       org-hide-emphasis-markers t
+  ;;       org-agenda-files '("~/org/"))
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((js . t)))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
