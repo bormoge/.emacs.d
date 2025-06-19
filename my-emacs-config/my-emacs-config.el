@@ -4,7 +4,7 @@
 ;; Maximize Emacs on start
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; DO NOT USE M-s-s
+;; Note to self: DO NOT USE M-s-s (The orca screen reader)
 
 ;; To invoke Hyper key: CTRL + x @ h
 
@@ -48,6 +48,13 @@
 ;; Set key for undo-only
 (define-key (current-global-map) (kbd "C-S-/") 'undo-only)
 
+;; Define help keys for `find-library' and `describe-keymap'
+(define-key (current-global-map) (kbd "C-h M-l") 'find-library)
+(define-key (current-global-map) (kbd "C-h M-k") 'describe-keymap)
+
+;; Enable syntax highlighting
+(global-font-lock-mode t)
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 
@@ -89,7 +96,7 @@
 (scroll-bar-mode 'right)
 
 ;; Enable Horizontal Scroll Bar
-(horizontal-scroll-bar-mode 1)
+;;(horizontal-scroll-bar-mode t)
 
 ;; Replace a selected area with typed text
 (delete-selection-mode 1)
@@ -151,6 +158,13 @@
 (setq read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
 (setq minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
+
+;; Show character name in ‘what-cursor-position’
+(setq what-cursor-show-names t)
+
+;; Enable right click menu
+(when (display-graphic-p)
+  (context-menu-mode))
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)

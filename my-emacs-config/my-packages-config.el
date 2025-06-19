@@ -102,7 +102,7 @@
           treemacs-silent-refresh                  nil
           treemacs-sorting                         'alphabetic-asc
           treemacs-select-when-already-in-treemacs 'move-back
-          treemacs-space-between-root-nodes        t
+          treemacs-space-between-root-nodes        nil ;;default: t
           treemacs-tag-follow-cleanup              t
           treemacs-tag-follow-delay                1.5
           treemacs-text-scale                      nil
@@ -202,19 +202,6 @@
   :ensure t
   :defer t)
 
-;; Loading, configuring, and ensuring that org-mode is installed.
-(use-package org
-  :ensure t
-  :defer t
-  ;;:config
-  ;; (setq org-startup-indented t
-  ;;       org-hide-emphasis-markers t
-  ;;       org-agenda-files '("~/org/"))
-  ;; (org-babel-do-load-languages
-  ;;  'org-babel-load-languages
-  ;;  '((js . t)))
-  )
-
 ;; ledger-mode
 (use-package ledger-mode
   :ensure t
@@ -276,10 +263,31 @@
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
 
+;; nerd-icons
+(use-package nerd-icons
+  :ensure t
+  ;; :custom
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+  ;; (nerd-icons-install-fonts)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 ;;;; Org configuration
+
+;; Loading, configuring, and ensuring that org-mode is installed.
+(use-package org
+  :ensure t
+  :defer t
+  ;;:config
+  ;; (setq org-startup-indented t
+  ;;       org-hide-emphasis-markers t
+  ;;       org-agenda-files '("~/org/"))
+  ;; (org-babel-do-load-languages
+  ;;  'org-babel-load-languages
+  ;;  '((js . t)))
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
