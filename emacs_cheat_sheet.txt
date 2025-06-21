@@ -105,7 +105,7 @@ Unhighlight all on whole file		CTRL + u ALT + s h u
 
 Count words on a region			ALT + =
 Count words on a buffer			CTRL + u ALT + =
-Cursor position	 			CTRL + x =
+Cursor position				CTRL + x =
 
 
 Scroll lock				FN + s
@@ -121,7 +121,8 @@ Describe function			CTRL + h f
 Describe key				CTRL + h k
 Describe key briefly			CTRL + h c
 Key location				CTRL + h w
-Describe variables			CTRL + h v
+Describe variable			CTRL + h v
+Describe command			CTRL + h x
 Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
 List key bindings			CTRL + h b
@@ -194,14 +195,26 @@ Time Emacs has been open		emacs-uptime
 List available colors			list-colors-display
 Repeat mode				repeat-mode
 Describe Repeat mode keymap		describe-repeat-maps
-Describe major mode on buffer		describe-mode
+Describe a character			describe-char
 
 
-## Calc
+## calc
 Calculator				calc				CTRL + x * c
 Calculator full screen			full-calc
 Toggle calc between big or small	calc-big-or-small		CTRL + x * b
 Reset calculator			calc-reset			CTRL + x * 0
+
+
+## rectangle-mark-mode
+Rectangle mode				rectangle-mark-mode		CTRL + x SPACE
+Insert character			string-rectangle		CTRL + x r t, CTRL + t
+Delete rectangle			delete-rectangle		CTRL + x r d
+Cut rectangle				kill-rectangle			CTRL + x r k
+Copy rectangle				copy-rectangle-as-kill		CTRL + x r ALT + w
+Paste rectangle				yank-rectangle			CTRL + x r y
+Replace rectangle with white space	clear-rectangle			CTRL + x r c
+Insert blank space on rectangle		open-rectangle			CTRL + x r o, CTRL + o
+Put number of line left of rectangle	rectangle-number-lines		CTRL + x r N
 
 
 ## Emacs Variables

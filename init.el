@@ -6,14 +6,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes 'nil)
- '(require-final-newline t)
- '(diff-switches "-u")
- '(package-selected-packages
-   '(cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless kind-icon lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
- '(package-vc-selected-packages
-   '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
-     (pg :vc-backend Git :url "https://github.com/emarsden/pg-el"))))
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -4,7 +4,7 @@
 ;; Maximize Emacs on start
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-;; DO NOT USE M-s-s
+;; Note to self: DO NOT USE M-s-s (The orca screen reader)
 
 ;; To invoke Hyper key: CTRL + x @ h
 
@@ -48,9 +48,10 @@
 ;; Set key for undo-only
 (define-key (current-global-map) (kbd "C-S-/") 'undo-only)
 
-;; Define help keys for `find-library' and `describe-keymap'
+;; Define help keys for `find-library', `describe-keymap', and `describe-char'
 (define-key (current-global-map) (kbd "C-h M-l") 'find-library)
 (define-key (current-global-map) (kbd "C-h M-k") 'describe-keymap)
+(define-key (current-global-map) (kbd "C-h M-c") 'describe-char)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -139,7 +140,8 @@
 
 ;; Change cursor's appearance
 (setq blink-cursor-mode t)
-(set-default 'cursor-type '(bar . 7))
+(set-default 'cursor-type t)
+;; (set-default 'cursor-type '(bar . 7)) ;; default: t
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
 (global-auto-revert-mode t) ;; Nil by default
@@ -165,6 +167,12 @@
 ;; Enable right click menu
 (when (display-graphic-p)
   (context-menu-mode))
+
+;; Always generate an empty line at the end of the file
+(setq require-final-newline t)
+
+;; Pass argument -u to command diff
+(setq diff-switches "-u")
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)

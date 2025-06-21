@@ -13,6 +13,18 @@
         ("melpa"        . 2)
         ("melpa-stable" . 1)))
 
+(setq package-selected-packages
+      '(nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient
+			 embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools
+			 consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode
+			 orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons
+			 all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs
+			 treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+
+(setq package-vc-selected-packages
+      '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
+	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
+
 ;; Doom themes
 (use-package doom-themes
   :ensure t
@@ -147,27 +159,6 @@
   
   ) ;; Yes, this is the end of the use-package treemacs.
 
-;; (use-package treemacs-evil
-;;   :after (treemacs evil)
-;;   :ensure t)
-
-;; (use-package treemacs-projectile
-;;   :after (treemacs projectile)
-;;   :ensure t)
-
-(use-package all-the-icons ;; IMPORTANT: to see the icons you need to install them using all-the-icons-install-fonts
-  :ensure t
-  :if (display-graphic-p))
-
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode . all-the-icons-dired-mode))
-
-(use-package treemacs-icons-dired
-  :after (all-the-icons-dired)
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
-
 (use-package treemacs-magit
   :after (treemacs magit)
   :ensure t)
@@ -184,11 +175,6 @@
   :ensure t
   :after lsp
   :commands lsp-treemacs-errors-list)
-
-;; Vim mode for Emacs
-;; (use-package evil
-;;   :ensure t
-;;   :defer t)
 
 ;; Minimap
 (use-package minimap
@@ -240,16 +226,6 @@
 (use-package multiple-cursors
   :ensure t
   :defer t)
-
-(use-package kind-icon
-  :ensure t
-  :after corfu
-  ;:custom
-  ;;(kind-icon-use-icons nil)
-  ;;(kind-icon-blend-background t)
-  ;;(kind-icon-default-face 'corfu-default) ; only needed with blend-background
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
 ;; avy
 (use-package avy
@@ -323,12 +299,38 @@
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Nerd Icons
+
 ;; nerd-icons
 (use-package nerd-icons
   :ensure t
-  ;; :custom
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-  ;; (nerd-icons-install-fonts)
+  :custom
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+  ;; (nerd-icons-install-fonts) ;; To install the Symbols Nerd Font
+  )
+
+(use-package nerd-icons-dired
+  :ensure t
+  :after (dired nerd-icons)
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
+  )
+
+(use-package nerd-icons-corfu
+  :ensure t
+  :after (corfu)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
