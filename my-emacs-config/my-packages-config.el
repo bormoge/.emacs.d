@@ -14,9 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger
-			      ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge
-			      yasnippet treemacs doom-themes magit diff-hl))
+      '(nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Doom themes
 (use-package doom-themes
@@ -268,6 +266,11 @@
   (nerd-icons-completion-mode)
   ;;(add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
   )
+
+(use-package nerd-icons-ibuffer
+  :ensure t
+  :after (ibuffer)
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
