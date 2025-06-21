@@ -6,11 +6,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes 'nil)
- '(require-final-newline t)
- '(diff-switches "-u")
- '(package-selected-packages
-   '(nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet treemacs doom-themes magit diff-hl)))
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

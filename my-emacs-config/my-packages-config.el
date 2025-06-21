@@ -13,6 +13,11 @@
         ("melpa"        . 2)
         ("melpa-stable" . 1)))
 
+(setq package-selected-packages
+      '(nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger
+			      ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge
+			      yasnippet treemacs doom-themes magit diff-hl))
+
 ;; Doom themes
 (use-package doom-themes
   :ensure t
@@ -147,27 +152,6 @@
   
   ) ;; Yes, this is the end of the use-package treemacs.
 
-;; (use-package treemacs-evil
-;;   :after (treemacs evil)
-;;   :ensure t)
-
-;; (use-package treemacs-projectile
-;;   :after (treemacs projectile)
-;;   :ensure t)
-
-(use-package all-the-icons ;; IMPORTANT: to see the icons you need to install them using all-the-icons-install-fonts
-  :ensure t
-  :if (display-graphic-p))
-
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode . all-the-icons-dired-mode))
-
-(use-package treemacs-icons-dired
-  :after (all-the-icons-dired)
-  :hook (dired-mode . treemacs-icons-dired-enable-once)
-  :ensure t)
-
 (use-package treemacs-magit
   :after (treemacs magit)
   :ensure t)
@@ -178,11 +162,6 @@
   :config (treemacs-set-scope-type 'Tabs))
 
 ;; (treemacs-start-on-boot)
-
-;; Vim mode for Emacs
-;; (use-package evil
-;;   :ensure t
-;;   :defer t)
 
 ;; YASnippet for shortcuts
 (use-package yasnippet
@@ -263,12 +242,31 @@
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Nerd Icons
+
 ;; nerd-icons
 (use-package nerd-icons
   :ensure t
-  ;; :custom
-  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-  ;; (nerd-icons-install-fonts)
+  :custom
+  (nerd-icons-font-family "Symbols Nerd Font Mono")
+  ;; (nerd-icons-install-fonts) ;; To install the Symbols Nerd Font
+  )
+
+(use-package nerd-icons-dired
+  :ensure t
+  :after (dired nerd-icons)
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
+
+(use-package nerd-icons-completion
+  :ensure t
+  ;;:after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  ;;(add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
