@@ -48,10 +48,14 @@
 ;; Set key for undo-only
 (define-key (current-global-map) (kbd "C-S-/") 'undo-only)
 
-;; Define help keys for `find-library', `describe-keymap', and `describe-char'
+;; Define help keys for `find-library', `describe-keymap', `describe-char', and `describe-face'
 (define-key (current-global-map) (kbd "C-h M-l") 'find-library)
 (define-key (current-global-map) (kbd "C-h M-k") 'describe-keymap)
 (define-key (current-global-map) (kbd "C-h M-c") 'describe-char)
+(define-key (current-global-map) (kbd "C-h M-f") 'describe-face)
+
+;; Define key for ibuffer
+(define-key (current-global-map) (kbd "C-x M-b") 'ibuffer)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -66,15 +70,66 @@
 (setq delete-by-moving-to-trash nil)
 
 ;; Tab Bars
-(tab-bar-mode 1)
+(tab-bar-mode t)
 (setq tab-bar-history-mode nil)
+(setq tab-bar-auto-width-max '((300) 30))
+;;(setq tab-bar-auto-width nil)
 
-;; Window Tab Lines
-(global-tab-line-mode 1)
+(set-face-attribute 'tab-bar-tab nil
+		    :background "#68217A"
+		    :distant-foreground "#d4d4d4"
+		    :foreground "#d4d4d4"
+		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
+		    :weight 'bold
+		    :height 140)
+
+(set-face-attribute 'tab-bar-tab-inactive nil
+		    :background "#252526"
+		    :foreground "#AEAFAD"
+		    :height 140
+		    :box '(:line-width (3 . 3) :color "black" :style flat-button))
+
+(setq tab-bar-new-button '#(" " 0 1
+			    (rear-nonsticky t help-echo "New tab" face shadow display
+					    (image :type svg :file
+						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
+						   :height (1 . em) :scale 1.6 :margin 1 :ascent
+						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
+
+;; Tab Lines
+(global-tab-line-mode t)
+
+(set-face-attribute 'font-lock-doc-face nil
+		    :inherit font-lock-comment-face
+		    :foreground "#e54568") ;; Original value: #777778
+
+(set-face-attribute 'tab-line-tab nil
+		    :background "#252526"
+		    :foreground "#AEAFAD"
+		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
+		    :height 120)
+
+(set-face-attribute 'tab-line-tab-current nil
+		    :background "#68217A"
+		    :distant-foreground "d4d4d4"
+		    :foreground "#d4d4d4"
+		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
+		    :height 120)
+
+(set-face-attribute 'tab-line-tab-inactive nil
+		    :background "#252526"
+		    :foreground "#AEAFAD"
+		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
+		    :height 120)
+
+(set-face-attribute 'tab-line-tab-modified nil
+		    :inherit 'font-lock-doc-face
+		    :background "#130034")
 
 ;; Enable menus
 (menu-bar-mode t)
 (tool-bar-mode t)
+;;(modifier-bar-mode t)
 
 ;; Enable tooltips
 (tooltip-mode t)
