@@ -77,16 +77,16 @@
 
 (set-face-attribute 'tab-bar-tab nil
 		    :background "#68217A"
-		    :distant-foreground "#d4d4d4"
-		    :foreground "#d4d4d4"
+		    :distant-foreground "#D4D4D4"
+		    :foreground "#D4D4D4"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :weight 'bold
-		    :height 140)
+		    :weight 'heavy
+		    :height 130)
 
 (set-face-attribute 'tab-bar-tab-inactive nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
-		    :height 140
+		    :height 130
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button))
 
 (setq tab-bar-new-button '#(" " 0 1
@@ -99,31 +99,28 @@
 ;; Tab Lines
 (global-tab-line-mode t)
 
-(set-face-attribute 'font-lock-doc-face nil
-		    :inherit font-lock-comment-face
-		    :foreground "#e54568") ;; Original value: #777778
-
 (set-face-attribute 'tab-line-tab nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-current nil
 		    :background "#68217A"
-		    :distant-foreground "d4d4d4"
-		    :foreground "#d4d4d4"
+		    :distant-foreground "#D4D4D4"
+		    :foreground "#D4D4D4"
+		    :weight 'heavy
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-inactive nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-modified nil
-		    :inherit 'font-lock-doc-face
+		    :foreground "#E54568"
 		    :background "#130034")
 
 ;; Enable menus

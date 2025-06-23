@@ -54,11 +54,11 @@ If you want to upgrade all packages installed using the command **package-vc-ins
 M-x package-vc-upgrade-all
 ```
 
-### lsp-java
+### lsp
 
-To update the Eclipse JDT Language Server use the following command inside Emacs:
+To install / update a language server use the following command inside Emacs:
 ```
-M-x lsp-java-update-server
+M-x lsp-install-server
 ```
 
 ## License

@@ -157,7 +157,7 @@ Whitespace mode				whitespace-mode
 Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
-Check changes in file			diff-buffer-with-file
+Check changes in file			diff, diff-buffers, diff-buffer-with-file
 Font info				describe-fontset
 Face info				describe-face
 Set font				menu-set-font

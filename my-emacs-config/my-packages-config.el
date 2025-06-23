@@ -567,6 +567,11 @@
   :hook (
 	 ((java-mode java-ts-mode) . lsp-deferred)
 	 ((clojure-mode clojure-ts-mode) . lsp-deferred)
+	 ((css-mode css-ts-mode) . lsp-deferred)
+	 ((html-mode html-ts-mode) . lsp-deferred)
+	 ((js-mode javascript-mode js2-mode js-ts-mode) . lsp-deferred)
+	 ((typescript-mode typescript-ts-mode) . lsp-deferred)
+	 ((js-json-mode json-ts-mode) . lsp-deferred)
 	 (lsp-completion-mode-hook . corfu-mode)
 	 (lsp-completion-at-point-functions . lsp-completion-at-point)
 	 (lsp-mode . lsp-lens-mode)
@@ -574,16 +579,14 @@
 	 )
   :commands (lsp lsp-deferred))
 
+;; To determine which server is used for which extension: lsp-language-id-configuration
+
 ;; lsp-ui to show higher abtraction interfaces for lsp-mode
 (when (package-installed-p 'lsp-mode)
   (use-package lsp-ui
   :ensure t
   :after lsp-mode
   :commands lsp-ui-mode))
-
-;; lsp clients: To Be Installed
-;; lsp-python
-;; lsp-javascript / lsp-typescript
 
 ;; (add-to-list 'lsp-client-packages 'lsp-XXX)
 
@@ -595,14 +598,30 @@
   ;; (add-hook 'java-mode-hook 'lsp)
   ;; (add-hook 'java-ts-mode-hook 'lsp)
   ;; (add-to-list 'lsp-language-id-configuration '(java-ts-mode . "java"))
+  
+  ;; Here you need a Java compiler to use the lsp server JDTLS. Also, you need to pass the absolute path, not relative.
+  (setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
+  (setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
   )
-
-;; Here you need a Java compiler to use the lsp server JDTLS. Also, you need to pass the absolute path, not relative.
-(setenv "JAVA_HOME" (file-truename (concat user-emacs-directory "java-lts/jdk-21")))
-(setq lsp-java-java-path (file-truename (concat user-emacs-directory "java-lts/jdk-21/bin/java")))
 
 ;; lsp-clojure
 (use-package lsp-clojure
+  :after lsp-mode)
+
+;; lsp-javascript (javascript / typescript)
+(use-package lsp-javascript
+  :after lsp-mode)
+
+;; lsp-html
+(use-package lsp-html
+  :after lsp-mode)
+
+;; lsp-css
+(use-package lsp-css
+  :after lsp-mode)
+
+;; lsp-css
+(use-package lsp-json
   :after lsp-mode)
 
 ;; LSP booster
@@ -685,15 +704,38 @@
 
 ;; Treesitter grammar repositories.
 (setq treesit-language-source-alist
-      '((java "https://github.com/tree-sitter/tree-sitter-java")
-	(clojure "https://github.com/sogaiu/tree-sitter-clojure"))
+      '(
+	(java . ("https://github.com/tree-sitter/tree-sitter-java"))
+	(clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
+	(css . ("https://github.com/tree-sitter/tree-sitter-css"))
+	(html . ("https://github.com/tree-sitter/tree-sitter-html"))
+	(javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+	(json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+	(typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	)
       )
+
+;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
 
 ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
 (setq major-mode-remap-alist
-      '((java-mode . java-ts-mode)
-	(clojure-mode . clojure-ts-mode))
+      '(
+	(java-mode . java-ts-mode)
+	(clojure-mode . clojure-ts-mode)
+	(css-mode . css-ts-mode)
+	(html-mode . html-ts-mode)
+	(((js-mode javascript-mode js2-mode)) . js-ts-mode)
+	(js-json-mode . json-ts-mode)
+	(typescript-tsx-mode . tsx-ts-mode)
+	(typescript-mode . typescript-ts-mode)
+	)
       )
+
+;; Initialize major modes on these file extensions
+(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
 
 ;; 16.13.2 Parser-based Font Lock
 ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
