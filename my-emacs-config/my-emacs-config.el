@@ -89,12 +89,13 @@
 		    :height 130
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button))
 
-(setq tab-bar-new-button '#(" " 0 1
-			    (rear-nonsticky t help-echo "New tab" face shadow display
-					    (image :type svg :file
-						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
-						   :height (1 . em) :scale 1.6 :margin 1 :ascent
-						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
+;; This gives problems on NixOS because of the location of the file plus_16.svg
+;; (setq tab-bar-new-button '#(" " 0 1
+;; 			    (rear-nonsticky t help-echo "New tab" face shadow display
+;; 					    (image :type svg :file
+;; 						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
+;; 						   :height (1 . em) :scale 1.6 :margin 1 :ascent
+;; 						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
 
 ;; Tab Lines
 (global-tab-line-mode t)
@@ -125,7 +126,7 @@
 
 ;; Enable menus
 (menu-bar-mode t)
-(tool-bar-mode t)
+(tool-bar-mode 0)
 ;;(modifier-bar-mode t)
 
 ;; Enable tooltips
@@ -136,10 +137,10 @@
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
 	    (unless (derived-mode-p 'treemacs-mode)
-	      (text-scale-set 3))))
+	      (text-scale-set 2))))
 
 ;; Change font
-(set-frame-font "Source Code Pro 10")
+;; (set-frame-font "Source Code Pro 10")
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
