@@ -77,58 +77,56 @@
 
 (set-face-attribute 'tab-bar-tab nil
 		    :background "#68217A"
-		    :distant-foreground "#d4d4d4"
-		    :foreground "#d4d4d4"
+		    :distant-foreground "#D4D4D4"
+		    :foreground "#D4D4D4"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :weight 'bold
-		    :height 140)
+		    :weight 'heavy
+		    :height 130)
 
 (set-face-attribute 'tab-bar-tab-inactive nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
-		    :height 140
+		    :height 130
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button))
 
-(setq tab-bar-new-button '#(" " 0 1
-			    (rear-nonsticky t help-echo "New tab" face shadow display
-					    (image :type svg :file
-						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
-						   :height (1 . em) :scale 1.6 :margin 1 :ascent
-						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
+;; This gives problems on NixOS because of the location of the file plus_16.svg
+;; (setq tab-bar-new-button '#(" " 0 1
+;; 			    (rear-nonsticky t help-echo "New tab" face shadow display
+;; 					    (image :type svg :file
+;; 						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
+;; 						   :height (1 . em) :scale 1.6 :margin 1 :ascent
+;; 						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
 
 ;; Tab Lines
 (global-tab-line-mode t)
-
-(set-face-attribute 'font-lock-doc-face nil
-		    :inherit font-lock-comment-face
-		    :foreground "#e54568") ;; Original value: #777778
 
 (set-face-attribute 'tab-line-tab nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-current nil
 		    :background "#68217A"
-		    :distant-foreground "d4d4d4"
-		    :foreground "#d4d4d4"
+		    :distant-foreground "#D4D4D4"
+		    :foreground "#D4D4D4"
+		    :weight 'heavy
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-inactive nil
 		    :background "#252526"
 		    :foreground "#AEAFAD"
 		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 120)
+		    :height 110)
 
 (set-face-attribute 'tab-line-tab-modified nil
-		    :inherit 'font-lock-doc-face
+		    :foreground "#E54568"
 		    :background "#130034")
 
 ;; Enable menus
 (menu-bar-mode t)
-(tool-bar-mode t)
+(tool-bar-mode 0)
 ;;(modifier-bar-mode t)
 
 ;; Enable tooltips
@@ -139,10 +137,10 @@
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
 	    (unless (derived-mode-p 'treemacs-mode)
-	      (text-scale-set 3))))
+	      (text-scale-set 2))))
 
 ;; Change font
-(set-frame-font "Source Code Pro 10")
+;; (set-frame-font "Source Code Pro 10")
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
