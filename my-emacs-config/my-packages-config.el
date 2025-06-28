@@ -14,7 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs minimap dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 (setq package-vc-selected-packages
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
@@ -171,10 +171,6 @@
   :after lsp
   :commands lsp-treemacs-errors-list)
 
-;; Minimap
-(use-package minimap
-  :ensure t)
-
 ;; YASnippet for shortcuts
 (use-package yasnippet
   :ensure t
@@ -293,6 +289,14 @@
 	  magit-diff-mode)
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
+
+(use-package project
+  ;; Use demand to load the package automatically
+  :demand t
+  :config
+  ;; Show project name on mode-line
+  (setq project-mode-line t)
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -817,12 +821,6 @@
    'magit-insert-tracked-files
    nil
    'append)
-
-;; Minimap
-;; Minimap config. By default the package is globally activated, but it only works on modes derived from 'prog-mode'.
-(minimap-mode 1)
-(setq minimap-window-location 'right)
-(setq minimap-width-fraction '0.10)
 
 ;; evil-mode
 ;; Set C-z for evil-mode

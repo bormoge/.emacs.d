@@ -5,9 +5,11 @@ Open file				CTRL + x CTRL + f
 Open directory				CTRL + x d
 Save file				CTRL + x CTRL + s
 New file (switch-to-buffer)		CTRL + x b
+Rename buffer				CTRL + x x r
 Write file				CTRL + x CTRL + w
 Universal argument			CTRL + u
 List of buffers				CTRL + x CTRL + b
+read-only-mode				CTRL + x CTRL + q
 
 
 Copy					ALT + w
@@ -95,6 +97,7 @@ Word search				ALT + s w
 Exact word search			ALT + s w ENTER ALT + c
 occur					ALT + s o
 grep					ALT + x grep
+Replace string with another one		ALT + %
 
 
 Highlight word on whole file		ALT + s h r
@@ -115,10 +118,13 @@ Search words on internet		ALT + s ALT + w
 
 
 Metahelp				CTRL + h CTRL + h
-Emacs documentation			CTRL + h i
+General documentation			CTRL + h i
+Emacs documentation			CTRL + h r
 Help					CTRL + h ?
 Describe function			CTRL + h f
+Search in documentation for function	CTRL + h F
 Describe key				CTRL + h k
+Search in documentation for key		CTRL + h K
 Describe key briefly			CTRL + h c
 Key location				CTRL + h w
 Describe variable			CTRL + h v
@@ -137,6 +143,7 @@ Emacs news (specific version)		CTRL + u CTRL + h CTRL + n
 
 Quit					CTRL + g
 Quit help				q
+Refresh (dired, grep, compile, etc.)	g
 Kill Buffer				CTRL + x k
 
 
@@ -158,6 +165,7 @@ Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
 Check changes in file			diff, diff-buffers, diff-buffer-with-file
+Compile a program			compile
 Font info				describe-fontset
 Face info				describe-face
 Set font				menu-set-font
