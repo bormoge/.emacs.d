@@ -4,6 +4,7 @@ Minimize Emacs				CTRL + z
 Open file				CTRL + x CTRL + f
 Open directory				CTRL + x d
 Save file				CTRL + x CTRL + s
+Write file				CTRL + x CTRL + w
 New file (switch-to-buffer)		CTRL + x b
 Rename buffer				CTRL + x x r
 Write file				CTRL + x CTRL + w
@@ -12,6 +13,9 @@ List of buffers				CTRL + x CTRL + b
 read-only-mode				CTRL + x CTRL + q
 
 
+Set mark				CTRL + SPC
+Return to previous mark			CTRL + u CTRL + SPC
+Exchange point and mark			CTRL + x CTRL + x
 Copy					ALT + w
 Cut					CTRL + w
 Cut previous word			ALT + DEL
@@ -27,6 +31,7 @@ Multiline rectangle			CTRL + x r t
 
 
 Comment a text line			ALT + ;
+Indent region				CTRL + ALT + \
 
 
 Move to start of file			ALT + <
@@ -119,6 +124,7 @@ Search words on internet		ALT + s ALT + w
 
 Metahelp				CTRL + h CTRL + h
 General documentation			CTRL + h i
+General documentation (other window)	CTRL + h 4 i
 Emacs documentation			CTRL + h r
 Help					CTRL + h ?
 Describe function			CTRL + h f
@@ -129,12 +135,15 @@ Describe key briefly			CTRL + h c
 Key location				CTRL + h w
 Describe variable			CTRL + h v
 Describe command			CTRL + h x
+Describe any symbol			CTRL + h o
+Describe syntax				CTRL + h s
 Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
 List key bindings			CTRL + h b
-Show inputs				CTRL + h l
+Show inputs log				CTRL + h l
 Show categories by keyword		CTRL + h p
 Search word on documentation		CTRL + h d
+Search on source code			CTRL + h 4 s
 Emacs License (GPL 3.0)			CTRL + h CTRL + c
 About page				CTRL + h CTRL + a
 Emacs news				CTRL + h CTRL + n
@@ -148,6 +157,10 @@ Kill Buffer				CTRL + x k
 
 
 Switch to project			CTRL + x p p
+Switch to project directory		CTRL + x p d
+Switch to project file			CTRL + x p f
+Switch to project buffer		CTRL + x p b
+Check VC info for project		CTRL + x p v
 
 
 ## Emacs Tricks
@@ -199,6 +212,7 @@ Calendar				calendar
 Lunar phases				lunar-phases
 Save minibuffer history			savehist-mode
 Count words inside a region		count-words
+Count lines inside a page		count-lines-page
 Time Emacs has been open		emacs-uptime
 List available colors			list-colors-display
 Repeat mode				repeat-mode

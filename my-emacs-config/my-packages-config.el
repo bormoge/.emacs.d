@@ -14,11 +14,17 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 (setq package-vc-selected-packages
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
 	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
+
+;; Spacemacs theme
+(use-package spacemacs-theme
+  :vc (:url "https://github.com/nashamri/spacemacs-theme"
+       :rev :newest)
+  :ensure t)
 
 ;; Doom themes
 (use-package doom-themes
@@ -290,6 +296,7 @@
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
 
+;; Project manager
 (use-package project
   ;; Use demand to load the package automatically
   :demand t
@@ -580,6 +587,7 @@
 	 (lsp-completion-at-point-functions . lsp-completion-at-point)
 	 (lsp-mode . lsp-lens-mode)
 	 (lsp-mode . lsp-enable-which-key-integration)
+	 (lsp-mode . lsp-inlay-hints-mode)
 	 )
   :commands (lsp lsp-deferred))
 
