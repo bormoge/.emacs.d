@@ -201,12 +201,9 @@
 
 ;; Scroll settings
 (setq scroll-conservatively 100)
-(setq scroll-margin 1)
+(setq scroll-margin 6)
 (setq scroll-step 1)
 (setq scroll-preserve-screen-position nil)
-
-;; No backup files
-(setq make-backup-files nil)
 
 ;; Config for vertico package
 (setq enable-recursive-minibuffers t)
@@ -226,6 +223,15 @@
 
 ;; Pass argument -u to command diff
 (setq diff-switches "-u")
+
+;; More detailed completions
+(setq completions-detailed t)
+
+;; Use real function / variables names when customizing
+(setq custom-unlispify-tag-names nil)
+
+;; No backup files
+(setq make-backup-files nil)
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)

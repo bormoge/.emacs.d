@@ -14,7 +14,13 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+
+;; Spacemacs theme
+(use-package spacemacs-theme
+  :vc (:url "https://github.com/nashamri/spacemacs-theme"
+       :rev :newest)
+  :ensure t)
 
 ;; Doom themes
 (use-package doom-themes
@@ -239,6 +245,15 @@
 	  magit-diff-mode)
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil))))
+
+;; Project manager
+(use-package project
+  ;; Use demand to load the package automatically
+  :demand t
+  :config
+  ;; Show project name on mode-line
+  (setq project-mode-line t)
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
