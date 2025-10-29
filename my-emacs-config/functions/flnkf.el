@@ -55,7 +55,7 @@
 	  flnkf-buffer))
     (switch-to-buffer "*scratch*")))
 
-(defun flnkf-link-text (text-to-link)
+(defun flnkf-link-text (text-to-link &optional tab-bar-or-tab-line bury-current-buffer)
   "Put a clickable link in the text to open the file in a new tab.\nIf the path includes `flnkf-directory', it uses `flnkf-file-reader'."
   (let ((file-path (string-trim text-to-link)))
     (insert-text-button file-path
@@ -66,11 +66,23 @@
                                       ;; Check if the path is inside ~/.emacs.d/flnkf/
                                       (if (string-prefix-p (expand-file-name flnkf-directory) expanded-path)
                                           (progn
-					    (tab-new)
+					    (let ((bury-current-buffer (or bury-current-buffer 0)))
+					      (when (> bury-current-buffer 0)
+						(bury-buffer)))
+					    (let ((tab-bar-or-tab-line (or tab-bar-or-tab-line 0)))
+					      (when (> tab-bar-or-tab-line 0)
+						(tab-new)))
+					    ;;(tab-new)
 					    (let ((flnkf-buffer (flnkf-file-reader path)))
 					      (switch-to-buffer flnkf-buffer)))
                                         (progn
-					  (tab-new)
+					  (let ((bury-current-buffer (or bury-current-buffer 0)))
+					      (when (> bury-current-buffer 0)
+						(bury-buffer)))
+					  (let ((tab-bar-or-tab-line (or tab-bar-or-tab-line 0)))
+					      (when (> tab-bar-or-tab-line 0)
+						(tab-new)))
+					  ;;(tab-new)
 					  (find-file path)
 					  )))))
                         'follow-link t)))

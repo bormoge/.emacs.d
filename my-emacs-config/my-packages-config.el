@@ -14,13 +14,42 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode multiple-cursors focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Spacemacs theme
 (use-package spacemacs-theme
   :vc (:url "https://github.com/nashamri/spacemacs-theme"
-       :rev :newest)
+       :rev :newest
+       :branch "master")
   :ensure t)
+
+;; ;; zenburn-theme.el
+;; (use-package zenburn-theme
+;;   :vc (:url "https://github.com/bbatsov/zenburn-emacs"
+;;        :rev :newest
+;;        :branch "master")
+;;   :ensure t)
+
+;; ;; morning-star-theme.el
+;; (use-package morning-star-theme
+;;   :vc (:url "https://github.com/Alexander-Miller/morning-star-theme"
+;;        :rev :newest
+;;        :branch "master")
+;;   :ensure t)
+
+;; ;; doric-themes
+;; (use-package doric-themes
+;;   :vc (:url "https://github.com/protesilaos/doric-themes"
+;;        :rev :newest
+;;        :branch "main")
+;;   :ensure t)
+
+;; ;; ef-themes
+;; (use-package ef-themes
+;;   :vc (:url "https://github.com/protesilaos/ef-themes"
+;;        :rev :newest
+;;        :branch "main")
+;;   :ensure t)
 
 ;; Doom themes
 (use-package doom-themes
@@ -35,7 +64,8 @@
   ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
   (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config)
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  )
 
 ;; Used to highlight lines changed
 (use-package diff-hl
@@ -180,11 +210,6 @@
 (use-package focus
   :ensure t)
 
-;; Multiline cursors.
-(use-package multiple-cursors
-  :ensure t
-  :defer t)
-
 ;; ledger-mode
 (use-package ledger-mode
   :ensure t
@@ -230,7 +255,7 @@
   ;;(set-face-background 'hl-line "#303030")
   ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
   (set-face-attribute 'hl-line nil
-                      :background "#303030"
+                      :background "#404040"
 		      :underline nil
                       :overline nil)
   (global-hl-line-mode t)
@@ -325,11 +350,6 @@
    nil
    'append)
 
-;; evil-mode
-;; Set C-z for evil-mode
-;; (global-unset-key (kbd "C-z")) ;; Originally suspend-frame, it also uses C-x C-z
-;; (global-set-key (kbd "C-z") 'evil-mode)
-
 ;; YASnippets
 ;; Remap the snippet expansion from TAB to H-TAB
 (define-key yas-minor-mode-map [(tab)] nil)
@@ -338,16 +358,5 @@
 
 ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
 ;; (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
-
-;; multiple-cursors.el
-;; Add a cursor to each line of an active region.
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-
-;; Add multiple cursors not based on continuous lines, but based on keywords.
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-c C-<mouse-1>") 'mc/add-cursor-on-click)
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
