@@ -11,7 +11,12 @@ Write file				CTRL + x CTRL + w
 Universal argument			CTRL + u
 List of buffers				CTRL + x CTRL + b
 read-only-mode				CTRL + x CTRL + q
+Kill buffer				CTRL + x k
+Text-mode menubar			ALT + `
 
+Execute command				ALT + x
+Execute command relevant to context	SHIFT + ALT + x
+Quit					CTRL + g
 
 Set mark				CTRL + SPC
 Return to previous mark			CTRL + u CTRL + SPC
@@ -32,6 +37,7 @@ Multiline rectangle			CTRL + x r t
 
 Comment a text line			ALT + ;
 Indent region				CTRL + ALT + \
+Remove blank lines			CTRL + x CTRL + o
 
 
 Move to start of file			ALT + <
@@ -46,6 +52,7 @@ Move to next word			ALT + f, CTRL + <key-right>
 Move to previous blank line		CTRL + <key-up>
 Move to next blank line			CTRL + <key-down>
 Go to line				ALT + g g
+Next error				ALT + g n
 
 
 Increase text scale			CTRL + <wheel-up>
@@ -58,6 +65,7 @@ Select text				CTRL + SPACE
 Select all				CTRL + x h
 Delete selected text			CTRL + SPACE <backspace>
 Select text while moving cursor		SHIFT + <key-up>, SHIFT + <key-down>, SHIFT + <key-left>, SHIFT + <key-right>
+Delete up to and including character	ALT + z
 
 
 Shell Mode				ALT + x shell
@@ -150,10 +158,10 @@ Emacs news				CTRL + h CTRL + n
 Emacs news (specific version)		CTRL + u CTRL + h CTRL + n
 
 
-Quit					CTRL + g
-Quit help				q
+Quit help buffer			q
+View documentation about help buffer	i
+Help view source code			s
 Refresh (dired, grep, compile, etc.)	g
-Kill Buffer				CTRL + x k
 
 
 Switch to project			CTRL + x p p
@@ -163,6 +171,13 @@ Switch to project buffer		CTRL + x p b
 Check VC info for project		CTRL + x p v
 
 
+Upcase word				ALT + u
+Downcase word				ALT + l
+Select whole paragraph			ALT + h
+Break line at point and indent		ALT + j
+Kill sentence				ALT + k
+
+
 ## Emacs Tricks
 Copy entire line			CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
 Emulate Hyper key			CTRL + x @ h
@@ -170,7 +185,7 @@ Print Emacs version from terminal	emacs -batch -l <(echo "(message (version))")
 
 
 ## Emacs Functions
-Emacs version				version
+Emacs version				emacs-version
 Find library file(s)			find-library
 Describe package keymap			describe-keymap
 Whitespace mode				whitespace-mode
@@ -218,6 +233,11 @@ List available colors			list-colors-display
 Repeat mode				repeat-mode
 Describe Repeat mode keymap		describe-repeat-maps
 Describe a character			describe-char
+Deprioritize buffer			bury-buffer
+
+
+## org-mode
+Open link				org-open-at-point		CTRL + c CTRL + o
 
 
 ## calc
@@ -237,6 +257,12 @@ Paste rectangle				yank-rectangle			CTRL + x r y
 Replace rectangle with white space	clear-rectangle			CTRL + x r c
 Insert blank space on rectangle		open-rectangle			CTRL + x r o, CTRL + o
 Put number of line left of rectangle	rectangle-number-lines		CTRL + x r N
+
+
+## profiler (analyze Emacs performance)
+Start profiler				profiler-start
+Report profiler results			profiler-report
+Stop profiler				profiler-stop
 
 
 ## Emacs Variables
@@ -261,6 +287,7 @@ Display active major mode		major-mode
 Display active minor modes		minor-mode-list
 Mode line displayed minor modes		minor-mode-alist
 Compile .elc files asynchronously	native-comp-jit-compilation
+Change tab-line close behaviour		tab-line-close-tab-function
 
 
 ## Packages

@@ -57,6 +57,9 @@
 ;; Define key for ibuffer
 (define-key (current-global-map) (kbd "C-x M-b") 'ibuffer)
 
+;; Define key for bury-buffer
+(define-key (current-global-map) (kbd "H-x k") 'bury-buffer)
+
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
 
@@ -140,7 +143,8 @@
 	      (text-scale-set 2))))
 
 ;; Change font
-;; (set-frame-font "Source Code Pro 10")
+;; (set-frame-font "Source Code Pro 11")
+;; (set-frame-font "Adwaita Mono 11")
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
@@ -229,6 +233,12 @@
 
 ;; Use real function / variables names when customizing
 (setq custom-unlispify-tag-names nil)
+
+;; When created, change focus to Help buffer
+(setopt help-window-select t)
+
+;; Reuse Help window in contexts other than another Help buffer
+(setopt help-window-keep-selected t)
 
 ;; No backup files
 (setq make-backup-files nil)

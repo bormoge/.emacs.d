@@ -14,7 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu multiple-cursors lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg all-the-icons all-the-icons-dired treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 (setq package-vc-selected-packages
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
@@ -23,8 +23,37 @@
 ;; Spacemacs theme
 (use-package spacemacs-theme
   :vc (:url "https://github.com/nashamri/spacemacs-theme"
-       :rev :newest)
+       :rev :newest
+       :branch "master")
   :ensure t)
+
+;; ;; zenburn-theme.el
+;; (use-package zenburn-theme
+;;   :vc (:url "https://github.com/bbatsov/zenburn-emacs"
+;;        :rev :newest
+;;        :branch "master")
+;;   :ensure t)
+
+;; ;; morning-star-theme.el
+;; (use-package morning-star-theme
+;;   :vc (:url "https://github.com/Alexander-Miller/morning-star-theme"
+;;        :rev :newest
+;;        :branch "master")
+;;   :ensure t)
+
+;; ;; doric-themes
+;; (use-package doric-themes
+;;   :vc (:url "https://github.com/protesilaos/doric-themes"
+;;        :rev :newest
+;;        :branch "main")
+;;   :ensure t)
+
+;; ;; ef-themes
+;; (use-package ef-themes
+;;   :vc (:url "https://github.com/protesilaos/ef-themes"
+;;        :rev :newest
+;;        :branch "main")
+;;   :ensure t)
 
 ;; Doom themes
 (use-package doom-themes
@@ -39,7 +68,8 @@
   ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
   (setq doom-themes-treemacs-theme "doom-colors")
   (doom-themes-treemacs-config)
-  (doom-themes-org-config))
+  (doom-themes-org-config)
+  )
 
 ;; Used to highlight lines changed
 (use-package diff-hl
@@ -209,7 +239,8 @@
 (use-package flycheck
   :ensure t
   :init
-  (global-flycheck-mode))
+  ;;(global-flycheck-mode)
+  )
 
 ;; Focus on selected text
 (use-package focus
@@ -218,11 +249,6 @@
 (use-package lsp-focus
   :ensure t
   :after (lsp focus))
-
-;; Multiline cursors.
-(use-package multiple-cursors
-  :ensure t
-  :defer t)
 
 ;; avy
 (use-package avy
@@ -237,14 +263,6 @@
 (use-package flycheck-ledger
   :ensure t
   :after (flycheck ledger))
-
-;; Dashboard for Emacs
-;; (use-package dashboard
-;;   :ensure t
-;;   :defer t
-;;   :config
-;;   (dashboard-setup-startup-hook)
-;;   (setq dashboard-startup-banner 'logo))
 
 ;; Automatically show available commands
 ;; Already preinstalled in Emacs 30
@@ -280,7 +298,7 @@
   ;;(set-face-background 'hl-line "#303030")
   ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
   (set-face-attribute 'hl-line nil
-                      :background "#303030"
+                      :background "#404040"
 		      :underline nil
                       :overline nil)
   (global-hl-line-mode t)
@@ -410,6 +428,7 @@
              ("TAB" . minibuffer-complete)
              ("M-g M-c" . switch-to-completions)
              ("s-<tab>" . vertico-insert)
+             ("<backtab>" . vertico-insert)
 	     ("C-M-n" . vertico-next-group)
 	     ("C-M-p" . vertico-previous-group)
 	     )
@@ -572,6 +591,7 @@
   (define-key lsp-mode-map (kbd "s-l") nil)
   (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
   (setq lsp-completion-provider :capf)
+  (setq lsp-diagnostics-provider :auto) ;;:flymake ;; Use Flymake or Flycheck for diagnostics
   :config
   (lsp-enable-which-key-integration t)
   ;;(setq lsp-client-packages '(lsp-clients lsp-XXX))
@@ -830,11 +850,6 @@
    nil
    'append)
 
-;; evil-mode
-;; Set C-z for evil-mode
-;; (global-unset-key (kbd "C-z")) ;; Originally suspend-frame, it also uses C-x C-z
-;; (global-set-key (kbd "C-z") 'evil-mode)
-
 ;; YASnippets
 ;; Remap the snippet expansion from TAB to H-TAB
 (define-key yas-minor-mode-map [(tab)] nil)
@@ -844,24 +859,6 @@
 ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
 (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
 (add-hook 'focus-mode-hook #'lsp-focus-mode)
-
-;; multiple-cursors.el
-;; Add a cursor to each line of an active region.
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-
-;; Add multiple cursors not based on continuous lines, but based on keywords.
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(global-set-key (kbd "C-c C-<mouse-1>") 'mc/add-cursor-on-click)
-
-;; Dashboard
-;; Items to show
-;; (setq dashboard-items '((recents   . 30)
-;;                         (projects  . 5)))
-
-;; (setq dashboard-item-shortcuts '((recents   . "r")
-;;                                  (projects  . "p")))
 
 ;; vundo
 ;; Map the `undo' function onto C-x u
