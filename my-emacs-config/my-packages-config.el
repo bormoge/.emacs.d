@@ -20,56 +20,8 @@
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
 	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
 
-;; Spacemacs theme
-(use-package spacemacs-theme
-  :vc (:url "https://github.com/nashamri/spacemacs-theme"
-       :rev :newest
-       :branch "master")
-  :ensure t)
-
-;; ;; zenburn-theme.el
-;; (use-package zenburn-theme
-;;   :vc (:url "https://github.com/bbatsov/zenburn-emacs"
-;;        :rev :newest
-;;        :branch "master")
-;;   :ensure t)
-
-;; ;; morning-star-theme.el
-;; (use-package morning-star-theme
-;;   :vc (:url "https://github.com/Alexander-Miller/morning-star-theme"
-;;        :rev :newest
-;;        :branch "master")
-;;   :ensure t)
-
-;; ;; doric-themes
-;; (use-package doric-themes
-;;   :vc (:url "https://github.com/protesilaos/doric-themes"
-;;        :rev :newest
-;;        :branch "main")
-;;   :ensure t)
-
-;; ;; ef-themes
-;; (use-package ef-themes
-;;   :vc (:url "https://github.com/protesilaos/ef-themes"
-;;        :rev :newest
-;;        :branch "main")
-;;   :ensure t)
-
-;; Doom themes
-(use-package doom-themes
-  :ensure t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-dark+ t)
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
-  (setq doom-themes-treemacs-theme "doom-colors")
-  (doom-themes-treemacs-config)
-  (doom-themes-org-config)
-  )
+;; Load theme(s)
+(load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
 
 ;; Used to highlight lines changed
 (use-package diff-hl

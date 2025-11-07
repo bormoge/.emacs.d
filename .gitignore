@@ -5,6 +5,8 @@
 /eclipse.jdt.ls
 /eln-cache
 /elpa
+/eshell
+/flnkf
 /games
 /image-dired
 /melpa
@@ -13,16 +15,15 @@
 /transient
 /tree-sitter
 /workspace
-/flnkf
 
 /my-emacs-config/functions/tetris.el
+.dap-breakpoints
+.lsp-session-v1
+.mc-lists.el
+flnkf-file.txt
 forge-database.sqlite
 projectile-bookmarks.eld
 projects
-.mc-lists.el
-.lsp-session-v1
 history
 recentf
 tramp
-flnkf-file.txt
-.dap-breakpoints

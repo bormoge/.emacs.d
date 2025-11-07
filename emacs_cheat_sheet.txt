@@ -113,7 +113,7 @@ grep					ALT + x grep
 Replace string with another one		ALT + %
 
 
-Highlight word on whole file		ALT + s h r
+Highlight regexp on whole file		ALT + s h r
 Highlight selected word on whole file	ALT + s h .
 Unhighlight on whole file		ALT + s h u
 Unhighlight all on whole file		CTRL + u ALT + s h u
@@ -145,6 +145,7 @@ Describe variable			CTRL + h v
 Describe command			CTRL + h x
 Describe any symbol			CTRL + h o
 Describe syntax				CTRL + h s
+Symbol documentation			CTRL + h S
 Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
 List key bindings			CTRL + h b
@@ -176,6 +177,10 @@ Downcase word				ALT + l
 Select whole paragraph			ALT + h
 Break line at point and indent		ALT + j
 Kill sentence				ALT + k
+
+
+Check definition of keyword		ALT + .
+Return from definition to keyword	ALT + ,
 
 
 ## Emacs Tricks
@@ -234,6 +239,7 @@ Repeat mode				repeat-mode
 Describe Repeat mode keymap		describe-repeat-maps
 Describe a character			describe-char
 Deprioritize buffer			bury-buffer
+Measure execution time of function	benchmark, benchmark-run, benchmark-run-compiled
 
 
 ## org-mode
@@ -263,6 +269,11 @@ Put number of line left of rectangle	rectangle-number-lines		CTRL + x r N
 Start profiler				profiler-start
 Report profiler results			profiler-report
 Stop profiler				profiler-stop
+
+
+## debugging
+Debug if message matches regexp		debug-on-message
+Debug if there is an error		debug-on-error
 
 
 ## Emacs Variables
@@ -301,6 +312,7 @@ Check sources for treesit.el		treesit-language-source-alist
 Path for treesit sources		treesit-extra-load-path
 Install treesit grammar			treesit-install-language-grammar
 A list of lists of feature symbols	treesit-font-lock-feature-list
+Explore current buffer’s syntax tree	treesit-explore-mode
 
 # LSP
 Shutdown lsp server			lsp-shutdown-workspace
