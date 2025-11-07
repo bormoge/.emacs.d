@@ -22,8 +22,8 @@
 (define-key (current-global-map) (kbd "H-c t b") 'term)
 
 ;; Set keys for tnwmt.el
-(define-key (current-global-map) (kbd "H-r") 'tnwmt-read)
-(define-key (current-global-map) (kbd "H-s") 'tnwmt-save)
+;; (define-key (current-global-map) (kbd "H-r") 'tnwmt-read)
+;; (define-key (current-global-map) (kbd "H-s") 'tnwmt-save)
 
 ;; Set keys for the-entire-line.el
 (global-set-key (kbd "M-s-w") 'copy-the-entire-line)
@@ -60,6 +60,12 @@
 ;; Define key for bury-buffer
 (define-key (current-global-map) (kbd "H-x k") 'bury-buffer)
 
+;; Replace regexp
+(define-key (current-global-map) (kbd "M-s-r r") 'query-replace-regexp)
+
+;; Replace string
+(define-key (current-global-map) (kbd "M-s-r s") 'query-replace)
+
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
 
@@ -78,54 +84,8 @@
 (setq tab-bar-auto-width-max '((300) 30))
 ;;(setq tab-bar-auto-width nil)
 
-(set-face-attribute 'tab-bar-tab nil
-		    :background "#68217A"
-		    :distant-foreground "#D4D4D4"
-		    :foreground "#D4D4D4"
-		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :weight 'heavy
-		    :height 130)
-
-(set-face-attribute 'tab-bar-tab-inactive nil
-		    :background "#252526"
-		    :foreground "#AEAFAD"
-		    :height 130
-		    :box '(:line-width (3 . 3) :color "black" :style flat-button))
-
-;; This gives problems on NixOS because of the location of the file plus_16.svg
-;; (setq tab-bar-new-button '#(" " 0 1
-;; 			    (rear-nonsticky t help-echo "New tab" face shadow display
-;; 					    (image :type svg :file
-;; 						   "/usr/share/emacs/30.1/etc/images/symbols/plus_16.svg"
-;; 						   :height (1 . em) :scale 1.6 :margin 1 :ascent
-;; 						   center :transform-smoothing t)))) ;; Original value is the same except :scale 1
-
 ;; Tab Lines
 (global-tab-line-mode t)
-
-(set-face-attribute 'tab-line-tab nil
-		    :background "#252526"
-		    :foreground "#AEAFAD"
-		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 110)
-
-(set-face-attribute 'tab-line-tab-current nil
-		    :background "#68217A"
-		    :distant-foreground "#D4D4D4"
-		    :foreground "#D4D4D4"
-		    :weight 'heavy
-		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 110)
-
-(set-face-attribute 'tab-line-tab-inactive nil
-		    :background "#252526"
-		    :foreground "#AEAFAD"
-		    :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		    :height 110)
-
-(set-face-attribute 'tab-line-tab-modified nil
-		    :foreground "#E54568"
-		    :background "#130034")
 
 ;; Enable menus
 (menu-bar-mode t)
@@ -143,8 +103,7 @@
 	      (text-scale-set 2))))
 
 ;; Change font
-;; (set-frame-font "Source Code Pro 11")
-;; (set-frame-font "Adwaita Mono 11")
+(set-frame-font "Adwaita Mono 11" nil t)
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
@@ -235,7 +194,7 @@
 (setq custom-unlispify-tag-names nil)
 
 ;; When created, change focus to Help buffer
-(setopt help-window-select t)
+(setopt help-window-select nil)
 
 ;; Reuse Help window in contexts other than another Help buffer
 (setopt help-window-keep-selected t)
