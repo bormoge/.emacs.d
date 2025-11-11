@@ -128,7 +128,7 @@
     )
   :bind
   (:map global-map
-        ("H-0"       . treemacs-select-window)
+        ("H-x t o"   . treemacs-select-window)
         ("H-x t 1"   . treemacs-delete-other-windows)
         ("H-x t t"   . treemacs)
         ("H-x t d"   . treemacs-select-directory)

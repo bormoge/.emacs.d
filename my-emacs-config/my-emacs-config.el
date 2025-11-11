@@ -71,6 +71,9 @@
 
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
+(setq line-number-mode t)
+(setq column-number-mode t)
+(setq size-indication-mode t)
 
 ;; Enable use of system clipboard
 (setq select-enable-clipboard t)
@@ -97,13 +100,22 @@
 
 ;; Increase zoom
 ;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+(setq-default text-scale-mode-amount 2)
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
-	    (unless (derived-mode-p 'treemacs-mode)
-	      (text-scale-set 2))))
+	    (if (derived-mode-p 'treemacs-mode)
+		(text-scale-set 0)
+	      (text-scale-set text-scale-mode-amount))
+	    ))
 
 ;; Change font
-(set-frame-font "Adwaita Mono 11" nil t)
+;;(set-frame-font "Adwaita Mono 12" nil t)
+;;(set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
+;;(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+;;(set-frame-font "Hack Nerd Font Mono 12" nil t)
+;;(set-frame-font "Iosevka Nerd Font Mono 14" nil t)
+;;(set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
+(set-frame-font "Ioskeley Mono Light 12" nil t)
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
@@ -128,7 +140,7 @@
 ;; At startup, show the messages
 (view-echo-area-messages)
 (with-current-buffer (messages-buffer)
-  (enlarge-window 9)
+  (enlarge-window 10)
   )
 
 ;; Display warnings depending of level
@@ -236,8 +248,8 @@
 (defun check-if-file-at-startup ()
   "Check if a file is being opened at startup."
   (if (or (buffer-file-name) load-file-name)
-      (message "A file is opened, skipping desktop sessions buffer.")
-    (flnkf-open-default-buffer-list)
+      (message "A file is opened, skipping flnkf buffer.")
+    (flnkf-open-default-buffer-list 4)
     ))
 ;;    (tnwmt-open-buffer-list)))
 
