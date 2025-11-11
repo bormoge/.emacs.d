@@ -10,6 +10,7 @@ Rename buffer				CTRL + x x r
 Write file				CTRL + x CTRL + w
 Universal argument			CTRL + u
 List of buffers				CTRL + x CTRL + b
+List of file buffers			CTRL + u CTRL + x CTRL + b
 read-only-mode				CTRL + x CTRL + q
 Kill buffer				CTRL + x k
 Text-mode menubar			ALT + `
@@ -183,6 +184,9 @@ Check definition of keyword		ALT + .
 Return from definition to keyword	ALT + ,
 
 
+Count lines inside a page		CTRL + x l
+
+
 ## Emacs Tricks
 Copy entire line			CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y
 Emulate Hyper key			CTRL + x @ h
@@ -240,6 +244,7 @@ Describe Repeat mode keymap		describe-repeat-maps
 Describe a character			describe-char
 Deprioritize buffer			bury-buffer
 Measure execution time of function	benchmark, benchmark-run, benchmark-run-compiled
+Show current directory			pwd
 
 
 ## org-mode
@@ -297,8 +302,10 @@ Execute function before Emacs closes	kill-emacs-hook
 Display active major mode		major-mode
 Display active minor modes		minor-mode-list
 Mode line displayed minor modes		minor-mode-alist
+Mode line display template		mode-line-format
 Compile .elc files asynchronously	native-comp-jit-compilation
 Change tab-line close behaviour		tab-line-close-tab-function
+Get full name (path) of file		buffer-file-name
 
 
 ## Packages

@@ -114,3 +114,7 @@
 ;;        :rev :newest
 ;;        :branch "main")
 ;;   :ensure t)
+
+;; nordic-night-theme
+;; (use-package nordic-night-theme
+;;   :ensure t)
