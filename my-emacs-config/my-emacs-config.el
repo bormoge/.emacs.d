@@ -14,6 +14,9 @@
 (define-key (current-global-map) (kbd "H-<up>") 'windmove-up)
 (define-key (current-global-map) (kbd "H-<down>") 'windmove-down)
 
+;; Set key for swapping windows
+(define-key (current-global-map) (kbd "C-x M-o") 'window-swap-states)
+
 ;; Set keys for shell, eshell, term
 (define-key (current-global-map) (kbd "H-c e b") 'eshell)
 (define-key (current-global-map) (kbd "H-c e c") 'eshell-command)
@@ -65,6 +68,23 @@
 
 ;; Replace string
 (define-key (current-global-map) (kbd "M-s-r s") 'query-replace)
+
+;; Open flnkf buffer list of links
+(define-key (current-global-map) (kbd "H-o") 'flnkf-open-default-buffer-list)
+
+;; Open full-calc
+(define-key (current-global-map) (kbd "<Calculator>") 'full-calc)
+
+;; Define keys for library repeat.el
+(define-key (current-global-map) (kbd "s-<") 'repeat)
+(define-key (current-global-map) (kbd "s->") 'repeat-mode)
+(define-key (current-global-map) (kbd "s-z") 'describe-repeat-maps)
+
+;; Define keys for diff and ediff
+(define-key (current-global-map) (kbd "H-d 1") 'diff)
+(define-key (current-global-map) (kbd "H-d 2") 'diff-buffers)
+(define-key (current-global-map) (kbd "H-d 3") 'ediff)
+(define-key (current-global-map) (kbd "H-d 4") 'ediff-buffers)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -138,10 +158,10 @@
 (setq mouse-highlight nil)
 
 ;; At startup, show the messages
-(view-echo-area-messages)
-(with-current-buffer (messages-buffer)
-  (enlarge-window 10)
-  )
+;; (view-echo-area-messages)
+;; (with-current-buffer (messages-buffer)
+;;   (enlarge-window 10)
+;;   )
 
 ;; Display warnings depending of level
 (setq warning-minimum-level :warning)
@@ -157,7 +177,7 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
 (setq savehist-file "~/.emacs.d/history"
-  history-length 50
+  history-length 100
   history-delete-duplicates t
   savehist-save-minibuffer-history t
   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
@@ -210,6 +230,32 @@
 
 ;; Reuse Help window in contexts other than another Help buffer
 (setopt help-window-keep-selected t)
+
+;; EditorConfig (https://editorconfig.org/)
+;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
+;;(editorconfig-mode t)
+
+;; Short yes or no answer
+(setq use-short-answers t)
+
+;; Enable Transient Mark Mode
+(setopt transient-mark-mode t)
+
+;; ElDoc config
+(setq eldoc-idle-delay 0.5)
+(setq eldoc-echo-area-display-truncation-message nil)
+(setopt global-eldoc-mode t)
+
+;; Enable commands
+(put 'narrow-to-region 'disabled nil)
+(put 'widen 'disabled nil)
+
+;; Display battery status
+(setopt display-battery-mode t)
+
+;; Display name of a "function" (depends of the context)
+(setq which-func-update-delay 0.5)
+(setopt which-function-mode t)
 
 ;; No backup files
 (setq make-backup-files nil)
