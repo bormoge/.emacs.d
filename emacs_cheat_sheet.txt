@@ -2,7 +2,8 @@
 Close Emacs				CTRL + x CTRL + c
 Minimize Emacs				CTRL + z
 Open file				CTRL + x CTRL + f
-Open directory				CTRL + x d
+Open specific directory (dired)		CTRL + x d
+Open buffer directory (dired)		CTRL + x CTRL + j
 Save file				CTRL + x CTRL + s
 Write file				CTRL + x CTRL + w
 New file (switch-to-buffer)		CTRL + x b
@@ -14,10 +15,13 @@ List of file buffers			CTRL + u CTRL + x CTRL + b
 read-only-mode				CTRL + x CTRL + q
 Kill buffer				CTRL + x k
 Text-mode menubar			ALT + `
+Menu to navigate buffer (imenu)		ALT + g i
+
 
 Execute command				ALT + x
 Execute command relevant to context	SHIFT + ALT + x
 Quit					CTRL + g
+
 
 Set mark				CTRL + SPC
 Return to previous mark			CTRL + u CTRL + SPC
@@ -29,11 +33,14 @@ Cut next word				ALT + d
 Paste					CTRL + y
 Paste from history			ALT + y
 Undo					CTRL + /
+Undo on region only			CTRL + u CTRL + /
 undo-redo				CTRL + ?
 undo-only				ALT + x undo-only
 Revert buffer changes			CTRL + x x g
 comment-region				ALT + ;
 Multiline rectangle			CTRL + x r t
+Narrow and edit region			CTRL + x n n
+Widen buffer				CTRL + x n w
 
 
 Comment a text line			ALT + ;
@@ -53,7 +60,12 @@ Move to next word			ALT + f, CTRL + <key-right>
 Move to previous blank line		CTRL + <key-up>
 Move to next blank line			CTRL + <key-down>
 Go to line				ALT + g g
+
+
 Next error				ALT + g n
+Prevous error				ALT + g p
+Next parentheses			CTRL + ALT + n
+Previous parentheses			CTRL + ALT + p
 
 
 Increase text scale			CTRL + <wheel-up>
@@ -70,7 +82,8 @@ Delete up to and including character	ALT + z
 
 
 Shell Mode				ALT + x shell
-Full terminal emulation			ALT + x term
+Terminal emulation			ALT + x term
+Terminal emulation (ANSI support)	ALT + x ansi-term
 Shell Command				ALT + !
 Async Shell Command			ALT + &
 
@@ -87,6 +100,9 @@ New horizontal window			CTRL + x 3
 Close focused window			CTRL + x 0
 CLose all unfocused windows		CTRL + x 1
 Other window				CTRL + x o
+Display buffer in another window	CTRL + x 4 CTRL + o
+Display file in another window		CTRL + x 4 CTRL + f
+Open dired in another window		CTRL + x 4 CTRL + j
 
 
 New tab					CTRL + x t 2
@@ -101,6 +117,8 @@ Change to left tab line			CTRL + x <key-left>
 New frame				CTRL + x 5 2
 Delete frame				CTRL + x 5 0
 Change frame				CTRL + x 5 o
+Display buffer in another frame		CTRL + x 5 CTRL + o
+Display file in another frame		CTRL + x 5 CTRL + f
 
 
 Incremental search forward		CTRL + s
@@ -156,8 +174,8 @@ Search word on documentation		CTRL + h d
 Search on source code			CTRL + h 4 s
 Emacs License (GPL 3.0)			CTRL + h CTRL + c
 About page				CTRL + h CTRL + a
-Emacs news				CTRL + h CTRL + n
-Emacs news (specific version)		CTRL + u CTRL + h CTRL + n
+Emacs news				CTRL + h n
+Emacs news (specific version)		CTRL + u CTRL + h n
 
 
 Quit help buffer			q
@@ -201,7 +219,8 @@ Whitespace mode				whitespace-mode
 Delete duplicate lines			delete-duplicate-lines
 Resize windows				window-divider-mode
 Undo window changes			winner-mode
-Check changes in file			diff, diff-buffers, diff-buffer-with-file
+Swap two windows			window-swap-states
+Check differences in files		diff, diff-buffers, diff-buffer-with-file, ediff, ediff-buffers
 Compile a program			compile
 Font info				describe-fontset
 Face info				describe-face
@@ -239,16 +258,20 @@ Count words inside a region		count-words
 Count lines inside a page		count-lines-page
 Time Emacs has been open		emacs-uptime
 List available colors			list-colors-display
-Repeat mode				repeat-mode
-Describe Repeat mode keymap		describe-repeat-maps
 Describe a character			describe-char
 Deprioritize buffer			bury-buffer
 Measure execution time of function	benchmark, benchmark-run, benchmark-run-compiled
 Show current directory			pwd
+Enable EditorConfig support		editorconfig-mode
+Give a completion suggestion		completion-preview-mode
 
 
 ## org-mode
 Open link				org-open-at-point		CTRL + c CTRL + o
+Create sparse tree (Search category)	org-sparse-tree			CTRL + c /
+Org occur (Search regexp)		org-occur			CTRL + c / /, CTRL + c / r
+Next sparse tree match			next-error			ALT + g n
+Previous sparse tree match		previous-error			ALT + g p
 
 
 ## calc
@@ -281,31 +304,37 @@ Debug if message matches regexp		debug-on-message
 Debug if there is an error		debug-on-error
 
 
+## repeat
+Repeat most recently executed command	repeat				CTRL + x z
+Mode that enables repeating commands	repeat-mode
+Repeat mode transient keymaps		describe-repeat-maps
+
+
 ## Emacs Variables
 Check directory native compilation	native-comp-eln-load-path
 Move deleted files to trash		delete-by-moving-to-trash
 Emacs Compilation Flags			system-configuration-options
 Emacs Compilation Flags			system-configuration-features
-Minor modes in buffer			minor-mode-alist
-Check active major mode			major-mode
-Determine major mode by start text	magic-mode-alist
 Contains installed packages		package-activated-list
 Lexical binding				lexical-binding
 Default action for display-buffer	display-buffer-base-action
 Mouse behaviour				scroll-step, scroll-conservatively, mouse-wheel-progressive-speed
 List of version control backends	vc-handled-backends
 Functions to complete text		completion-at-point-functions
-Shows major modes used on files		auto-mode-alist
 List all packages			package-activated-list
 Variables saved by savehist-mode	savehist-additional-variables
 Execute function before Emacs closes	kill-emacs-hook
 Display active major mode		major-mode
+Shows major modes used on files		auto-mode-alist
+Specify alternate major mode		major-mode-remap-alist
+Determine major mode by start text	magic-mode-alist
 Display active minor modes		minor-mode-list
 Mode line displayed minor modes		minor-mode-alist
 Mode line display template		mode-line-format
 Compile .elc files asynchronously	native-comp-jit-compilation
 Change tab-line close behaviour		tab-line-close-tab-function
 Get full name (path) of file		buffer-file-name
+Enable .dir-locals.el			enable-dir-local-variables
 
 
 ## Packages
@@ -322,6 +351,7 @@ A list of lists of feature symbols	treesit-font-lock-feature-list
 Explore current buffer’s syntax tree	treesit-explore-mode
 
 # LSP
+Install specified lsp server		lsp-install-server
 Shutdown lsp server			lsp-shutdown-workspace
 Find symbol definition			lsp-find-definition			SUPER + l g r
 Find symbol reference			lsp-find-references			SUPER + l g g

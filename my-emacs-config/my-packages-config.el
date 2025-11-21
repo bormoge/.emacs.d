@@ -14,7 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 (setq package-vc-selected-packages
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
@@ -22,6 +22,100 @@
 
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
+
+;; Use doom-modeline, a modified version of the modeline
+(use-package doom-modeline
+  :ensure t
+  :init
+  (doom-modeline-mode 1)
+  ;; :hook (after-init . doom-modeline-mode)
+  :custom ;; Does this package have more options than treemacs?
+  (doom-modeline-support-imenu t)
+  (doom-modeline-height 27)
+  (doom-modeline-bar-width 1)
+  (doom-modeline-hud nil)
+  (doom-modeline-window-width-limit 85)
+  (doom-modeline-spc-face-overrides nil)
+  (doom-modeline-project-detection 'project)
+  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-icon t)
+  (doom-modeline-major-mode-icon t)
+  (doom-modeline-major-mode-color-icon t)
+  (doom-modeline-buffer-state-icon t)
+  (doom-modeline-buffer-modification-icon t)
+  (doom-modeline-lsp-icon t)
+  (doom-modeline-time-icon t)
+  (doom-modeline-time-live-icon t)
+  (doom-modeline-time-analogue-clock t)
+  (doom-modeline-time-clock-size 0.7)
+  (doom-modeline-unicode-fallback nil)
+  (doom-modeline-buffer-name t)
+  (doom-modeline-highlight-modified-buffer-name t)
+  (doom-modeline-column-zero-based t)
+  (doom-modeline-percent-position '(-3 "%p"))
+  (doom-modeline-position-line-format '("L%l"))
+  (doom-modeline-position-column-format '("C%c"))
+  (doom-modeline-position-column-line-format '("%l:%c"))
+  (doom-modeline-minor-modes t)
+  ;; (doom-modeline-enable-word-count t)
+  ;; (doom-modeline-continuous-word-count-modes '(text-mode markdown-mode gfm-mode org-mode))
+  (doom-modeline-continuous-word-count-modes nil)
+  (doom-modeline-buffer-encoding t)
+  (doom-modeline-indent-info nil)
+  ;; (doom-modeline-total-line-number t)
+  (doom-modeline-vcs-icon t)
+  (doom-modeline-vcs-max-length 15)
+  (doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
+  (doom-modeline-vcs-state-faces-alist
+      '((needs-update . (doom-modeline-warning bold))
+        (removed . (doom-modeline-urgent bold))
+        (conflict . (doom-modeline-urgent bold))
+        (unregistered . (doom-modeline-urgent bold))))
+  (doom-modeline-check-icon t)
+  (doom-modeline-check-simple-format nil)
+  (doom-modeline-number-limit 99)
+  (doom-modeline-project-name t)
+  (doom-modeline-workspace-name t)
+  (doom-modeline-persp-name t)
+  (doom-modeline-display-default-persp-name nil)
+  (doom-modeline-persp-icon t)
+  (doom-modeline-lsp t)
+  (doom-modeline-github nil)
+  (doom-modeline-github-interval (* 30 60))
+  (doom-modeline-modal t)
+  (doom-modeline-modal-icon t)
+  (doom-modeline-modal-modern-icon t)
+  (doom-modeline-always-show-macro-register nil)
+  (doom-modeline-mu4e nil)
+  ;; (mu4e-alert-enable-mode-line-display)
+  (doom-modeline-gnus t)
+  (doom-modeline-gnus-timer 2)
+  ;; (doom-modeline-gnus-excluded-groups '("dummy.group"))
+  (doom-modeline-irc t)
+  ;; (doom-modeline-irc-stylize #'doom-modeline-shorten-irc) ;;'identity
+  (doom-modeline-battery t)
+  (doom-modeline-time t)
+  (doom-modeline-display-misc-in-all-mode-lines t)
+  (doom-modeline-buffer-file-name-function #'identity)
+  (doom-modeline-buffer-file-truename-function #'identity)
+  (doom-modeline-env-version t)
+  (doom-modeline-env-enable-python t)
+  (doom-modeline-env-enable-ruby t)
+  (doom-modeline-env-enable-perl t)
+  (doom-modeline-env-enable-go t)
+  (doom-modeline-env-enable-elixir t)
+  (doom-modeline-env-enable-rust t)
+  ;; (doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
+  ;; (doom-modeline-env-ruby-executable "ruby")
+  ;; (doom-modeline-env-perl-executable "perl")
+  ;; (doom-modeline-env-go-executable "go")
+  ;; (doom-modeline-env-elixir-executable "iex")
+  ;; (doom-modeline-env-rust-executable "rustc")
+  (doom-modeline-env-load-string "...")
+  ;; (doom-modeline-always-visible-segments '(mu4e irc))
+  ;; (doom-modeline-before-update-env-hook nil)
+  ;; (doom-modeline-after-update-env-hook nil)
+  )
 
 ;; Used to highlight lines changed
 (use-package diff-hl
@@ -480,7 +574,7 @@
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-sort-length-enable nil) ;; default: t
   (prescient-sort-full-matches-first t) ;; default: nil
-  (prescient-history-length 50) ;; default: 100
+  (prescient-history-length 100) ;; default: 100
   (prescient-frequency-decay 0.997) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
