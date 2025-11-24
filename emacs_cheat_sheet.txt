@@ -77,6 +77,9 @@ Decrease global text scale		CTRL + ALT + <wheel-down>
 Select text				CTRL + SPACE
 Select all				CTRL + x h
 Delete selected text			CTRL + SPACE <backspace>
+Delete word                             CTRL + <backspace>
+Delete line                             CTRL + SHIFT + <backspace>
+Delete rest of line                     CTRL + k
 Select text while moving cursor		SHIFT + <key-up>, SHIFT + <key-down>, SHIFT + <key-left>, SHIFT + <key-right>
 Delete up to and including character	ALT + z
 
@@ -264,7 +267,10 @@ Measure execution time of function	benchmark, benchmark-run, benchmark-run-compi
 Show current directory			pwd
 Enable EditorConfig support		editorconfig-mode
 Give a completion suggestion		completion-preview-mode
-
+Delete unused native comp. files	native-compile-prune-cache
+Function executed after function	add-hook
+Function executed after variable	add-variable-watcher
+Return list with N elements removed	butlast
 
 ## org-mode
 Open link				org-open-at-point		CTRL + c CTRL + o
@@ -335,6 +341,7 @@ Compile .elc files asynchronously	native-comp-jit-compilation
 Change tab-line close behaviour		tab-line-close-tab-function
 Get full name (path) of file		buffer-file-name
 Enable .dir-locals.el			enable-dir-local-variables
+List of enabled themes			custom-enabled-themes
 
 
 ## Packages

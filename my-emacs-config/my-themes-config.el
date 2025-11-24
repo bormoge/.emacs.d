@@ -3,8 +3,8 @@
   :ensure t
   :config
   ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
+        doom-themes-enable-italic nil) ; if nil, italics is universally disabled
   (load-theme 'doom-dark+ t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -17,17 +17,14 @@
 
   (set-face-attribute 'tab-bar-tab nil
 		      :background "#68217A"
-		      :distant-foreground "#D4D4D4"
 		      :foreground "#D4D4D4"
-		      :box '(:line-width (3 . 3) :color "black" :style flat-button)
 		      :weight 'heavy
-		      :height 130)
+		      :height 1.0)
 
   (set-face-attribute 'tab-bar-tab-inactive nil
 		      :background "#252526"
 		      :foreground "#AEAFAD"
-		      :height 130
-		      :box '(:line-width (3 . 3) :color "black" :style flat-button))
+		      :height 1.0)
 
   ;; Tab Lines
   (load "tab-line")
@@ -35,26 +32,28 @@
   (set-face-attribute 'tab-line-tab nil
 		      :background "#252526"
 		      :foreground "#AEAFAD"
-		      :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		      :height 110)
+		      :height 0.9)
 
   (set-face-attribute 'tab-line-tab-current nil
 		      :background "#68217A"
-		      :distant-foreground "#D4D4D4"
 		      :foreground "#D4D4D4"
 		      :weight 'heavy
-		      :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		      :height 110)
+		      :height 0.9)
 
   (set-face-attribute 'tab-line-tab-inactive nil
 		      :background "#252526"
 		      :foreground "#AEAFAD"
-		      :box '(:line-width (3 . 3) :color "black" :style flat-button)
-		      :height 110)
+		      :height 0.9)
 
   (set-face-attribute 'tab-line-tab-modified nil
-		      :foreground "#E54568"
-		      :background "#130034")
+		      ;;:background "#252526"  ;; remove this line if you want dark-violet background on modified tab lines
+		      :foreground "#E54568"  ;; alt: #E54568, #EE4466, "deep pink", "orange", #DB8E73, "red", #D16969
+		      :height 0.9)
+
+  (set-face-attribute 'tab-line-tab-special nil
+		      :weight 'normal
+		      :slant 'italic
+		      :height 0.9)
   )
 
 ;; spacemacs-theme

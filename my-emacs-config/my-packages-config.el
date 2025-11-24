@@ -14,7 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit treemacs-icons-dired forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 (setq package-vc-selected-packages
       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
@@ -57,6 +57,7 @@
   (doom-modeline-position-column-format '("C%c"))
   (doom-modeline-position-column-line-format '("%l:%c"))
   (doom-modeline-minor-modes t)
+  (doom-modeline-selection-info nil)
   ;; (doom-modeline-enable-word-count t)
   ;; (doom-modeline-continuous-word-count-modes '(text-mode markdown-mode gfm-mode org-mode))
   (doom-modeline-continuous-word-count-modes nil)
@@ -119,11 +120,27 @@
 
 ;; Used to highlight lines changed
 (use-package diff-hl
-  :ensure t)
+  :ensure t
+  :config
+  ;; Activate diff-hl in all buffers.
+  (global-diff-hl-mode)
+  )
 
 ;; Package used to manage git
 (use-package magit
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Integrate diff-hl with magit.
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  ;; Add tracked files to magit-status.
+  (magit-add-section-hook
+   'magit-status-sections-hook
+   'magit-insert-tracked-files
+   nil
+   'append)
+  :commands (magit-status magit-dispatch)
+  )
 
 ;; Package used to manage git forges (GitHub, GitLab, Codeberg, etc...)
 (use-package forge
@@ -257,8 +274,14 @@
 (use-package yasnippet
   :ensure t
   :init
+  ;; YASnippet global mode
   (yas-global-mode 1)
+  ;; Remap the snippet expansion from TAB to H-TAB
+  (define-key yas-minor-mode-map [(tab)] nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
   :config
+  ;; YASnippet directories
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   )
 
@@ -290,7 +313,14 @@
 
 ;; Focus on selected text
 (use-package focus
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
+  (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
+  (add-hook 'focus-mode-hook #'lsp-focus-mode)
+  :commands (focus-mode focus-read-only-mode)
+  )
 
 (use-package lsp-focus
   :ensure t
@@ -298,17 +328,24 @@
 
 ;; avy
 (use-package avy
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Mapping keys for avy
+  (global-set-key (kbd "C-: c 1") 'avy-goto-char)
+  (global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
+  (global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
+  (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
+  :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
+  )
 
 ;; ledger-mode
 (use-package ledger-mode
   :ensure t
-  :defer t)
-
-;; flycheck intregration for ledger-mode
-(use-package flycheck-ledger
-  :ensure t
-  :after (flycheck ledger))
+  :defer t
+  :config
+  (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+  )
 
 ;; Automatically show available commands
 ;; Already preinstalled in Emacs 30
@@ -334,7 +371,13 @@
 
 ;; vundo
 (use-package vundo
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Map the `undo' function onto C-x u
+  (define-key (current-global-map) (kbd "C-x u") 'vundo)
+  :commands (vundo)
+  )
 
 ;; Highlight cursor line
 (use-package hl-line
@@ -418,6 +461,7 @@
 ;; Corfu
 (use-package corfu
   :ensure t
+  :defer t
   :hook (((java-mode
 	  java-ts-mode
 	  emacs-lisp-mode) . corfu-mode)
@@ -505,9 +549,11 @@
 (when (package-installed-p 'consult)
   (use-package consult-dir
     :ensure t
+    :defer t
     :after consult)
   (use-package consult-flycheck
     :ensure t
+    :defer t
     :after consult)
   (use-package consult-lsp
     :ensure t
@@ -528,6 +574,7 @@
 ;; Embark
 (use-package embark
   :ensure t
+  :defer t
   :bind
   (("C-, ." . embark-act)
    ("C-, ," . embark-dwim)
@@ -544,15 +591,33 @@
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none)))))
+                 (window-parameters (mode-line-format . none))))
+
+  ;; Change the value of prefix-help-command. Default: describe-prefix-bindings
+  (defun change-between-describe-prefix-and-embark-prefix ()
+    "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
+    (interactive)
+    (if (equal prefix-help-command 'describe-prefix-bindings)
+	(progn
+	  (setq prefix-help-command #'embark-prefix-help-command)
+	  (message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
+      (progn
+	(setq prefix-help-command #'describe-prefix-bindings)
+	(message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
+      ))
+
+  (global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
+  )
 
 (use-package embark-consult
   :ensure t
+  :defer t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package avy-embark-collect
   :ensure t
+  :defer t
   :after (embark avy))
 
 ;; Orderless
@@ -584,7 +649,7 @@
 (use-package corfu-prescient
   :ensure t
   :demand t
-  :after corfu prescient
+  :after (corfu prescient)
   :custom
   ;; Sorting.
   (corfu-prescient-enable-sorting t) ;; default: t
@@ -649,7 +714,7 @@
 	 ((js-mode javascript-mode js2-mode js-ts-mode) . lsp-deferred)
 	 ((typescript-mode typescript-ts-mode) . lsp-deferred)
 	 ((js-json-mode json-ts-mode) . lsp-deferred)
-	 (lsp-completion-mode-hook . corfu-mode)
+	 (lsp-completion-mode . corfu-mode)
 	 (lsp-completion-at-point-functions . lsp-completion-at-point)
 	 (lsp-mode . lsp-lens-mode)
 	 (lsp-mode . lsp-enable-which-key-integration)
@@ -671,6 +736,7 @@
 ;; lsp-java
 (use-package lsp-java
   :ensure t
+  :defer t
   :after lsp-mode
   :config
   ;; (add-hook 'java-mode-hook 'lsp)
@@ -684,22 +750,27 @@
 
 ;; lsp-clojure
 (use-package lsp-clojure
+  :defer t
   :after lsp-mode)
 
 ;; lsp-javascript (javascript / typescript)
 (use-package lsp-javascript
+  :defer t
   :after lsp-mode)
 
 ;; lsp-html
 (use-package lsp-html
+  :defer t
   :after lsp-mode)
 
 ;; lsp-css
 (use-package lsp-css
+  :defer t
   :after lsp-mode)
 
 ;; lsp-css
 (use-package lsp-json
+  :defer t
   :after lsp-mode)
 
 ;; LSP booster
@@ -875,62 +946,5 @@
   ;;  'org-babel-load-languages
   ;;  '((js . t)))
   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;; Packages configuration
-
-;; diff-hl
-;; Activate in all buffers diff-hl.
-(global-diff-hl-mode)
-
-;; To integrate diff-hl with magit.
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-
-;; Magit
-;; Add tracked files to magit-status.
-(magit-add-section-hook
-   'magit-status-sections-hook
-   'magit-insert-tracked-files
-   nil
-   'append)
-
-;; YASnippets
-;; Remap the snippet expansion from TAB to H-TAB
-(define-key yas-minor-mode-map [(tab)] nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
-
-;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
-(add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
-(add-hook 'focus-mode-hook #'lsp-focus-mode)
-
-;; vundo
-;; Map the `undo' function onto C-x u
-(define-key (current-global-map) (kbd "C-x u") 'vundo)
-
-;; avy
-;; Mapping keys for avy
-(global-set-key (kbd "C-: c 1") 'avy-goto-char)
-(global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
-(global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
-(global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
-
-;; embark
-;; Change the value of prefix-help-command. Default: describe-prefix-bindings
-(defun change-between-describe-prefix-and-embark-prefix ()
-  "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
-  (interactive)
-  (if (equal prefix-help-command 'describe-prefix-bindings)
-      (progn
-	(setq prefix-help-command #'embark-prefix-help-command)
-	(message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
-    (progn
-      (setq prefix-help-command #'describe-prefix-bindings)
-      (message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
-    ))
-
-(global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
