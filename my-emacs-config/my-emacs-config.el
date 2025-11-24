@@ -105,10 +105,18 @@
 (tab-bar-mode t)
 (setq tab-bar-history-mode nil)
 (setq tab-bar-auto-width-max '((300) 30))
+;; tab-bar-tab-name-current, tab-bar-tab-name-current-with-count, tab-bar-tab-name-truncated, tab-bar-tab-name-all
+(setq tab-bar-tab-name-function #'tab-bar-tab-name-current)
+(setq tab-bar-tab-name-truncated-max 20)
+(setq tab-bar-tab-name-ellipsis t)
 ;;(setq tab-bar-auto-width nil)
 
 ;; Tab Lines
 (global-tab-line-mode t)
+;; tab-line-tab-name-buffer, tab-line-tab-name-truncated-buffer
+(setq tab-line-tab-name-function #'tab-line-tab-name-buffer)
+(setq tab-line-tab-name-truncated-max 20)
+(setq tab-line-tab-name-ellipsis t)
 
 ;; Enable menus
 (menu-bar-mode t)
@@ -256,6 +264,12 @@
 ;; Display name of a "function" (depends of the context)
 (setq which-func-update-delay 0.5)
 (setopt which-function-mode t)
+
+;; Blink the screen
+(setq visible-bell t)
+
+;; Use spaces for indentation
+(setq-default indent-tabs-mode nil)
 
 ;; No backup files
 (setq make-backup-files nil)

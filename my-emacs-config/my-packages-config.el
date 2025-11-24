@@ -14,7 +14,7 @@
         ("melpa-stable" . 1)))
 
 (setq package-selected-packages
-      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons gnu-elpa-keyring-update direnv flycheck-ledger ledger-mode focus flycheck treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
@@ -53,6 +53,7 @@
   (doom-modeline-position-column-format '("C%c"))
   (doom-modeline-position-column-line-format '("%l:%c"))
   (doom-modeline-minor-modes t)
+  (doom-modeline-selection-info nil)
   ;; (doom-modeline-enable-word-count t)
   ;; (doom-modeline-continuous-word-count-modes '(text-mode markdown-mode gfm-mode org-mode))
   (doom-modeline-continuous-word-count-modes nil)
@@ -115,11 +116,27 @@
 
 ;; Used to highlight lines changed
 (use-package diff-hl
-  :ensure t)
+  :ensure t
+  :config
+  ;; Activate diff-hl in all buffers.
+  (global-diff-hl-mode)
+  )
 
 ;; Package used to manage git
 (use-package magit
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Integrate diff-hl with magit.
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  ;; Add tracked files to magit-status.
+  (magit-add-section-hook
+   'magit-status-sections-hook
+   'magit-insert-tracked-files
+   nil
+   'append)
+  :commands (magit-status magit-dispatch)
+  )
 
 ;; Package used to manage git forges (GitHub, GitLab, Codeberg, etc...)
 (use-package forge
@@ -247,29 +264,47 @@
 (use-package yasnippet
   :ensure t
   :init
+  ;; YASnippet global mode
   (yas-global-mode 1)
+  ;; Remap the snippet expansion from TAB to H-TAB
+  (define-key yas-minor-mode-map [(tab)] nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
   :config
+  ;; YASnippet directories
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   )
 
 ;; Focus on selected text
 (use-package focus
-  :ensure t)
+  :ensure t
+  :defer t
+  :config
+  ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
+  ;; (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
+  :commands (focus-mode focus-read-only-mode)
+  )
+
+;; avy
+(use-package avy
+  :ensure t
+  :defer t
+  :config
+  ;; Mapping keys for avy
+  (global-set-key (kbd "C-: c 1") 'avy-goto-char)
+  (global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
+  (global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
+  (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
+  :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
+  )
 
 ;; ledger-mode
 (use-package ledger-mode
   :ensure t
-  :defer t)
-
-;; Syntax checking using Flycheck
-(use-package flycheck
-  :ensure t
-  :hook (ledger-mode . flycheck-mode))
-
-;; flycheck intregration for ledger-mode
-(use-package flycheck-ledger
-  :ensure t
-  :after (flycheck ledger))
+  :defer t
+  :config
+  (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+  )
 
 ;; Automatically show available commands
 ;; Already preinstalled in Emacs 30
@@ -375,34 +410,5 @@
   ;;  'org-babel-load-languages
   ;;  '((js . t)))
   )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;; Packages configuration
-
-;; diff-hl
-;; Activate in all buffers diff-hl.
-(global-diff-hl-mode)
-
-;; To integrate diff-hl with magit.
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-
-;; Magit
-;; Add tracked files to magit-status.
-(magit-add-section-hook
-   'magit-status-sections-hook
-   'magit-insert-tracked-files
-   nil
-   'append)
-
-;; YASnippets
-;; Remap the snippet expansion from TAB to H-TAB
-(define-key yas-minor-mode-map [(tab)] nil)
-(define-key yas-minor-mode-map (kbd "TAB") nil)
-(define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
-
-;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
-;; (add-to-list 'focus-mode-to-thing '(java-ts-mode . paragraph))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
