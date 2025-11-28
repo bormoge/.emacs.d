@@ -4,21 +4,19 @@
 ;; Priority for installation
 (setq package-archives
       '(("gnu"          . "https://elpa.gnu.org/packages/")
-	("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
         ("melpa"        . "https://melpa.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/"))
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("gnu-devel"    . "https://elpa.gnu.org/devel/"))
       package-archive-priorities
-      '(("gnu"          . 4)
-        ("nongnu"       . 3)
-        ("melpa"        . 2)
-        ("melpa-stable" . 1)))
+      '(("gnu"          . 5)
+        ("nongnu"       . 4)
+        ("melpa"        . 3)
+        ("melpa-stable" . 2)
+        ("gnu-devel"    . 1)))
 
 (setq package-selected-packages
-      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
-
-(setq package-vc-selected-packages
-      '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
-	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
+      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
@@ -122,6 +120,8 @@
 (use-package diff-hl
   :ensure t
   :config
+  ;; Ensure VC is enabled
+  ;;(setq vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   ;; Activate diff-hl in all buffers.
   (global-diff-hl-mode)
   )
@@ -285,16 +285,6 @@
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   )
 
-;; Packages to manage PostgreSQL
-;; To upgrade use package-vc-upgrade
-(unless (package-installed-p 'pg)
-  (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
-(unless (package-installed-p 'pgmacs)
-  (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
-
-(require 'pg)
-(require 'pgmacs)
-
 ;; Package to fold code
 ;; To upgrade use package-vc-upgrade
 ;; (unless (package-installed-p 'treesit-fold)
@@ -373,9 +363,9 @@
 (use-package vundo
   :ensure t
   :defer t
-  :config
-  ;; Map the `undo' function onto C-x u
-  (define-key (current-global-map) (kbd "C-x u") 'vundo)
+  :init
+  ;; Map the `undo' function onto C-x M-u
+  (define-key (current-global-map) (kbd "C-x M-u") 'vundo)
   :commands (vundo)
   )
 
@@ -451,6 +441,63 @@
   :after (ibuffer)
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
+(use-package nerd-icons-grep
+  :ensure t
+  :init
+  (nerd-icons-grep-mode)
+  :custom
+  ;; This setting is a pre-requirement, so an icon can be displayed near each
+  ;; heading
+  (grep-use-headings t)
+  )
+
+(use-package nerd-icons-xref
+  :ensure t
+  :init
+  (nerd-icons-xref-mode)
+  )
+
+(use-package smartparens
+  :ensure t
+  :hook (prog-mode text-mode markdown-mode org-mode) ;; Add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config)
+  )
+
+;; Packages to manage PostgreSQL
+;; To upgrade use package-vc-upgrade
+
+;; pgmacs
+(use-package pgmacs
+  :vc (:url "https://github.com/emarsden/pgmacs"
+       :rev :newest
+       :branch "main"
+       :vc-backend Git)
+  :ensure t
+  :defer t)
+
+;; pgmacs
+(use-package pg
+  :vc (:url "https://github.com/emarsden/pg-el"
+       :rev :newest
+       :branch "main"
+       :vc-backend Git)
+  :ensure t
+  :defer t)
+
+;; (setq package-vc-selected-packages
+;;       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
+;; 	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
+
+;; (unless (package-installed-p 'pg)
+;;   (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
+;; (unless (package-installed-p 'pgmacs)
+;;   (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
+
+;; (require 'pg)
+;; (require 'pgmacs)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -510,8 +557,8 @@
 (use-package vertico
   :ensure t
   :custom
-  (vertico-scroll-margin 1) ;; Different scroll margin
-  (vertico-count 8) ;; Show more candidates
+  (vertico-scroll-margin 2) ;; Different scroll margin
+  (vertico-count 12) ;; Show more candidates
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
@@ -521,6 +568,9 @@
              ("<backtab>" . vertico-insert)
 	     ("C-M-n" . vertico-next-group)
 	     ("C-M-p" . vertico-previous-group)
+             ("<wheel-down>" . next-line)
+             ("<wheel-up>" . previous-line)
+             ("<mouse-1>" . vertico-exit)
 	     )
   :init
   (vertico-mode))
@@ -544,7 +594,113 @@
 
 ;; Consult
 (use-package consult
-  :ensure t)
+  :ensure t
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-c M-x" . consult-mode-command)
+         ("C-c h" . consult-history)
+         ("C-c k" . consult-kmacro)
+         ("C-c m" . consult-man)
+         ("C-c i" . consult-info)
+         ([remap Info-search] . consult-info)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ;;("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-'" . consult-register-store)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g r" . consult-grep-match)
+         ("M-g f m" . consult-flymake)             ;; Alternative: consult-flycheck
+         ("M-g f c" . consult-flymake)
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g M-o" . consult-org-heading)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+         ("M-s M-d" . consult-fd)
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history)                 ;; orig. previous-matching-history-element
+         )
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Tweak the register preview for `consult-register-load',
+  ;; `consult-register-store' and the built-in commands.  This improves the
+  ;; register formatting, adds thin separator lines, register sorting and hides
+  ;; the window mode line.
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep consult-man
+   consult-bookmark consult-recent-file consult-xref
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+)
 
 (when (package-installed-p 'consult)
   (use-package consult-dir
@@ -697,9 +853,9 @@
   :ensure t
   :init
   ;; Set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
-  (define-key lsp-mode-map (kbd "s-l") nil)
+  ;; (setq lsp-keymap-prefix "C-c l") ;; Default: s-l
+  ;; (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  ;; (define-key lsp-mode-map (kbd "s-l") nil)
   (setq lsp-idle-delay 0.500) ;; lsp-idle-delay determines how often lsp-mode will refresh.
   (setq lsp-completion-provider :capf)
   (setq lsp-diagnostics-provider :auto) ;;:flymake ;; Use Flymake or Flycheck for diagnostics
@@ -927,6 +1083,8 @@
   (setq pdf-info-epdfinfo-program "~/.emacs.d/elpa/pdf-tools-1.1.0/epdfinfo")
   ;;(setq-default pdf-view-display-size 'fit-page)
   ;;(setq pdf-annot-activate-created-annotations t)
+  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+  (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

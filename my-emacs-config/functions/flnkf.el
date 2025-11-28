@@ -30,33 +30,34 @@
 (defun flnkf-file-reader (path-of-file &optional text-scale-number tab-bar-or-tab-line bury-current-buffer)
   "Reads a regular file and returns a buffer with links to the valid file paths found inside the read file."
   (if (file-regular-p (expand-file-name path-of-file))
-      (if (get-buffer (expand-file-name path-of-file))
-	  (switch-to-buffer (expand-file-name path-of-file))
-	(let ((flnkf-buffer (switch-to-buffer (expand-file-name path-of-file))))
-	  (with-current-buffer flnkf-buffer
-            (erase-buffer)
-	    ;; Implicitely set global minor modes assigning major mode (Inheritance of minor modes perhaps?)
-	    (text-mode)
-	    ;; Explicitely set minor mode related to global mode
-	    ;; (If you don't set major mode, you need to set all minor mode variables)
-	    ;; (display-line-numbers-mode nil)
-	    (let ((text-scale-number (or text-scale-number text-scale-mode-amount)))
-	      (text-scale-set text-scale-number))
-            (insert-file-contents path-of-file)
-            (goto-char (point-min))
-            (while (not (eobp))
-              (let ((line (thing-at-point 'line t)))
-		;; 'file-regular-p' for regular files // 'file-exists-p' for any type of file // 'file-directory-p' for directories
-		(when (and line (file-exists-p (string-trim line)))
-		  ;; Replace the line with a linked version
-		  (beginning-of-line)
-		  (delete-region (line-beginning-position) (line-end-position))
-		  (flnkf-link-text (string-trim line) text-scale-number tab-bar-or-tab-line bury-current-buffer)))
-              (forward-line 1))
-	    (read-only-mode 1)
-	    (beginning-of-buffer)
-	    flnkf-buffer)))
-	(switch-to-buffer "*scratch*")))
+      (let ((buffer-file-name (concat "[flnkf] " (substring (format "%s" (last (file-name-split (expand-file-name path-of-file)) 1)) 1 -1))))
+        (if (get-buffer buffer-file-name)
+	    (switch-to-buffer buffer-file-name)
+	  (let ((flnkf-buffer (switch-to-buffer buffer-file-name)))
+	    (with-current-buffer flnkf-buffer
+              (erase-buffer)
+	      ;; Implicitely set global minor modes assigning major mode (Inheritance of minor modes perhaps?)
+	      (text-mode)
+	      ;; Explicitely set minor mode related to global mode
+	      ;; (If you don't set major mode, you need to set all minor mode variables)
+	      ;; (display-line-numbers-mode nil)
+	      (let ((text-scale-number (or text-scale-number text-scale-mode-amount)))
+	        (text-scale-set text-scale-number))
+              (insert-file-contents path-of-file)
+              (goto-char (point-min))
+              (while (not (eobp))
+                (let ((line (thing-at-point 'line t)))
+		  ;; 'file-regular-p' for regular files // 'file-exists-p' for any type of file // 'file-directory-p' for directories
+		  (when (and line (file-exists-p (string-trim line)))
+		    ;; Replace the line with a linked version
+		    (beginning-of-line)
+		    (delete-region (line-beginning-position) (line-end-position))
+		    (flnkf-link-text (string-trim line) text-scale-number tab-bar-or-tab-line bury-current-buffer)))
+                (forward-line 1))
+	      (read-only-mode 1)
+	      (beginning-of-buffer)
+	      flnkf-buffer))))
+        (switch-to-buffer "*scratch*")))
 
 (defun flnkf-link-text (text-to-link &optional text-scale-number tab-bar-or-tab-line bury-current-buffer)
   "Put a clickable link in the text to open the file in a new tab.\nIf the path includes `flnkf-directory', it uses `flnkf-file-reader'."

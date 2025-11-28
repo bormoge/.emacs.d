@@ -86,8 +86,19 @@
 (define-key (current-global-map) (kbd "H-d 3") 'ediff)
 (define-key (current-global-map) (kbd "H-d 4") 'ediff-buffers)
 
+;; Convert tabs to spaces or spaces to tabs
+(define-key (current-global-map) (kbd "H-x s-<tab>") 'tabify)
+(define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
+(define-key (current-global-map) (kbd "H-x s-<iso-lefttab>") 'untabify)
+(define-key (current-global-map) (kbd "H-x s-w") 'whitespace-mode)
+
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
+
+;; Bidirectional editing config
+(setq-default bidi-paragraph-direction 'left-to-right)
+(if (version<= "27.1" emacs-version)
+    (setq bidi-inhibit-bpa t))
 
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
@@ -200,6 +211,7 @@
 ;; (set-default 'cursor-type '(bar . 7)) ;; default: t
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
+(setq global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
 (global-auto-revert-mode t) ;; Nil by default
 
 ;; Scroll settings
@@ -263,12 +275,14 @@
 
 ;; Display name of a "function" (depends of the context)
 (setq which-func-update-delay 0.5)
+(setq which-func-display 'header)
 (setopt which-function-mode t)
 
 ;; Blink the screen
 (setq visible-bell t)
 
 ;; Use spaces for indentation
+;; Alternatively, you can modify the variable `tab-width'
 (setq-default indent-tabs-mode nil)
 
 ;; No backup files

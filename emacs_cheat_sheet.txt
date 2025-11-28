@@ -77,9 +77,9 @@ Decrease global text scale		CTRL + ALT + <wheel-down>
 Select text				CTRL + SPACE
 Select all				CTRL + x h
 Delete selected text			CTRL + SPACE <backspace>
-Delete word                             CTRL + <backspace>
-Delete line                             CTRL + SHIFT + <backspace>
-Delete rest of line                     CTRL + k
+Delete word				CTRL + <backspace>
+Delete line				CTRL + SHIFT + <backspace>
+Delete rest of line			CTRL + k
 Select text while moving cursor		SHIFT + <key-up>, SHIFT + <key-down>, SHIFT + <key-left>, SHIFT + <key-right>
 Delete up to and including character	ALT + z
 
@@ -95,6 +95,7 @@ Execute command				ALT + x
 Apropos					ALT + x apropos
 Command completition			ALT + x <TAB>
 Evaluate expression			ALT + :
+Evaluate expression at point            CTRL x + CTRL + e
 Repeat previous command			CTRL + x z
 
 
@@ -155,14 +156,18 @@ Search words on internet		ALT + s ALT + w
 Metahelp				CTRL + h CTRL + h
 General documentation			CTRL + h i
 General documentation (other window)	CTRL + h 4 i
+Describe input method			CTRL + h I
 Emacs documentation			CTRL + h r
 Help					CTRL + h ?
+Emacs news				CTRL + h n
+Emacs news (specific version)		CTRL + u CTRL + h n
 Describe function			CTRL + h f
 Search in documentation for function	CTRL + h F
 Describe key				CTRL + h k
 Search in documentation for key		CTRL + h K
 Describe key briefly			CTRL + h c
 Key location				CTRL + h w
+Show popular commands and bindings	CTRL + h CTRL + q
 Describe variable			CTRL + h v
 Describe command			CTRL + h x
 Describe any symbol			CTRL + h o
@@ -172,13 +177,21 @@ Describe buffer modes			CTRL + h m
 Messages buffer				CTRL + h e
 List key bindings			CTRL + h b
 Show inputs log				CTRL + h l
+Describe a natural language		CTRL + h L
 Show categories by keyword		CTRL + h p
+Info about packages			CTRL + h P
 Search word on documentation		CTRL + h d
 Search on source code			CTRL + h 4 s
+Help at point				CTRL + h .
 Emacs License (GPL 3.0)			CTRL + h CTRL + c
+Emacs Warranty				CTRL + h CTRL + w
 About page				CTRL + h CTRL + a
-Emacs news				CTRL + h n
-Emacs news (specific version)		CTRL + u CTRL + h n
+Debugging help				CTRL + h CTRL + d
+Info about where to get packages	CTRL + h CTRL + e
+About GNU Project (webpage)		CTRL + h g
+Info about obtaining Emacs		CTRL + h CTRL + o
+Info about Emacs problems		CTRL + h CTRL + p
+Emacs to-do list			CTRL + h CTRL + t
 
 
 Quit help buffer			q
@@ -201,6 +214,7 @@ Break line at point and indent		ALT + j
 Kill sentence				ALT + k
 
 
+Find references of keyword at point	ALT + ?
 Check definition of keyword		ALT + .
 Return from definition to keyword	ALT + ,
 
