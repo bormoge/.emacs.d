@@ -4,17 +4,19 @@
 ;; Priority for installation
 (setq package-archives
       '(("gnu"          . "https://elpa.gnu.org/packages/")
-	("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
         ("melpa"        . "https://melpa.org/packages/")
-        ("melpa-stable" . "https://stable.melpa.org/packages/"))
+        ("melpa-stable" . "https://stable.melpa.org/packages/")
+        ("gnu-devel"    . "https://elpa.gnu.org/devel/"))
       package-archive-priorities
-      '(("gnu"          . 4)
-        ("nongnu"       . 3)
-        ("melpa"        . 2)
-        ("melpa-stable" . 1)))
+      '(("gnu"          . 5)
+        ("nongnu"       . 4)
+        ("melpa"        . 3)
+        ("melpa-stable" . 2)
+        ("gnu-devel"    . 1)))
 
 (setq package-selected-packages
-      '(doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
@@ -118,6 +120,8 @@
 (use-package diff-hl
   :ensure t
   :config
+  ;; Ensure VC is enabled
+  ;;(setq vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   ;; Activate diff-hl in all buffers.
   (global-diff-hl-mode)
   )
@@ -392,6 +396,30 @@
   :ensure t
   :after (ibuffer)
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
+(use-package nerd-icons-grep
+  :ensure t
+  :init
+  (nerd-icons-grep-mode)
+  :custom
+  ;; This setting is a pre-requirement, so an icon can be displayed near each
+  ;; heading
+  (grep-use-headings t)
+  )
+
+(use-package nerd-icons-xref
+  :ensure t
+  :init
+  (nerd-icons-xref-mode)
+  )
+
+(use-package smartparens
+  :ensure t
+  :hook (prog-mode text-mode markdown-mode org-mode) ;; Add `smartparens-mode` to these hooks
+  :config
+  ;; load default config
+  (require 'smartparens-config)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
