@@ -22,6 +22,9 @@
 ;; Apply packages configuration
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
+;; Load theme(s)
+(load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
+
 ;; Apply configuration after loading .el files
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
 

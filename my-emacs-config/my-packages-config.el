@@ -18,9 +18,6 @@
 (setq package-selected-packages
       '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
-;; Load theme(s)
-(load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
-
 ;; Use doom-modeline, a modified version of the modeline
 (use-package doom-modeline
   :ensure t
