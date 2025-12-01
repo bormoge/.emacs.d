@@ -16,10 +16,7 @@
         ("gnu-devel"    . 1)))
 
 (setq package-selected-packages
-      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg peg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
-
-;; Load theme(s)
-(load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
+      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; Use doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -558,7 +555,7 @@
   :ensure t
   :custom
   (vertico-scroll-margin 2) ;; Different scroll margin
-  (vertico-count 12) ;; Show more candidates
+  (vertico-count 10) ;; Show more candidates
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
@@ -622,7 +619,7 @@
          ("M-g e" . consult-compile-error)
          ("M-g r" . consult-grep-match)
          ("M-g f m" . consult-flymake)             ;; Alternative: consult-flycheck
-         ("M-g f c" . consult-flymake)
+         ("M-g f c" . consult-flycheck)
          ("M-g g" . consult-goto-line)             ;; orig. goto-line
          ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
          ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
@@ -680,6 +677,7 @@
   ;; Optionally configure preview. The default value
   ;; is 'any, such that any key triggers the preview.
   ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "s-.")
   ;; (setq consult-preview-key "M-.")
   ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
   ;; For some commands and buffer sources it is useful to configure the

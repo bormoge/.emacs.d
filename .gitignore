@@ -21,6 +21,7 @@
 .lsp-session-v1
 .mc-lists.el
 flnkf-file.txt
+ede-projects.el
 forge-database.sqlite
 projectile-bookmarks.eld
 projects

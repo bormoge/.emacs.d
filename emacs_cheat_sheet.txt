@@ -95,7 +95,7 @@ Execute command				ALT + x
 Apropos					ALT + x apropos
 Command completition			ALT + x <TAB>
 Evaluate expression			ALT + :
-Evaluate expression at point            CTRL x + CTRL + e
+Evaluate expression at point		CTRL x + CTRL + e
 Repeat previous command			CTRL + x z
 
 
@@ -286,12 +286,14 @@ Function executed after function	add-hook
 Function executed after variable	add-variable-watcher
 Return list with N elements removed	butlast
 
+
 ## org-mode
 Open link				org-open-at-point		CTRL + c CTRL + o
 Create sparse tree (Search category)	org-sparse-tree			CTRL + c /
 Org occur (Search regexp)		org-occur			CTRL + c / /, CTRL + c / r
 Next sparse tree match			next-error			ALT + g n
 Previous sparse tree match		previous-error			ALT + g p
+Indent org files			org-indent-mode
 
 
 ## calc
@@ -356,6 +358,7 @@ Change tab-line close behaviour		tab-line-close-tab-function
 Get full name (path) of file		buffer-file-name
 Enable .dir-locals.el			enable-dir-local-variables
 List of enabled themes			custom-enabled-themes
+Number of garbage collections		gcs-done
 
 
 ## Packages

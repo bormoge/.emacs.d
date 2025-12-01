@@ -24,10 +24,6 @@
 (define-key (current-global-map) (kbd "H-c s c") 'shell-command)
 (define-key (current-global-map) (kbd "H-c t b") 'term)
 
-;; Set keys for tnwmt.el
-;; (define-key (current-global-map) (kbd "H-r") 'tnwmt-read)
-;; (define-key (current-global-map) (kbd "H-s") 'tnwmt-save)
-
 ;; Set keys for the-entire-line.el
 (global-set-key (kbd "M-s-w") 'copy-the-entire-line)
 (global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
@@ -102,6 +98,7 @@
 
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
+(setq display-line-numbers-width nil)
 (setq line-number-mode t)
 (setq column-number-mode t)
 (setq size-indication-mode t)
@@ -284,6 +281,9 @@
 ;; Use spaces for indentation
 ;; Alternatively, you can modify the variable `tab-width'
 (setq-default indent-tabs-mode nil)
+
+;; Follow the compilation buffer
+(setq compilation-scroll-output t)
 
 ;; No backup files
 (setq make-backup-files nil)
