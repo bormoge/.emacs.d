@@ -24,11 +24,6 @@
 (define-key (current-global-map) (kbd "H-c s c") 'shell-command)
 (define-key (current-global-map) (kbd "H-c t b") 'term)
 
-;; Set keys for the-entire-line.el
-(global-set-key (kbd "M-s-w") 'copy-the-entire-line)
-(global-set-key (kbd "M-s-y") 'copy-paste-the-entire-line)
-(global-set-key (kbd "M-s-d") 'delete-the-entire-line)
-
 ;; Delete duplicate lines using Hyper + ALT + <backspace>
 (define-key (current-global-map) (kbd "H-M-<backspace>") 'delete-duplicate-lines)
 
@@ -188,6 +183,8 @@
 
 ;; Display time and date on the minibuffer (neat stuff)
 (setq display-time-day-and-date t)
+(setq display-time-default-load-average nil)
+(setq display-time-format "%I:%M %a %d-%m-%Y")
 (display-time-mode t)
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
@@ -321,11 +318,10 @@
 ;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
 (defun check-if-file-at-startup ()
   "Check if a file is being opened at startup."
-  (if (or (buffer-file-name) load-file-name)
-      (message "A file is opened, skipping flnkf buffer.")
+  (if (or (buffer-file-name) (memq major-mode '(dired-mode)))
+      (message "Skipping flnkf buffer.")
     (flnkf-open-default-buffer-list 4)
     ))
-;;    (tnwmt-open-buffer-list)))
 
 ;; Run the check after Emacs initialization
 (add-hook 'emacs-startup-hook 'check-if-file-at-startup)

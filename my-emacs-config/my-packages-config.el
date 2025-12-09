@@ -13,12 +13,14 @@
         ("nongnu"       . 4)
         ("melpa"        . 3)
         ("melpa-stable" . 2)
-        ("gnu-devel"    . 1)))
+        ("gnu-devel"    . 1)
+        )
+      )
 
 (setq package-selected-packages
       '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
-;; Use doom-modeline, a modified version of the modeline
+;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
   :ensure t
   :init
@@ -144,17 +146,6 @@
   :ensure t
   :defer t
   :after magit)
-
-;; Project manager
-;; (use-package projectile
-;;   :ensure t
-;;   :init
-;;   (setq projectile-project-search-path '("~/projects/" "~/work/" "~/playground"))
-;;   :config
-;;   (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-;;   (global-set-key (kbd "C-c p") 'projectile-command-map)
-;;   (projectile-mode +1)
-;;   )
 
 ;; File and project explorer
 ;; Most of this config is taken from Alexander-Miller's repository
@@ -282,11 +273,7 @@
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   )
 
-;; Package to fold code
-;; To upgrade use package-vc-upgrade
-;; (unless (package-installed-p 'treesit-fold)
-;;   (package-vc-install "https://github.com/emacs-tree-sitter/treesit-fold" nil nil 'treesit-fold))
-;; (require 'treesit-fold)
+;; Package to fold code using tree-sitter technology
 (use-package treesit-fold
   :ensure t
   :defer t)
@@ -296,6 +283,11 @@
   :ensure t
   :init
   ;;(global-flycheck-mode)
+  )
+
+(use-package flymake
+  :hook
+  (emacs-lisp-mode . flymake-mode)
   )
 
 ;; Focus on selected text
@@ -472,7 +464,8 @@
        :branch "main"
        :vc-backend Git)
   :ensure t
-  :defer t)
+  :defer t
+  )
 
 ;; pgmacs
 (use-package pg
@@ -481,7 +474,8 @@
        :branch "main"
        :vc-backend Git)
   :ensure t
-  :defer t)
+  :defer t
+  )
 
 ;; (setq package-vc-selected-packages
 ;;       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
@@ -510,6 +504,16 @@
 	  java-ts-mode
 	  emacs-lisp-mode) . corfu-mode)
 	 )
+  :config
+  ;; See: minad/corfu#transfer-completion-to-the-minibuffer
+  (defun corfu-move-to-minibuffer ()
+    (interactive)
+    (pcase completion-in-region--data
+      (`(,beg ,end ,table ,pred ,extras)
+       (let ((completion-extra-properties extras)
+             completion-cycle-threshold completion-cycling)
+         (consult-completion-in-region beg end table pred)))))
+  (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -522,6 +526,8 @@
   (text-mode-ispell-word-completion nil) ;; For Emacs 30 and newer
   :bind
   (:map corfu-map
+        ("RET" . newline)
+        ([return] . newline)
         ("TAB" . corfu-insert)
         ([tab] . corfu-insert)
 	("H-<tab>" . yas-expand)
@@ -529,7 +535,9 @@
 	("H-t" . corfu-popupinfo-toggle)
 	("S-<down>" . corfu-popupinfo-scroll-up)
 	("S-<up>" . corfu-popupinfo-scroll-down)
-	))
+        ("M-m" . corfu-move-to-minibuffer)
+	)
+  )
 
 ;; Cape
 (use-package cape
@@ -570,7 +578,8 @@
              ("<mouse-1>" . vertico-exit)
 	     )
   :init
-  (vertico-mode))
+  (vertico-mode)
+  )
 
 ;; List of vertico extensions found in github@minad/vertico.
 
@@ -698,7 +707,7 @@
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
-)
+  )
 
 (when (package-installed-p 'consult)
   (use-package consult-dir
@@ -711,8 +720,8 @@
     :after consult)
   (use-package consult-lsp
     :ensure t
-    :after consult))
-
+    :after consult)
+  )
 
 ;; Marginalia
 (use-package marginalia
@@ -723,7 +732,8 @@
   (marginalia-max-relative-age 1209600) ;; Can be set to 1209600 or 0
   (marginalia-align 'center) ;; Can be set right, left, or center
   :init
-  (marginalia-mode))
+  (marginalia-mode)
+  )
 
 ;; Embark
 (use-package embark
@@ -758,7 +768,8 @@
       (progn
 	(setq prefix-help-command #'describe-prefix-bindings)
 	(message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
-      ))
+      )
+    )
 
   (global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
   )
@@ -767,12 +778,14 @@
   :ensure t
   :defer t
   :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
+  (embark-collect-mode . consult-preview-at-point-mode)
+  )
 
 (use-package avy-embark-collect
   :ensure t
   :defer t
-  :after (embark avy))
+  :after (embark avy)
+  )
 
 ;; Orderless
 (use-package orderless
@@ -798,7 +811,8 @@
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
   :config
-  (prescient-persist-mode 1))
+  (prescient-persist-mode 1)
+  )
 
 (use-package corfu-prescient
   :ensure t
@@ -818,7 +832,8 @@
   ;; `prescient--completion-recommended-overrides'.  Those options apply only
   ;; when `corfu-prescient-enable-filtering' is non-nil.
   :config
-  (corfu-prescient-mode 1))
+  (corfu-prescient-mode 1)
+  )
 
 (use-package vertico-prescient
   :ensure t
@@ -838,7 +853,8 @@
   ;; `prescient--completion-recommended-overrides'.  Those options apply only
   ;; when when `vertico-prescient-enable-filtering' is non-nil.
   :config
-  (vertico-prescient-mode 1))
+  (vertico-prescient-mode 1)
+  )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1078,6 +1094,7 @@
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
+  ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
   (setq pdf-info-epdfinfo-program "~/.emacs.d/elpa/pdf-tools-1.1.0/epdfinfo")
   ;;(setq-default pdf-view-display-size 'fit-page)
   ;;(setq pdf-annot-activate-created-annotations t)

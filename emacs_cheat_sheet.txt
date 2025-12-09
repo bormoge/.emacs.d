@@ -51,15 +51,17 @@ Remove blank lines			CTRL + x CTRL + o
 Move to start of file			ALT + <
 Move to end of file			ALT + >
 Move to start of line			CTRL + a
-Move before first line char		ALT + m
+Move to first non-whitespace of line	ALT + m
 Move to previous line			CTRL + p
 Move to end of line			CTRL + e
 Move to next line			CTRL + n
+Move to beginning of sentence		ALT + a
+Move to end of sentence			ALT + e
 Move to previous word			ALT + b, CTRL + <key-left>
 Move to next word			ALT + f, CTRL + <key-right>
 Move to previous blank line		CTRL + <key-up>
 Move to next blank line			CTRL + <key-down>
-Go to line				ALT + g g
+Go to line				ALT + g g, ALT + g ALT + g
 
 
 Next error				ALT + g n
@@ -144,7 +146,8 @@ Unhighlight all on whole file		CTRL + u ALT + s h u
 
 Count words on a region			ALT + =
 Count words on a buffer			CTRL + u ALT + =
-Cursor position				CTRL + x =
+Info on cursor position			CTRL + x =
+Info on cursor position (other window)	CTRL + u CTRL + x =
 
 
 Scroll lock				FN + s
