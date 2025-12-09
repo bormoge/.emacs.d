@@ -13,12 +13,14 @@
         ("nongnu"       . 4)
         ("melpa"        . 3)
         ("melpa-stable" . 2)
-        ("gnu-devel"    . 1)))
+        ("gnu-devel"    . 1)
+        )
+      )
 
 (setq package-selected-packages
-      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy vundo gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
-;; Use doom-modeline, a modified version of the modeline
+;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
   :ensure t
   :init
@@ -145,17 +147,6 @@
   :defer t
   :after magit)
 
-;; Project manager
-;; (use-package projectile
-;;   :ensure t
-;;   :init
-;;   (setq projectile-project-search-path '("~/projects/" "~/work/" "~/playground"))
-;;   :config
-;;   (define-key projectile-mode-map (kbd "C-c C-p") 'projectile-command-map)
-;;   (global-set-key (kbd "C-c p") 'projectile-command-map)
-;;   (projectile-mode +1)
-;;   )
-
 ;; File and project explorer
 ;; Most of this config is taken from Alexander-Miller's repository
 (use-package treemacs
@@ -276,6 +267,11 @@
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   )
 
+(use-package flymake
+  :hook
+  (emacs-lisp-mode . flymake-mode)
+  )
+
 ;; Focus on selected text
 (use-package focus
   :ensure t
@@ -328,6 +324,16 @@
 ;; gnu-elpa-keyring-update
 (use-package gnu-elpa-keyring-update
   :ensure t)
+
+;; vundo
+(use-package vundo
+  :ensure t
+  :defer t
+  :init
+  ;; Map the `undo' function onto C-x M-u
+  (define-key (current-global-map) (kbd "C-x M-u") 'vundo)
+  :commands (vundo)
+  )
 
 ;; Highlight cursor line
 (use-package hl-line

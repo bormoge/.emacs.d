@@ -16,14 +16,13 @@
 
 (setq package-user-dir "~/.emacs.d/elpa")
 
-(load-file "~/.emacs.d/my-emacs-config/functions/the-entire-line.el")
 (load-file "~/.emacs.d/my-emacs-config/functions/flnkf.el")
-
-;; Apply packages configuration
-(load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
+
+;; Apply packages configuration
+(load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
 ;; Apply configuration after loading .el files
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")

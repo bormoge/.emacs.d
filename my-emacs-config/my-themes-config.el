@@ -3,6 +3,10 @@
   ;; Tab Bars
   (require 'tab-bar)
 
+  (set-face-attribute 'tab-bar nil
+                      ;;:background "#252526" ;;bg-alt
+                      :foreground (face-attribute 'mode-line-emphasis :foreground))
+
   (set-face-attribute 'tab-bar-tab nil
 		      :background (face-attribute 'mode-line :background)
 		      :foreground (face-attribute 'mode-line-emphasis :foreground)
@@ -15,6 +19,10 @@
 
   ;; Tab Lines
   (require 'tab-line)
+
+  (set-face-attribute 'tab-line nil
+                      ;;:background "#252526" ;;bg-alt
+                      :foreground (face-attribute 'mode-line-emphasis :foreground))
 
   (set-face-attribute 'tab-line-tab nil
 		      :background (face-attribute 'tab-line :background)
