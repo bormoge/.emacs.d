@@ -82,6 +82,7 @@
 (define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
 (define-key (current-global-map) (kbd "H-x s-<iso-lefttab>") 'untabify)
 (define-key (current-global-map) (kbd "H-x s-w") 'whitespace-mode)
+(define-key (current-global-map) (kbd "H-x s-q") 'indent-tabs-mode)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -215,6 +216,7 @@
 (setq scroll-preserve-screen-position nil)
 
 ;; Config for vertico package
+(context-menu-mode t)
 (setq enable-recursive-minibuffers t)
 (setq read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
 (setq minibuffer-prompt-properties

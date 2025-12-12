@@ -304,6 +304,11 @@ Calculator				calc				CTRL + x * c
 Calculator full screen			full-calc
 Toggle calc between big or small	calc-big-or-small		CTRL + x * b
 Reset calculator			calc-reset			CTRL + x * 0
+Edit calc buffer			calc-edit			`
+Edit calc buffer (n entries)		calc-edit			CTRL + u (number) `
+Convert number to percentage		calc-percent			ALT + %
+Change sign of number			calc-change-sign		n
+Start with negative sign		calcDigit-start			_
 
 
 ## rectangle-mark-mode
@@ -385,6 +390,7 @@ Find symbol reference			lsp-find-references			SUPER + l g g
 Rename symbol				lsp-rename				SUPER + l r r
 Format the code				lsp-format-buffer
 Log all language server messages	lsp-log-io
+Execute an action depending on server	lsp-execute-code-action			SUPER + l a a
 
 # Flycheck
 List errors detected by Flycheck	flycheck-list-errors

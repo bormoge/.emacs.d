@@ -18,7 +18,7 @@
       )
 
 (setq package-selected-packages
-      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -113,6 +113,10 @@
   ;; (doom-modeline-always-visible-segments '(mu4e irc))
   ;; (doom-modeline-before-update-env-hook nil)
   ;; (doom-modeline-after-update-env-hook nil)
+  
+  ;; :config
+  ;; (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  ;; (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
   )
 
 ;; Used to highlight lines changed
@@ -138,6 +142,7 @@
    'magit-insert-tracked-files
    nil
    'append)
+  (setq transient-default-level 4) ;; default: 4
   :commands (magit-status magit-dispatch)
   )
 
@@ -489,6 +494,12 @@
 ;; (require 'pg)
 ;; (require 'pgmacs)
 
+;; Integration for uv, the Python package manager
+(use-package uv-mode
+  :ensure t
+  :hook (python-mode . uv-mode-auto-activate-hook)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -514,6 +525,8 @@
              completion-cycle-threshold completion-cycling)
          (consult-completion-in-region beg end table pred)))))
   (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
+  
+  (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -685,7 +698,7 @@
 
   ;; Optionally configure preview. The default value
   ;; is 'any, such that any key triggers the preview.
-  ;; (setq consult-preview-key 'any)
+  (setq consult-preview-key 'any)
   ;; (setq consult-preview-key "s-.")
   ;; (setq consult-preview-key "M-.")
   ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
@@ -714,13 +727,15 @@
     :ensure t
     :defer t
     :after consult)
-  (use-package consult-flycheck
-    :ensure t
-    :defer t
-    :after consult)
-  (use-package consult-lsp
-    :ensure t
-    :after consult)
+  (when (package-installed-p 'flycheck)
+    (use-package consult-flycheck
+      :ensure t
+      :defer t
+      :after consult))
+  (when (package-installed-p 'lsp-mode)
+    (use-package consult-lsp
+      :ensure t
+      :after consult))
   )
 
 ;; Marginalia
@@ -797,6 +812,7 @@
   (completion-styles '(orderless basic)) ;;partial-completion
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)))) ;;basic
+  ;;(completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
   )
 
 ;; Prescient
@@ -899,7 +915,10 @@
   (use-package lsp-ui
   :ensure t
   :after lsp-mode
-  :commands lsp-ui-mode))
+  :config
+  (setq lsp-ui-sideline-show-code-actions nil)
+  :commands lsp-ui-mode)
+  )
 
 ;; (add-to-list 'lsp-client-packages 'lsp-XXX)
 
