@@ -47,6 +47,12 @@
 		      :weight 'unspecified
 		      :slant 'italic
 		      :height 0.9)
+
+  (when doom-dark+-blue-modeline
+    (require 'which-func)
+    (set-face-attribute 'which-func nil
+		      :foreground (face-attribute 'mode-line :foreground))
+    )
   )
 
 (advice-add 'load-theme :after #'configure-theme-for-tab-line-tab-bar)
@@ -57,7 +63,8 @@
   :config
   ;; Global settings (defaults)
   (setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
-        doom-themes-enable-italic nil) ; if nil, italics is universally disabled
+        doom-themes-enable-italic nil  ; if nil, italics is universally disabled
+        doom-dark+-blue-modeline nil)
   (load-theme 'doom-dark+ t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -128,3 +135,13 @@
 ;; nordic-night-theme
 ;; (use-package nordic-night-theme
 ;;   :ensure t)
+
+;; temple-os-emacs-theme
+;; (use-package temple-os-emacs-theme
+;;   :vc (:url "https://github.com/Senka07/temple-os-emacs-theme"
+;;        :rev :newest
+;;        :branch "main"
+;;        :vc-backend Git)
+;;   :ensure t
+;;   :defer t
+;;   )

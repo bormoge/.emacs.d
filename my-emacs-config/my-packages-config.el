@@ -18,7 +18,7 @@
       )
 
 (setq package-selected-packages
-      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-completion nerd-icons-dired nerd-icons avy vundo gnu-elpa-keyring-update direnv ledger-mode focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless corfu focus treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -113,6 +113,10 @@
   ;; (doom-modeline-always-visible-segments '(mu4e irc))
   ;; (doom-modeline-before-update-env-hook nil)
   ;; (doom-modeline-after-update-env-hook nil)
+  
+  ;; :config
+  ;; (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  ;; (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
   )
 
 ;; Used to highlight lines changed
@@ -138,6 +142,7 @@
    'magit-insert-tracked-files
    nil
    'append)
+  (setq transient-default-level 4) ;; default: 4
   :commands (magit-status magit-dispatch)
   )
 
@@ -389,10 +394,17 @@
 
 (use-package nerd-icons-completion
   :ensure t
-  ;;:after marginalia
+  :after marginalia
   :config
   (nerd-icons-completion-mode)
-  ;;(add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
+  )
+
+(use-package nerd-icons-corfu
+  :ensure t
+  :after (corfu)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   )
 
 (use-package nerd-icons-ibuffer
@@ -423,6 +435,379 @@
   ;; load default config
   (require 'smartparens-config)
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
+;; There is also TempEl, an alternative to YASnippet developed by minad.
+;; prescient.el will be used as the sorting algorithm of this stack.
+
+;; Corfu
+(use-package corfu
+  :ensure t
+  :defer t
+  :hook (((java-mode
+	  java-ts-mode
+	  emacs-lisp-mode) . corfu-mode)
+	 )
+  :config
+  ;; See: minad/corfu#transfer-completion-to-the-minibuffer
+  (defun corfu-move-to-minibuffer ()
+    (interactive)
+    (pcase completion-in-region--data
+      (`(,beg ,end ,table ,pred ,extras)
+       (let ((completion-extra-properties extras)
+             completion-cycle-threshold completion-cycling)
+         (consult-completion-in-region beg end table pred)))))
+  (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
+  
+  (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
+  :custom
+  (corfu-auto t)
+  (corfu-cycle t)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0.2)
+  (corfu-preselect 'first)
+  (corfu-preview-current 'insert)
+  ;; If already indented, then try to complete at point
+  ;;(setopt tab-always-indent 'complete)
+  (text-mode-ispell-word-completion nil) ;; For Emacs 30 and newer
+  :bind
+  (:map corfu-map
+        ("RET" . newline)
+        ([return] . newline)
+        ("TAB" . corfu-insert)
+        ([tab] . corfu-insert)
+	("H-<tab>" . yas-expand)
+	("H-d" . corfu-popupinfo-mode)
+	("H-t" . corfu-popupinfo-toggle)
+	("S-<down>" . corfu-popupinfo-scroll-up)
+	("S-<up>" . corfu-popupinfo-scroll-down)
+        ("M-m" . corfu-move-to-minibuffer)
+	)
+  )
+
+;; Cape
+(use-package cape
+  :ensure t
+  :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
+  ;; :bind (("C-c p d" . cape-dabbrev)
+  ;;        ("C-c p h" . cape-history)
+  ;;        ("C-c p f" . cape-file)
+  ;;        etc...)
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-dict)
+  (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  ;; etc...
+)
+
+
+;; Vertico
+(use-package vertico
+  :ensure t
+  :custom
+  (vertico-scroll-margin 2) ;; Different scroll margin
+  (vertico-count 10) ;; Show more candidates
+  (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
+  (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :bind (:map vertico-map
+             ("TAB" . minibuffer-complete)
+             ("M-g M-c" . switch-to-completions)
+             ("s-<tab>" . vertico-insert)
+             ("<backtab>" . vertico-insert)
+	     ("C-M-n" . vertico-next-group)
+	     ("C-M-p" . vertico-previous-group)
+             ("<wheel-down>" . next-line)
+             ("<wheel-up>" . previous-line)
+             ("<mouse-1>" . vertico-exit)
+	     )
+  :init
+  (vertico-mode)
+  )
+
+;; List of vertico extensions found in github@minad/vertico.
+
+;; vertico-buffer
+;; vertico-directory
+;; vertico-flat
+;; vertico-grid
+;; vertico-indexed
+;; vertico-mouse
+;; vertico-multiform
+;; vertico-quick
+;; vertico-repeat
+;; vertico-reverse
+;; vertico-sort
+;; vertico-suspend
+;; vertico-unobtrusive
+
+
+;; Consult
+(use-package consult
+  :ensure t
+  ;; Replace bindings. Lazily loaded by `use-package'.
+  :bind (;; C-c bindings in `mode-specific-map'
+         ("C-c M-x" . consult-mode-command)
+         ("C-c h" . consult-history)
+         ("C-c k" . consult-kmacro)
+         ("C-c m" . consult-man)
+         ("C-c i" . consult-info)
+         ([remap Info-search] . consult-info)
+         ;; C-x bindings in `ctl-x-map'
+         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
+         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
+         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
+         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ;; Custom M-# bindings for fast register access
+         ("M-#" . consult-register-load)
+         ;;("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-'" . consult-register-store)
+         ("C-M-#" . consult-register)
+         ;; Other custom bindings
+         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ;; M-g bindings in `goto-map'
+         ("M-g e" . consult-compile-error)
+         ("M-g r" . consult-grep-match)
+         ("M-g f m" . consult-flymake)             ;; Alternative: consult-flycheck
+         ("M-g f c" . consult-flycheck)
+         ("M-g g" . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
+         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g M-o" . consult-org-heading)
+         ("M-g m" . consult-mark)
+         ("M-g k" . consult-global-mark)
+         ("M-g i" . consult-imenu)
+         ("M-g I" . consult-imenu-multi)
+         ;; M-s bindings in `search-map'
+         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
+         ("M-s M-d" . consult-fd)
+         ("M-s c" . consult-locate)
+         ("M-s g" . consult-grep)
+         ("M-s G" . consult-git-grep)
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s k" . consult-keep-lines)
+         ("M-s u" . consult-focus-lines)
+         ;; Isearch integration
+         ("M-s e" . consult-isearch-history)
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
+         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ;; Minibuffer history
+         :map minibuffer-local-map
+         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
+         ("M-r" . consult-history)                 ;; orig. previous-matching-history-element
+         )
+
+  ;; Enable automatic preview at point in the *Completions* buffer. This is
+  ;; relevant when you use the default completion UI.
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+
+  ;; The :init configuration is always executed (Not lazy)
+  :init
+
+  ;; Tweak the register preview for `consult-register-load',
+  ;; `consult-register-store' and the built-in commands.  This improves the
+  ;; register formatting, adds thin separator lines, register sorting and hides
+  ;; the window mode line.
+  (advice-add #'register-preview :override #'consult-register-window)
+  (setq register-preview-delay 0.5)
+
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+
+  ;; Configure other variables and modes in the :config section,
+  ;; after lazily loading the package.
+  :config
+
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key "s-.")
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme :preview-key '(:debounce 0.2 any)
+   consult-ripgrep consult-git-grep consult-grep consult-man
+   consult-bookmark consult-recent-file consult-xref
+   consult-source-bookmark consult-source-file-register
+   consult-source-recent-file consult-source-project-recent-file
+   ;; :preview-key "M-."
+   :preview-key '(:debounce 0.4 any))
+
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (setq consult-narrow-key "<") ;; "C-+"
+
+  ;; Optionally make narrowing help available in the minibuffer.
+  ;; You may want to use `embark-prefix-help-command' or which-key instead.
+  ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+  )
+
+(when (package-installed-p 'consult)
+  (use-package consult-dir
+    :ensure t
+    :defer t
+    :after consult)
+  (when (package-installed-p 'flycheck)
+    (use-package consult-flycheck
+      :ensure t
+      :defer t
+      :after consult))
+  (when (package-installed-p 'lsp-mode)
+    (use-package consult-lsp
+      :ensure t
+      :after consult))
+  )
+
+;; Marginalia
+(use-package marginalia
+  :ensure t
+  :bind (:map minibuffer-local-map
+              ("M-A" . marginalia-cycle))
+  :custom
+  (marginalia-max-relative-age 1209600) ;; Can be set to 1209600 or 0
+  (marginalia-align 'center) ;; Can be set right, left, or center
+  :init
+  (marginalia-mode)
+  )
+
+;; Embark
+(use-package embark
+  :ensure t
+  :defer t
+  :bind
+  (("C-, ." . embark-act)
+   ("C-, ," . embark-dwim)
+   ("C-, b" . embark-bindings))
+  :init
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc
+  ;;(add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;;(setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+  :config
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none))))
+
+  ;; Change the value of prefix-help-command. Default: describe-prefix-bindings
+  (defun change-between-describe-prefix-and-embark-prefix ()
+    "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
+    (interactive)
+    (if (equal prefix-help-command 'describe-prefix-bindings)
+	(progn
+	  (setq prefix-help-command #'embark-prefix-help-command)
+	  (message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
+      (progn
+	(setq prefix-help-command #'describe-prefix-bindings)
+	(message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
+      )
+    )
+
+  (global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
+  )
+
+(use-package embark-consult
+  :ensure t
+  :defer t
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode)
+  )
+
+(use-package avy-embark-collect
+  :ensure t
+  :defer t
+  :after (embark avy)
+  )
+
+;; Orderless
+(use-package orderless
+  :ensure t
+  ;;:after vertico
+  :custom
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic)) ;;partial-completion
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))) ;;basic
+  ;;(completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
+  )
+
+;; Prescient
+(use-package prescient
+  :ensure t
+  :custom
+  (prescient-aggressive-file-save nil) ;; default: nil
+  (prescient-sort-length-enable nil) ;; default: t
+  (prescient-sort-full-matches-first t) ;; default: nil
+  (prescient-history-length 100) ;; default: 100
+  (prescient-frequency-decay 0.997) ;; default: 0.997
+  (prescient-frequency-threshold 0.05) ;; default: 0.05
+  (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
+  :config
+  (prescient-persist-mode 1)
+  )
+
+(use-package corfu-prescient
+  :ensure t
+  :demand t
+  :after (corfu prescient)
+  :custom
+  ;; Sorting.
+  (corfu-prescient-enable-sorting t) ;; default: t
+  ;; Don't override `display-sort-function'
+  (corfu-prescient-override-sorting nil) ;; default: nil
+
+  ;; Filtering
+  ;; Telling corfu-prescient not to use prescient to do the filtering
+  (corfu-prescient-enable-filtering nil) ;; default: t
+  ;; See also `corfu-prescient-completion-styles',
+  ;; `corfu-prescient-completion-category-overrides' and
+  ;; `prescient--completion-recommended-overrides'.  Those options apply only
+  ;; when `corfu-prescient-enable-filtering' is non-nil.
+  :config
+  (corfu-prescient-mode 1)
+  )
+
+(use-package vertico-prescient
+  :ensure t
+  :demand t
+  :after vertico prescient
+  :custom
+  ;; Sorting.
+  (vertico-prescient-enable-sorting t) ;; default: t
+  ;; Don't override `display-sort-function'
+  (vertico-prescient-override-sorting nil) ;; default: nil
+
+  ;; Filtering
+  ;; Telling vertico-prescient not to use prescient to do the filtering
+  (vertico-prescient-enable-filtering nil) ;; default: t
+  ;; See also `vertico-prescient-completion-styles',
+  ;; `vertico-prescient-completion-category-overrides', and
+  ;; `prescient--completion-recommended-overrides'.  Those options apply only
+  ;; when when `vertico-prescient-enable-filtering' is non-nil.
+  :config
+  (vertico-prescient-mode 1)
+  )
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
