@@ -338,7 +338,8 @@
   :config
   (setq which-key-idle-delay 5.0)
   (which-key-setup-side-window-right-bottom)
-  ;;(which-key-mode)
+  ;; `prefix-help-command' becomes  `which-key-C-h-dispatch'
+  (which-key-mode)
   )
 
 ;; Directory-specific environments
@@ -374,6 +375,8 @@
                       :background "#404040"
 		      :underline nil
                       :overline nil)
+  ;; (set-face-attribute 'show-paren-match nil
+  ;;                     :background (face-attribute 'hl-line :background))
   (global-hl-line-mode t)
   :hook ((eshell-mode
           ;;eat-mode
@@ -457,6 +460,8 @@
   :config
   ;; load default config
   (require 'smartparens-config)
+  ;; (smartparens-global-strict-mode)
+  (define-key (current-global-map) (kbd "s-p <backspace>") 'sp-unwrap-sexp)
   )
 
 ;; Packages to manage PostgreSQL
@@ -513,7 +518,8 @@
   :defer t
   :hook (((java-mode
 	  java-ts-mode
-	  emacs-lisp-mode) . corfu-mode)
+	  emacs-lisp-mode
+          markdown-mode) . corfu-mode)
 	 )
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -580,9 +586,9 @@
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
-             ("TAB" . minibuffer-complete)
+             ("<tab>" . minibuffer-complete)
              ("M-g M-c" . switch-to-completions)
-             ("s-<tab>" . vertico-insert)
+             ("M-<tab>" . vertico-insert)
              ("<backtab>" . vertico-insert)
 	     ("C-M-n" . vertico-next-group)
 	     ("C-M-p" . vertico-previous-group)
@@ -762,6 +768,15 @@
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
 
+  ;; If which-key-mode is enabled before embark, by default `which-key--prefix-help-cmd-backup'
+  ;; will have the value `describe-prefix-bindings'.
+  ;; This code replaces whatever value `which-key--prefix-help-cmd-backup' had with `embark-prefix-help-command'.
+  ;; It also replaces `prefix-help-command' with `which-key-C-h-dispatch'.
+  (when which-key-mode
+    (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
+    (setq prefix-help-command #'which-key-C-h-dispatch)
+    )
+
   ;; Show the Embark target at point via Eldoc
   ;;(add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
   ;;(setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
@@ -778,10 +793,16 @@
     (interactive)
     (if (equal prefix-help-command 'describe-prefix-bindings)
 	(progn
-	  (setq prefix-help-command #'embark-prefix-help-command)
+          (if which-key-mode
+              (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
+            (setq prefix-help-command #'embark-prefix-help-command)
+            )
 	  (message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
       (progn
-	(setq prefix-help-command #'describe-prefix-bindings)
+        (if which-key-mode
+              (setq which-key--prefix-help-cmd-backup #'describe-prefix-bindings)
+            (setq prefix-help-command #'describe-prefix-bindings)
+            )
 	(message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
       )
     )
@@ -963,6 +984,7 @@
   :after lsp-mode)
 
 ;; LSP booster
+;; To make this code work you need to install the emacs-lsp-booster Rust package
 (defun lsp-booster--advice-json-parse (old-fn &rest args)
   "Try to parse bytecode instead of json."
   (or

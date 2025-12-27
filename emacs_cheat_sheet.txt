@@ -59,8 +59,8 @@ Move to beginning of sentence		ALT + a
 Move to end of sentence			ALT + e
 Move to previous word			ALT + b, CTRL + <key-left>
 Move to next word			ALT + f, CTRL + <key-right>
-Move to previous blank line		CTRL + <key-up>
-Move to next blank line			CTRL + <key-down>
+Move to previous blank line		CTRL + <key-up>, ALT + {
+Move to next blank line			CTRL + <key-down>, ALT + }
 Go to line				ALT + g g, ALT + g ALT + g
 
 
@@ -384,7 +384,7 @@ Explore current buffer’s syntax tree	treesit-explore-mode
 
 # LSP
 Install specified lsp server		lsp-install-server
-Shutdown lsp server			lsp-shutdown-workspace
+Shutdown lsp server			lsp-workspace-shutdown
 Find symbol definition			lsp-find-definition			SUPER + l g r
 Find symbol reference			lsp-find-references			SUPER + l g g
 Rename symbol				lsp-rename				SUPER + l r r

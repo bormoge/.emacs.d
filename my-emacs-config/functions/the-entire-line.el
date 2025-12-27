@@ -27,6 +27,15 @@ Deletes the entire line of text and goes back to the previous line, specifically
   (kill-whole-line 1)
   (left-char))
 
+(defun delete-lines-without-specific-string (STR)
+  "Delete all lines in the buffer that do not contain the string STR."
+  (interactive "sEnter string: ")
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (if (not (search-forward STR (line-end-position) t))
+          (delete-region (line-beginning-position) (line-end-position)))
+      (forward-line 1))))
 
 ;; (defun copy-current-line ()
 ;;   (interactive)
