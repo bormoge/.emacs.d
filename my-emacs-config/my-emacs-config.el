@@ -18,11 +18,11 @@
 (define-key (current-global-map) (kbd "C-x M-o") 'window-swap-states)
 
 ;; Set keys for shell, eshell, term
-(define-key (current-global-map) (kbd "H-c e b") 'eshell)
-(define-key (current-global-map) (kbd "H-c e c") 'eshell-command)
-(define-key (current-global-map) (kbd "H-c s b") 'shell)
-(define-key (current-global-map) (kbd "H-c s c") 'shell-command)
-(define-key (current-global-map) (kbd "H-c t b") 'term)
+(define-key (current-global-map) (kbd "H-s e b") 'eshell)
+(define-key (current-global-map) (kbd "H-s e c") 'eshell-command)
+(define-key (current-global-map) (kbd "H-s s b") 'shell)
+(define-key (current-global-map) (kbd "H-s s c") 'shell-command)
+(define-key (current-global-map) (kbd "H-s t b") 'term)
 
 ;; Delete duplicate lines using Hyper + ALT + <backspace>
 (define-key (current-global-map) (kbd "H-M-<backspace>") 'delete-duplicate-lines)
@@ -207,6 +207,11 @@
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
 (setq global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
+(setq auto-revert-remote-files nil)
+(setq auto-revert-verbose t)
+(setq auto-revert-interval 5)
+(setq auto-revert-avoid-polling nil)
+(setq global-auto-revert-non-file-buffers nil)
 (global-auto-revert-mode t) ;; Nil by default
 
 ;; Scroll settings
@@ -284,6 +289,13 @@
 ;; Follow the compilation buffer
 (setq compilation-scroll-output t)
 
+;; Native compilation for Emacs
+(setq native-comp-deferred-compilation t)
+(setq native-comp-speed 2)
+
+;; Dired config
+(setq dired-listing-switches "-ahl --group-directories-first")
+
 ;; No backup files
 (setq make-backup-files nil)
 
@@ -307,15 +319,6 @@
 ;;   (setq buffer-backed-up nil))
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
-
-;; Dired config
-;; (defun dired-mode-personal-setup ()
-;;   "My personal config for 'dired-mode'."
-;;   (dired-hide-details-mode t) ;; Set to 't' to hide permissions, authors, timestamps, etc.
-;;   (dired-omit-mode t) ;; Set to 't' to hide . and ..
-;;   )
-
-;; (add-hook 'dired-mode-hook #'dired-mode-personal-config)
 
 ;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
 (defun check-if-file-at-startup ()

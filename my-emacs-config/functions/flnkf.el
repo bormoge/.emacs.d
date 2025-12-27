@@ -37,7 +37,8 @@
 	    (with-current-buffer flnkf-buffer
               (erase-buffer)
 	      ;; Implicitely set global minor modes assigning major mode (Inheritance of minor modes perhaps?)
-	      (text-mode)
+	      (special-mode)
+	      (read-only-mode -1)
 	      ;; Explicitely set minor mode related to global mode
 	      ;; (If you don't set major mode, you need to set all minor mode variables)
 	      ;; (display-line-numbers-mode nil)

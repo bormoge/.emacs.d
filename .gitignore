@@ -14,6 +14,7 @@
 /prescient
 /transient
 /tree-sitter
+/url
 /workspace
 
 /my-emacs-config/functions/tetris.el
