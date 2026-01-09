@@ -135,8 +135,9 @@
 (setq-default text-scale-mode-amount 2)
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
-	    (if (derived-mode-p 'treemacs-mode)
-		(text-scale-set 0)
+	    ;; (if (derived-mode-p 'treemacs-mode)
+            (if (memq major-mode '(treemacs-mode dashboard-mode))
+	        (text-scale-set 0)
 	      (text-scale-set text-scale-mode-amount))
 	    ))
 

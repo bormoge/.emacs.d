@@ -21,6 +21,7 @@
 .dap-breakpoints
 .lsp-session-v1
 .mc-lists.el
+bookmarks
 flnkf-file.txt
 ede-projects.el
 forge-database.sqlite
