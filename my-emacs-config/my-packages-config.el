@@ -763,7 +763,9 @@
   :bind
   (("C-, ." . embark-act)
    ("C-, ," . embark-dwim)
-   ("C-, b" . embark-bindings))
+   ("C-, b" . embark-bindings)
+   ("C-, e" . embark-export)
+   )
   :init
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)

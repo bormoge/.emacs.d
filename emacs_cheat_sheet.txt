@@ -195,6 +195,7 @@ About GNU Project (webpage)		CTRL + h g
 Info about obtaining Emacs		CTRL + h CTRL + o
 Info about Emacs problems		CTRL + h CTRL + p
 Emacs to-do list			CTRL + h CTRL + t
+Emacs FAQ                               CTRL + h CTRL + f
 
 
 Quit help buffer			q
@@ -309,6 +310,9 @@ Edit calc buffer (n entries)		calc-edit			CTRL + u (number) `
 Convert number to percentage		calc-percent			ALT + %
 Change sign of number			calc-change-sign		n
 Start with negative sign		calcDigit-start			_
+Use fraction notation                   calc-fdiv                       :
+Convert fraction to float               calc-float                      c f
+Convert float to fraction               calc-fraction                   c F
 
 
 ## rectangle-mark-mode
