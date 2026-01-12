@@ -84,6 +84,9 @@
 (define-key (current-global-map) (kbd "H-x s-w") 'whitespace-mode)
 (define-key (current-global-map) (kbd "H-x s-q") 'indent-tabs-mode)
 
+;; Define keys for package functions
+(define-key (current-global-map) (kbd "H-q l") 'list-packages)
+
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
 
@@ -296,6 +299,9 @@
 
 ;; Dired config
 (setq dired-listing-switches "-ahl --group-directories-first")
+
+;; grep config
+(setq grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
 
 ;; No backup files
 (setq make-backup-files nil)
