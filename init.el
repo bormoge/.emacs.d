@@ -27,6 +27,9 @@
 ;; Apply configuration after loading .el files
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
 
+;; Define Emacs keys
+(load-file "~/.emacs.d/my-emacs-config/my-keys-config.el")
+
 ;; Comment this if you don't have the file
 ;; (load-file "~/.emacs.d/my-emacs-config/functions/tetris.el")
 
