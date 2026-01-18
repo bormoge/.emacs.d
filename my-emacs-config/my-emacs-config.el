@@ -220,6 +220,13 @@
 ;; grep config
 (setq grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
 
+;; Rectangle mode config
+(use-package rect
+  :bind
+  (:map rectangle-mark-mode-map
+        ("s-a" . string-rectangle))
+  :defer t)
+
 ;; No backup files
 (setq make-backup-files nil)
 

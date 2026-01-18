@@ -3,10 +3,10 @@
 ;; To invoke Hyper key: CTRL + x @ h
 
 ;; Set keys for changing window focus
-(define-key (current-global-map) (kbd "H-<left>") 'windmove-left)
-(define-key (current-global-map) (kbd "H-<right>") 'windmove-right)
-(define-key (current-global-map) (kbd "H-<up>") 'windmove-up)
-(define-key (current-global-map) (kbd "H-<down>") 'windmove-down)
+(define-key (current-global-map) (kbd "s-<left>") 'windmove-left)
+(define-key (current-global-map) (kbd "s-<right>") 'windmove-right)
+(define-key (current-global-map) (kbd "s-<up>") 'windmove-up)
+(define-key (current-global-map) (kbd "s-<down>") 'windmove-down)
 
 ;; Set key for swapping windows
 (define-key (current-global-map) (kbd "C-x M-o") 'window-swap-states)

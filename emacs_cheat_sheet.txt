@@ -290,6 +290,7 @@ Function executed after function	add-hook
 Function executed after variable	add-variable-watcher
 Return list with N elements removed	butlast
 Find a file by name                     find-name-dired
+Check buffer docs for style errors      checkdoc
 
 
 ## org-mode
