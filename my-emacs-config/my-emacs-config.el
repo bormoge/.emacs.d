@@ -227,15 +227,6 @@
         ("s-a" . string-rectangle))
   :defer t)
 
-;; Check if operating system is NixOS.
-(defun nixos-p ()
-  "Return non-nil if the current system is NixOS."
-  (when (file-readable-p "/etc/os-release")
-    (with-temp-buffer
-      (insert-file-contents "/etc/os-release")
-      (or (re-search-forward "^ID=nixos$" nil t)
-      (re-search-forward "^NAME=NixOS$" nil t)))))
-
 ;; No backup files
 (setq make-backup-files nil)
 

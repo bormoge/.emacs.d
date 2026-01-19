@@ -18,7 +18,7 @@
       )
 
 (setq package-selected-packages
-      '(uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -1075,6 +1075,7 @@
 	(json . ("https://github.com/tree-sitter/tree-sitter-json"))
 	(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
 	(typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	(nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
 	)
       )
 
@@ -1091,6 +1092,7 @@
 	(js-json-mode . json-ts-mode)
 	(typescript-tsx-mode . tsx-ts-mode)
 	(typescript-mode . typescript-ts-mode)
+	(nix-mode . nix-ts-mode)
 	)
       )
 
@@ -1164,3 +1166,34 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; When using NixOS, set up the appropriate environment.
+;; Check if the operating system is NixOS.
+(defun nixos-p ()
+  "Return non-nil if the current system is NixOS."
+  (when (file-readable-p "/etc/os-release")
+    (with-temp-buffer
+      (insert-file-contents "/etc/os-release")
+      (or (re-search-forward "^ID=nixos$" nil t)
+      (re-search-forward "^NAME=NixOS$" nil t)))))
+
+(when (nixos-p)
+  (use-package nix-mode
+    :ensure t
+    :hook
+    (nix-mode . flymake-mode))
+  
+  (use-package nix-ts-mode
+    :ensure t
+    :hook
+    (nix-ts-mode . flymake-mode))
+  
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (add-hook 'before-save-hook 'eglot-format nil t)))
+
+  (with-eval-after-load 'eglot
+    (dolist (mode '((nix-mode . ("nixd"))))
+      (add-to-list 'eglot-server-programs mode)))
+
+   (add-hook 'nix-ts-mode 'eglot-ensure))
