@@ -1167,7 +1167,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; When using NixOS, set up the appropriate environment.
 ;; Check if the operating system is NixOS.
 (defun nixos-p ()
   "Return non-nil if the current system is NixOS."
@@ -1177,6 +1176,7 @@
       (or (re-search-forward "^ID=nixos$" nil t)
       (re-search-forward "^NAME=NixOS$" nil t)))))
 
+;; When using NixOS, set up the appropriate environment.
 (when (nixos-p)
   (use-package nix-mode
     :ensure t
@@ -1186,7 +1186,8 @@
   (use-package nix-ts-mode
     :ensure t
     :hook
-    (nix-ts-mode . flymake-mode))
+    (nix-ts-mode . flymake-mode)
+    (nix-ts-mode . eglot-ensure))
   
   (add-hook 'prog-mode-hook
             (lambda ()
@@ -1194,6 +1195,4 @@
 
   (with-eval-after-load 'eglot
     (dolist (mode '((nix-mode . ("nixd"))))
-      (add-to-list 'eglot-server-programs mode)))
-
-   (add-hook 'nix-ts-mode 'eglot-ensure))
+      (add-to-list 'eglot-server-programs mode))))
