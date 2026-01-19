@@ -519,7 +519,9 @@
   :hook (((java-mode
 	  java-ts-mode
 	  emacs-lisp-mode
-          markdown-mode) . corfu-mode)
+          markdown-mode
+          nix-mode
+          nix-ts-mode) . corfu-mode)
 	 )
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
