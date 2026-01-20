@@ -401,6 +401,11 @@ Execute an action depending on server	lsp-execute-code-action			SUPER + l a a
 # Flycheck
 List errors detected by Flycheck	flycheck-list-errors
 
+# Eglot
+Start eglot                             eglot
+Start eglot programatically             eglot-ensure
+List active eglot connections           eglot-list-connections
+
 
 ## Emacs tutorials
 https://www.gnu.org/software/emacs/tour/

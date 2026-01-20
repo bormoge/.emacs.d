@@ -795,21 +795,21 @@
   (defun change-between-describe-prefix-and-embark-prefix ()
     "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
     (interactive)
-    (if (equal prefix-help-command 'describe-prefix-bindings)
-	(progn
-          (if which-key-mode
+    (if which-key-mode
+        (if (equal which-key--prefix-help-cmd-backup 'describe-prefix-bindings)
+            (progn
               (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
+	      (message "Changed `which-key--prefix-help-cmd-backup' into `embark-prefix-help-command'"))
+          (progn
+            (setq which-key--prefix-help-cmd-backup #'describe-prefix-bindings)
+	    (message "Changed `which-key--prefix-help-cmd-backup' into `describe-prefix-bindings'")))
+      (if (equal prefix-help-command 'describe-prefix-bindings)
+          (progn
             (setq prefix-help-command #'embark-prefix-help-command)
-            )
-	  (message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
-      (progn
-        (if which-key-mode
-              (setq which-key--prefix-help-cmd-backup #'describe-prefix-bindings)
-            (setq prefix-help-command #'describe-prefix-bindings)
-            )
-	(message "Changed `prefix-help-command' into `describe-prefix-bindings'"))
-      )
-    )
+            (message "Changed `prefix-help-command' into `embark-prefix-help-command'"))
+        (progn
+          (setq prefix-help-command #'describe-prefix-bindings)
+          (message "Changed `prefix-help-command' into `describe-prefix-bindings'")))))
 
   (global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
   )
