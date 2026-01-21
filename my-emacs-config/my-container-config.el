@@ -1,3 +1,9 @@
+;; LSP, DAP, linter and formatter installer
+(use-package mason
+  :ensure t
+  :config
+  (mason-setup))
+
 ;; Treemacs integration with LSP
 (use-package lsp-treemacs
   :ensure t
