@@ -24,6 +24,10 @@
 ;; Apply packages configuration
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
+;; When inside a (podman) container, apply this configuration
+(when (container-p)
+  (load-file "~/.emacs.d/my-emacs-config/my-container-config.el"))
+
 ;; Apply configuration after loading .el files
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
 
