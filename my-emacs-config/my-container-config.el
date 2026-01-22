@@ -1,3 +1,10 @@
+;; If not found, install rassumfrassum automatically
+(unless (executable-find "rass")
+  (shell-command "uv tool install rassumfrassum"))
+  ;; (make-process :name "install-rassumfrassum"
+  ;;               :buffer "*install rassumfrassum*"
+  ;;               :command '("uv" "tool" "install" "rassumfrassum")))
+
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
   :ensure t
@@ -228,6 +235,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;; Rust config
+(use-package rust-mode
+  :ensure t)
+  ;; :init
+  ;; (setq rust-mode-treesitter-derive t)
+  ;; :hook
+  ;; (rust-mode . flymake-mode))
+  ;; ;; (rust-ts-mode . flymake-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;; LaTeX and pdf configuration
 
 ;; AUCTeX
@@ -267,3 +285,45 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; eglot configuration
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) .
+                 ("rust-analyzer" :initializationOptions (:check (:command "clippy"))))))
+                 ;; ("rust-analyzer"))))
+
+(add-hook 'rust-ts-mode-hook 'eglot-ensure)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; dape configuration
+(use-package dape
+  :ensure t
+  :config
+  (setq dape-buffer-window-arrangement 'right))
+
+;; Download codelldb from github repository `vadimcn/codelldb'. You can also use mason.el.
+(mason-setup
+  (dolist (pkg '("codelldb"))
+    (unless (mason-installed-p pkg)
+      (ignore-errors (mason-install pkg)))))
+
+;; Put a soft link on debug-adapters directory so dape sees where codelldb is located.
+(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))
+  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/codelldb/") (expand-file-name "~/.emacs.d/debug-adapters/codelldb/")))
+
+;; For now this won't be necessary
+;; (add-to-list 'dape-configs
+;;                `(codelldb
+;;                  modes (rust-mode rust-ts-mode)
+;;                  ensure dape-ensure-command
+;;                  command "rust-gdb"
+;;                  command-args ("-i" "dap")
+;;                  command-cwd dape-command-cwd
+;;                  command-insert-stderr t
+;;                  port :autoport
+;;                  :request "launch"
+;;                  :type "debug"
+;;                  :cwd dape-cwd-fn
+;;                  :program dape-cwd-fn))

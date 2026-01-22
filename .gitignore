@@ -1,6 +1,7 @@
 /.cache
 /.git
 /auto-save-list
+/debug-adapters
 /desktop-sessions
 /eclipse.jdt.ls
 /eln-cache

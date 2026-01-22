@@ -16,8 +16,6 @@
 
 (setq package-user-dir "~/.emacs.d/elpa")
 
-(load-file "~/.emacs.d/my-emacs-config/functions/flnkf.el")
-
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
 

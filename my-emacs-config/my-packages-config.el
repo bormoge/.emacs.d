@@ -38,7 +38,24 @@
       )
 
 (setq package-selected-packages
-      '(mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu lsp-focus focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+
+;; Dashboard to display projects and bookmarks
+(use-package dashboard
+  :ensure t
+  :config
+  (setq dashboard-center-content t)
+  (setq dashboard-display-icons-p t)     ; display icons on both GUI and terminal
+  (setq dashboard-icon-type 'nerd-icons) ; use `nerd-icons' package
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-week-agenda t)
+  (setq dashboard-items '(
+                          (bookmarks . 30)
+                          (projects  . 5)
+                          (agenda    . 5)
+                          ))
+  (dashboard-setup-startup-hook))
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -123,12 +140,12 @@
   (doom-modeline-env-enable-go t)
   (doom-modeline-env-enable-elixir t)
   (doom-modeline-env-enable-rust t)
-  ;; (doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
+  (doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
   ;; (doom-modeline-env-ruby-executable "ruby")
   ;; (doom-modeline-env-perl-executable "perl")
   ;; (doom-modeline-env-go-executable "go")
   ;; (doom-modeline-env-elixir-executable "iex")
-  ;; (doom-modeline-env-rust-executable "rustc")
+  (doom-modeline-env-rust-executable "rustc")
   (doom-modeline-env-load-string "...")
   ;; (doom-modeline-always-visible-segments '(mu4e irc))
   ;; (doom-modeline-before-update-env-hook nil)
@@ -300,6 +317,10 @@
 (use-package flymake
   :hook
   (emacs-lisp-mode . flymake-mode)
+  (nix-mode . flymake-mode)
+  (nix-ts-mode . flymake-mode)
+  (rust-mode . flymake-mode)
+  (rust-ts-mode . flymake-mode)
   )
 
 ;; Focus on selected text
@@ -482,7 +503,10 @@
 	  emacs-lisp-mode
           markdown-mode
           nix-mode
-          nix-ts-mode) . corfu-mode)
+          nix-ts-mode
+          rust-mode
+          rust-ts-mode
+          ) . corfu-mode)
 	 )
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -874,6 +898,7 @@
 	(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
 	(typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
 	(nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
+	(rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
 	)
       )
 
@@ -891,6 +916,7 @@
 	(typescript-tsx-mode . tsx-ts-mode)
 	(typescript-mode . typescript-ts-mode)
 	(nix-mode . nix-ts-mode)
+        (rust-mode . rust-ts-mode)
 	)
       )
 
@@ -927,14 +953,11 @@
 ;; When using NixOS, set up the appropriate environment.
 (when (nixos-p)
   (use-package nix-mode
-    :ensure t
-    :hook
-    (nix-mode . flymake-mode))
+    :ensure t)
   
   (use-package nix-ts-mode
     :ensure t
     :hook
-    (nix-ts-mode . flymake-mode)
     (nix-ts-mode . eglot-ensure))
   
   (add-hook 'prog-mode-hook

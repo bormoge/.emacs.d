@@ -251,13 +251,13 @@
 
 ;; (add-hook 'before-save-hook  'force-backup-of-buffer)
 
-;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
-(defun check-if-file-at-startup ()
-  "Check if a file is being opened at startup."
-  (if (or (buffer-file-name) (memq major-mode '(dired-mode)))
-      (message "Skipping flnkf buffer.")
-    (flnkf-open-default-buffer-list 4)
-    ))
+;; ;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
+;; (defun check-if-file-at-startup ()
+;;   "Check if a file is being opened at startup."
+;;   (if (or (buffer-file-name) (memq major-mode '(dired-mode)))
+;;       (message "Skipping flnkf buffer.")
+;;     (flnkf-open-default-buffer-list 4)
+;;     ))
 
-;; Run the check after Emacs initialization
-(add-hook 'emacs-startup-hook 'check-if-file-at-startup)
+;; ;; Run the check after Emacs initialization
+;; (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
