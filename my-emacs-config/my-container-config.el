@@ -1,14 +1,12 @@
-;; If not found, install rassumfrassum automatically
-(unless (executable-find "rass")
-  (shell-command "uv tool install rassumfrassum"))
-  ;; (make-process :name "install-rassumfrassum"
-  ;;               :buffer "*install rassumfrassum*"
-  ;;               :command '("uv" "tool" "install" "rassumfrassum")))
-
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
   :ensure t
   :config
+  (mason-ensure
+   (lambda ()
+     (dolist (pkg '("rassumfrassum" "codelldb"))
+       (unless (mason-installed-p pkg)
+	 (ignore-errors (mason-install pkg))))))
   (mason-setup))
 
 ;; Treemacs integration with LSP
@@ -23,12 +21,6 @@
   :init
   ;;(global-flycheck-mode)
   )
-
-(use-package lsp-focus
-  :ensure t
-  :after (lsp focus)
-  :config
-  (add-hook 'focus-mode-hook #'lsp-focus-mode))
 
 ;; Packages to manage PostgreSQL
 ;; To upgrade use package-vc-upgrade
@@ -322,12 +314,6 @@
   :ensure t
   :config
   (setq dape-buffer-window-arrangement 'right))
-
-;; Download codelldb from github repository `vadimcn/codelldb'. You can also use mason.el.
-(mason-setup
-  (dolist (pkg '("codelldb"))
-    (unless (mason-installed-p pkg)
-      (ignore-errors (mason-install pkg)))))
 
 ;; Put a soft link on debug-adapters directory so dape sees where codelldb is located.
 (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))

@@ -222,7 +222,12 @@
 (setq native-comp-speed 2)
 
 ;; Dired config
-(setq dired-listing-switches "-ahl --group-directories-first")
+(use-package dired
+  :ensure nil
+  :custom
+  (dired-listing-switches "-ahl --group-directories-first")
+  (dired-kill-when-opening-new-dired-buffer t)
+  )
 
 ;; grep config
 (setq grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
