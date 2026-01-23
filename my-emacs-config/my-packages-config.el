@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update direnv ledger-mode orderless lsp-java corfu focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update envrc ledger-mode orderless lsp-java corfu focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -365,12 +365,13 @@
   (which-key-mode)
   )
 
-;; Directory-specific environments
-(use-package direnv
+;; Directory-specific environments (direnv)
+(use-package envrc
   :ensure t
-  :defer t
+  ;; :hook (after-init . envrc-global-mode)
   ;; :config
-  ;; (direnv-mode)
+  ;; (with-eval-after-load 'envrc
+  ;;   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
   )
 
 ;; gnu-elpa-keyring-update

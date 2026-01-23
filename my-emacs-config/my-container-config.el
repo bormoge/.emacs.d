@@ -45,23 +45,22 @@
   :defer t
   )
 
-;; (setq package-vc-selected-packages
-;;       '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs")
-;; 	(pg :vc-backend Git :url "https://github.com/emarsden/pg-el")))
-
-;; (unless (package-installed-p 'pg)
-;;   (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
-;; (unless (package-installed-p 'pgmacs)
-;;   (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
-
-;; (require 'pg)
-;; (require 'pgmacs)
-
 ;; Integration for uv, the Python package manager
 (use-package uv-mode
   :ensure t
   :hook (python-mode . uv-mode-auto-activate-hook)
   )
+
+;; Package to integrate various python tools. I'll leave this here just in case I end up using it.
+;; (use-package pet
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-base-mode-hook 'pet-mode -10)
+;;   ;; (add-hook 'python-mode-hook
+;;   ;;         (lambda ()
+;;   ;;           (setq-local python-shell-interpreter (pet-executable-find "python")
+;;   ;;                       python-shell-virtualenv-root (pet-virtualenv-root))))
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
