@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update envrc ledger-mode orderless lsp-java corfu focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult-dir consult cape gnu-elpa-keyring-update envrc ledger-mode orderless lsp-java corfu focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet lsp-treemacs treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -337,7 +337,7 @@
 (use-package avy
   :ensure t
   :defer t
-  :config
+  :init
   ;; Mapping keys for avy
   (global-set-key (kbd "C-: c 1") 'avy-goto-char)
   (global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
@@ -895,49 +895,57 @@
 
 ;; Treesitter
 
-;; Treesitter grammar repositories.
-(setq treesit-language-source-alist
-      '(
-	(java . ("https://github.com/tree-sitter/tree-sitter-java"))
-	(clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
-	(css . ("https://github.com/tree-sitter/tree-sitter-css"))
-	(html . ("https://github.com/tree-sitter/tree-sitter-html"))
-	(javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-	(json . ("https://github.com/tree-sitter/tree-sitter-json"))
-	(tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-	(typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-	(nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
-	(rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
-	)
-      )
+(use-package treesit
+  :ensure nil
+  :config
+  ;; Treesitter grammar repositories.
+  (setq treesit-language-source-alist
+        '(
+	  (java . ("https://github.com/tree-sitter/tree-sitter-java"))
+	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
+	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	  (nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
+	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
+	  (python . ("https://github.com/tree-sitter/tree-sitter-python" "master"))
+          (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
+	  )
+        )
+  ;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  (dolist (lang treesit-language-source-alist)
+    (unless (treesit-language-available-p (car lang))
+      (treesit-install-language-grammar (car lang))))
 
-;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
+  (setq major-mode-remap-alist
+        '(
+	  (java-mode . java-ts-mode)
+	  (clojure-mode . clojure-ts-mode)
+	  (css-mode . css-ts-mode)
+	  (html-mode . html-ts-mode)
+	  (((js-mode javascript-mode js2-mode)) . js-ts-mode)
+	  (js-json-mode . json-ts-mode)
+	  (typescript-tsx-mode . tsx-ts-mode)
+	  (typescript-mode . typescript-ts-mode)
+	  (nix-mode . nix-ts-mode)
+          (rust-mode . rust-ts-mode)
+          (python-mode . python-ts-mode)
+	  )
+        )
 
-;; Replace normal mode with its equivalent treesitter mode (ts-mode).
-(setq major-mode-remap-alist
-      '(
-	(java-mode . java-ts-mode)
-	(clojure-mode . clojure-ts-mode)
-	(css-mode . css-ts-mode)
-	(html-mode . html-ts-mode)
-	(((js-mode javascript-mode js2-mode)) . js-ts-mode)
-	(js-json-mode . json-ts-mode)
-	(typescript-tsx-mode . tsx-ts-mode)
-	(typescript-mode . typescript-ts-mode)
-	(nix-mode . nix-ts-mode)
-        (rust-mode . rust-ts-mode)
-	)
-      )
+  ;; Initialize major modes on these file extensions
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
 
-;; Initialize major modes on these file extensions
-(add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
-(add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
-
-;; 16.13.2 Parser-based Font Lock
-;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
-(setopt treesit-font-lock-level 4)
-
+  ;; 16.13.2 Parser-based Font Lock
+  ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
+  (setopt treesit-font-lock-level 4)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -956,6 +964,20 @@
   ;;  'org-babel-load-languages
   ;;  '((js . t)))
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Dabbrev config
+(use-package dabbrev
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand)
+         ("C-M-<Ungrab>" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

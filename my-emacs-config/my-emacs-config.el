@@ -54,7 +54,7 @@
 
 ;; Increase zoom
 ;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
-(setq-default text-scale-mode-amount 2)
+(setq default-text-scale-mode-amount 2)
 
 (setq forbidden-prefixes-text-scale-mode '("dape" "treemacs-mode" "dashboard-mode"))
 
@@ -65,7 +65,7 @@
                                (string-prefix-p prefix (symbol-name major-mode)))
                              forbidden-prefixes-text-scale-mode)
 	        ;(text-scale-set 0)
-	      (text-scale-set text-scale-mode-amount))
+	      (text-scale-set default-text-scale-mode-amount))
 	    ))
 
 ;; Change font

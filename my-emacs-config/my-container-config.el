@@ -62,6 +62,18 @@
 ;;   ;;                       python-shell-virtualenv-root (pet-virtualenv-root))))
 ;;   )
 
+(use-package combobulate
+  :vc (:url "https://github.com/mickeynp/combobulate"
+       :rev :newest
+       :branch "master"
+       :vc-backend Git)
+  :ensure t
+  :defer t
+  ;; :custom
+  ;; (combobulate-key-prefix "s-o") ;; It's bugged, probably related to mickeynp/combobulate#117
+  :hook ((prog-mode . combobulate-mode))
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
