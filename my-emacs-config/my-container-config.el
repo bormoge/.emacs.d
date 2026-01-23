@@ -287,6 +287,26 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; eglot configuration
+(use-package eglot
+  :ensure nil
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-confirm-server-edits '((eglot-rename . nil)
+                                (t . maybe-summary)
+                                (t . diff)))
+  :bind (:map eglot-mode-map
+              ("s-e c a" . eglot-code-actions)
+              ("s-e o i" . eglot-code-action-organize-imports)
+              ("s-e q f" . eglot-code-action-quickfix)
+              ("s-e s d" . eglot-shutdown)
+              ("s-e f t" . eglot-find-typeDefinition)
+              ("s-e f b" . eglot-format-buffer)
+              ("s-e f r" . eglot-format)
+              ("s-e r n" . eglot-rename)
+              ("s-e r w" . eglot-code-action-rewrite)
+              ("s-e r c" . eglot-reconnect)
+              ))
+
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) .
@@ -315,15 +335,14 @@
 
 ;; For now this won't be necessary
 ;; (add-to-list 'dape-configs
-;;                `(codelldb
-;;                  modes (rust-mode rust-ts-mode)
-;;                  ensure dape-ensure-command
-;;                  command "rust-gdb"
-;;                  command-args ("-i" "dap")
-;;                  command-cwd dape-command-cwd
-;;                  command-insert-stderr t
-;;                  port :autoport
-;;                  :request "launch"
-;;                  :type "debug"
-;;                  :cwd dape-cwd-fn
-;;                  :program dape-cwd-fn))
+;;              `(codelldb-rust-2 modes (rust-mode rust-ts-mode) command-args
+;;                                ("--port" :autoport "--settings"
+;;                                 "{\"sourceLanguages\":[\"rust\"]}")
+;;                                ensure dape-ensure-command command-cwd
+;;                                dape-command-cwd command "codelldb" port :autoport :type "lldb"
+;;                                :request "launch" :cwd "." :program
+;;                                (file-name-concat "target" "debug"
+;;                                                  (car
+;;                                                   (last
+;;                                                    (file-name-split
+;;                                                     (directory-file-name (dape-cwd))))))))

@@ -80,3 +80,6 @@
 
 ;; Define keys for package functions
 (define-key (current-global-map) (kbd "H-q l") 'list-packages)
+
+;; Define easy key for eldoc documentation
+(define-key (current-global-map) (kbd "s-.") 'eldoc)

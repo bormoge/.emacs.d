@@ -1,3 +1,5 @@
+(require 'cl-lib)
+
 ;; Remove startup screen
 (setq inhibit-startup-screen t)
 
@@ -53,11 +55,16 @@
 ;; Increase zoom
 ;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 (setq-default text-scale-mode-amount 2)
+
+(setq forbidden-prefixes-text-scale-mode '("dape" "treemacs-mode" "dashboard-mode"))
+
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
 	    ;; (if (derived-mode-p 'treemacs-mode)
-            (if (memq major-mode '(treemacs-mode dashboard-mode))
-	        (text-scale-set 0)
+            (unless (cl-some (lambda (prefix)
+                               (string-prefix-p prefix (symbol-name major-mode)))
+                             forbidden-prefixes-text-scale-mode)
+	        ;(text-scale-set 0)
 	      (text-scale-set text-scale-mode-amount))
 	    ))
 
