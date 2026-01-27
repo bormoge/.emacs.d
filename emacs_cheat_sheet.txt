@@ -150,7 +150,7 @@ Info on cursor position			CTRL + x =
 Info on cursor position (other window)	CTRL + u CTRL + x =
 
 
-Scroll lock				FN + s
+Scroll lock				FN + s, FN + k
 
 
 Search words on internet		ALT + s ALT + w

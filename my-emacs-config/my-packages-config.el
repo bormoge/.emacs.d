@@ -172,7 +172,7 @@
   :defer t
   :config
   ;; Integrate diff-hl with magit.
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
   ;; Add tracked files to magit-status.
   (magit-add-section-hook
    'magit-status-sections-hook
@@ -841,7 +841,7 @@
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-sort-length-enable nil) ;; default: t
   (prescient-sort-full-matches-first t) ;; default: nil
-  (prescient-history-length 100) ;; default: 100
+  (prescient-history-length 150) ;; default: 100
   (prescient-frequency-decay 0.997) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
@@ -912,7 +912,14 @@
 	  (nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
 	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
 	  (python . ("https://github.com/tree-sitter/tree-sitter-python" "master"))
-          (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "v0.5.0"))
+          (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "master"))
+          (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src"))
+          (markdown-inline . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src"))
+          (regex . ("https://github.com/tree-sitter/tree-sitter-regex" "master"))
+          (c . ("https://github.com/tree-sitter/tree-sitter-c" "master"))
+          (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "master"))
+          (erlang . ("https://github.com/WhatsApp/tree-sitter-erlang" "main"))
+          (elixir . ("https://github.com/elixir-lang/tree-sitter-elixir" "main"))
 	  )
         )
   ;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))

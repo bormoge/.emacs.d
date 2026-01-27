@@ -308,15 +308,18 @@
               ("s-e r n" . eglot-rename)
               ("s-e r w" . eglot-code-action-rewrite)
               ("s-e r c" . eglot-reconnect)
-              ))
+              )
+  :config
+  (setopt eglot-send-changes-idle-time 0.5
+          eglot-extend-to-xref nil)
 
-(with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) .
-                 ("rust-analyzer" :initializationOptions (:check (:command "clippy"))))))
-                 ;; ("rust-analyzer"))))
-
-(add-hook 'rust-ts-mode-hook 'eglot-ensure)
+                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+              ;; ("rust-analyzer"))))
+  :hook
+  ((rust-mode rust-ts-mode) . eglot-ensure)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

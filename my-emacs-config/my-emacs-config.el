@@ -239,8 +239,21 @@
         ("s-a" . string-rectangle))
   :defer t)
 
+;; Control how you want to show info using `what-cursor-position'
+;; (setq describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
+(setq describe-char-unidata-list t)
+
 ;; No backup files
 (setq make-backup-files nil)
+
+;; Create lock files
+;; (setq create-lockfiles t)
+
+;; Inhibit backups
+;; (setq backup-inhibited t)
+
+;; Auto-Save-Mode
+;; (auto-save-mode 1)
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)
