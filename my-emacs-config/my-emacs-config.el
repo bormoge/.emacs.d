@@ -69,13 +69,14 @@
 	    ))
 
 ;; Change font
-;;(set-frame-font "Adwaita Mono 12" nil t)
-;;(set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
-;;(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
-;;(set-frame-font "Hack Nerd Font Mono 12" nil t)
-;;(set-frame-font "Iosevka Nerd Font Mono 14" nil t)
-;;(set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
-(set-frame-font "Ioskeley Mono Light 12" nil t)
+;; (set-frame-font "Adwaita Mono 12" nil t)
+;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
+;; (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
+;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
+;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
+;; (set-frame-font "Ioskeley Mono Light 12" nil t)
+(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
 
 ;; Truncate long lines
 ;;(setq-default truncate-lines t)
@@ -126,7 +127,7 @@
   )
 
 ;; Modify the appearance of the region
-(custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
+;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
 
 ;; Change cursor's appearance
 (setq blink-cursor-mode t)
@@ -234,6 +235,7 @@
 
 ;; Rectangle mode config
 (use-package rect
+  :ensure nil
   :bind
   (:map rectangle-mark-mode-map
         ("s-a" . string-rectangle))
@@ -242,6 +244,12 @@
 ;; Control how you want to show info using `what-cursor-position'
 ;; (setq describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
 (setq describe-char-unidata-list t)
+
+;; Calc config
+(use-package calc
+  :ensure nil
+  :config
+  (setq calc-group-digits t))
 
 ;; No backup files
 (setq make-backup-files nil)

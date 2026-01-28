@@ -315,6 +315,9 @@ Start with negative sign		calcDigit-start			_
 Use fraction notation                   calc-fdiv                       :
 Convert fraction to float               calc-float                      c f
 Convert float to fraction               calc-fraction                   c F
+Group numbers, default (,)              calc-group-digits               d g
+Save a value                            calc-store-quick                s 0 ... s 9
+Recall a value                          calc-recall-quick               r 0 ... r 9
 
 
 ## rectangle-mark-mode

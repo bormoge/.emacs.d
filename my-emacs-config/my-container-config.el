@@ -9,12 +9,6 @@
 	 (ignore-errors (mason-install pkg))))))
   (mason-setup))
 
-;; Treemacs integration with LSP
-(use-package lsp-treemacs
-  :ensure t
-  :after lsp
-  :commands lsp-treemacs-errors-list)
-
 ;; Syntax checking using Flycheck
 (use-package flycheck
   :ensure t
