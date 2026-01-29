@@ -54,9 +54,6 @@
 ;; Replace string
 (define-key (current-global-map) (kbd "M-s-r s") 'query-replace)
 
-;; Open flnkf buffer list of links
-(define-key (current-global-map) (kbd "H-o") 'flnkf-open-default-buffer-list)
-
 ;; Open full-calc
 (define-key (current-global-map) (kbd "<Calculator>") 'full-calc)
 

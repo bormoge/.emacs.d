@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult-flycheck consult-lsp consult cape gnu-elpa-keyring-update envrc ledger-mode orderless lsp-java corfu focus flycheck treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet treemacs dap-mode lsp-ui lsp-mode doom-themes magit diff-hl))
+      '(consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -316,11 +316,15 @@
 
 (use-package flymake
   :hook
-  (emacs-lisp-mode . flymake-mode)
-  (nix-mode . flymake-mode)
-  (nix-ts-mode . flymake-mode)
-  (rust-mode . flymake-mode)
-  (rust-ts-mode . flymake-mode)
+  ((java-mode
+    java-ts-mode
+    emacs-lisp-mode
+    nix-mode
+    nix-ts-mode
+    rust-mode
+    rust-ts-mode
+    markdown-mode
+    ) . flymake-mode)
   )
 
 ;; Focus on selected text
@@ -352,6 +356,18 @@
   :defer t
   :config
   (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+  )
+
+;; hledger-mode
+(use-package hledger-mode
+  :ensure t
+  :defer t
+  )
+
+;; flymake-hledger
+(use-package flymake-hledger
+  :ensure t
+  :defer t
   )
 
 ;; Automatically show available commands
@@ -508,14 +524,14 @@
   :ensure t
   :defer t
   :hook (((java-mode
-	  java-ts-mode
-	  emacs-lisp-mode
-          markdown-mode
-          nix-mode
-          nix-ts-mode
-          rust-mode
-          rust-ts-mode
-          ) . corfu-mode)
+           java-ts-mode
+           emacs-lisp-mode
+           nix-mode
+           nix-ts-mode
+           rust-mode
+           rust-ts-mode
+           markdown-mode
+           ) . corfu-mode)
 	 )
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -640,10 +656,10 @@
          ;; Other custom bindings
          ("M-y" . consult-yank-pop)                ;; orig. yank-pop
          ;; M-g bindings in `goto-map'
-         ("M-g e" . consult-compile-error)
+         ("M-g e c" . consult-compile-error)
+         ("M-g e g" . consult-eglot-symbols)
          ("M-g r" . consult-grep-match)
-         ("M-g f m" . consult-flymake)             ;; Alternative: consult-flycheck
-         ("M-g f c" . consult-flycheck)
+         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
          ("M-g g" . consult-goto-line)             ;; orig. goto-line
          ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
          ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
@@ -652,6 +668,8 @@
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
          ("M-g I" . consult-imenu-multi)
+         ("M-g y y" . consult-yasnippet)
+         ("M-g y v" . consult-yasnippet-visit-snippet-file)
          ;; M-s bindings in `search-map'
          ("M-s d" . consult-find)                  ;; Alternative: consult-fd
          ("M-s M-d" . consult-fd)
@@ -725,13 +743,13 @@
   )
 
 (when (package-installed-p 'consult)
-  (when (package-installed-p 'flycheck)
-    (use-package consult-flycheck
+  (when (package-installed-p 'eglot)
+    (use-package consult-eglot
       :ensure t
       :defer t
       :after consult))
-  (when (package-installed-p 'lsp-mode)
-    (use-package consult-lsp
+  (when (package-installed-p 'yasnippet)
+    (use-package consult-yasnippet
       :ensure t
       :after consult))
   )
