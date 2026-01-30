@@ -163,6 +163,10 @@
               ("s-e r c" . eglot-reconnect)
               )
   :config
+  ;; Enable cache busting, depending on if your server returns
+  ;; sufficiently many candidates in the first place.
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+
   (setopt eglot-send-changes-idle-time 0.5
           eglot-extend-to-xref nil)
 
@@ -172,7 +176,9 @@
 
   ;; You need a Java compiler to use the lsp server JDTLS.
   ;; Also, you need to concat the absolute path, not relative.
-  (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
+  ;; (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
+
+  ;; You can find the settings for JDTLS here: marketplace dot visualstudio dot com / items ?itemName=redhat.java
 
   (add-to-list 'eglot-server-programs
                `((java-mode java-ts-mode) .
@@ -186,7 +192,26 @@
                     (:format
                      (:settings
                       (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
-                      :enabled t)))))))
+                      :enabled t)
+                     :completion
+                     (:maxResults "100")))))))
+
+  ;;   (add-to-list 'eglot-server-programs
+  ;;              `((java-mode java-ts-mode) .
+  ;;                ("jdtls"
+  ;;                 :initializationOptions
+  ;;                 (:bundles
+  ;;                  ;; This needs to be the absolute path to java-debug-adapter
+  ;;                  [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]))))
+
+  ;; (setq-default eglot-workspace-configuration
+  ;;               `(:java
+  ;;                 (:format
+  ;;                  (:settings
+  ;;                   (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
+  ;;                   :enabled t)
+  ;;                  :completion
+  ;;                  (:maxResults 70))))
 
   :hook
   ((rust-mode rust-ts-mode) . eglot-ensure)
@@ -201,9 +226,12 @@
   :config
   (setq dape-buffer-window-arrangement 'right))
 
-;; Put a soft link on debug-adapters directory so dape sees where codelldb is located.
+;; Put symlinks on debug-adapters directory so dape sees where the debuggers are located.
 (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))
   (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/codelldb/") (expand-file-name "~/.emacs.d/debug-adapters/codelldb/")))
+
+(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar"))
+  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar") (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar")))
 
 ;; For now this won't be necessary
 ;; (add-to-list 'dape-configs

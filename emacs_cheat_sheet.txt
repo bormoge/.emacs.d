@@ -305,6 +305,7 @@ Indent org files			org-indent-mode
 ## calc
 Calculator				calc				CTRL + x * c
 Calculator full screen			full-calc
+Embedded Calculator                     calc-embedded
 Toggle calc between big or small	calc-big-or-small		CTRL + x * b
 Reset calculator			calc-reset			CTRL + x * 0
 Edit calc buffer			calc-edit			`

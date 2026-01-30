@@ -56,9 +56,11 @@ M-x package-vc-upgrade-all
 
 ### lsp
 
-To install / update a language server use the following command inside Emacs:
+To install, update, or uninstall a language server / linter / formatter / debug adapter use the following commands inside Emacs:
 ```
-M-x lsp-install-server
+M-x mason-install
+M-x mason-update
+M-x mason-uninstall
 ```
 
 ## License

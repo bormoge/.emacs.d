@@ -38,13 +38,14 @@
       )
 
 (setq package-selected-packages
-      '(consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
   :ensure t
   :config
   (setq dashboard-center-content t)
+  (set-face-attribute 'dashboard-items-face nil :height 163 :inherit 'widget-button)
   (setq dashboard-display-icons-p t)     ; display icons on both GUI and terminal
   (setq dashboard-icon-type 'nerd-icons) ; use `nerd-icons' package
   (setq dashboard-set-heading-icons t)
@@ -151,9 +152,9 @@
   ;; (doom-modeline-before-update-env-hook nil)
   ;; (doom-modeline-after-update-env-hook nil)
   
-  ;; :config
-  ;; (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
-  ;; (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
+  :config
+  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
   )
 
 ;; Used to highlight lines changed
@@ -747,7 +748,11 @@
     (use-package consult-eglot
       :ensure t
       :defer t
-      :after consult))
+      :after consult eglot))
+  (use-package consult-eglot-embark
+      :ensure t
+      :defer t
+      :after (consult-eglot embark))
   (when (package-installed-p 'yasnippet)
     (use-package consult-yasnippet
       :ensure t
@@ -844,7 +849,9 @@
   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
   (completion-styles '(orderless basic)) ;;partial-completion
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))) ;;basic
+  (completion-category-overrides '((file (styles partial-completion)) ;;basic
+                                   (eglot (styles orderless))
+                                   (eglot-capf (styles orderless))))
   ;;(completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
   )
 

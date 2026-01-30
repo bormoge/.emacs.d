@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: spdx
+# key: spdx
+# uuid: spdx
+# --
+SPDX-License-Identifier: GPL-3.0-or-later

@@ -53,7 +53,7 @@
 (tooltip-mode t)
 
 ;; Increase zoom
-;;(add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 (setq default-text-scale-mode-amount 2)
 
 (setq forbidden-prefixes-text-scale-mode '("dape" "treemacs-mode" "dashboard-mode"))
@@ -71,7 +71,6 @@
 ;; Change font
 ;; (set-frame-font "Adwaita Mono 12" nil t)
 ;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
-;; (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
 ;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
 ;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
 ;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
