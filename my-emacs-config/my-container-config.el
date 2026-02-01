@@ -1,3 +1,21 @@
+;; checking for missing cli
+(defun missing-cli (cli-list)
+  (seq-filter
+   (lambda (cli)
+     (not (executable-find cli)))
+   cli-list))
+
+(defun cli-sanity-check (cli-list)
+  (let ((mcli (missing-cli cli-list)))
+    (when mcli
+      (display-warning
+       'environment
+       (format "Missing CLI commands: %s"
+               (string-join mcli ", "))
+       :warning))))
+
+(cli-sanity-check '("rustup" "uv" "java" "node"))
+
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
   :ensure t
@@ -88,6 +106,61 @@
   :commands (cider-jack-in))
 
 ;; Other packages to consider: clj-refactor.el, inf-clojure
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; ;;;; typescript-mode config
+;; (use-package typescript-mode
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (require 'ansi-color)
+;;   (defun colorize-compilation-buffer ()
+;;     (ansi-color-apply-on-region compilation-filter-start (point-max)))
+;;   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+;;   )
+
+;; ;; tide package config
+;; (use-package tide
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (defun setup-tide-mode ()
+;;     (interactive)
+;;     (tide-setup)
+;;     (eldoc-mode +1)
+;;     (tide-hl-identifier-mode +1))
+
+;;   ;; ;; formats the buffer before saving
+;;   ;; (add-hook 'before-save-hook 'tide-format-before-save)
+
+;;   ;; if you use typescript-mode
+;;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
+;;   ;; if you use treesitter based typescript-ts-mode (emacs 29+)
+;;   (add-hook 'typescript-ts-mode-hook #'setup-tide-mode)
+;;   )
+
+;; ;; web-mode package config
+;; (use-package web-mode
+;;   :ensure t
+;;   :defer t
+;;   )
+
+;; ;;;; tsx-mode config
+;; (use-package tsx-mode
+;;   :vc (:url "https://github.com/orzechowskid/tsx-mode.el"
+;;        :rev :newest
+;;        :branch "emacs30"
+;;        :vc-backend Git)
+;;   :ensure t
+;;   :defer t
+;;   )
+
+;; ;; json-mode config
+;; (use-package json-mode
+;;   :ensure t
+;;   :defer t
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

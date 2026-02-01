@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: orgh1
+# key: orgh1
+# uuid: orgh1
+# --
+#-*- mode: org -*-
+#+STARTUP: overview

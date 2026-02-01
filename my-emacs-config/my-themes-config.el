@@ -69,8 +69,8 @@
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; default "doom-atom"; use "doom-colors" for less minimal icon theme
-  (setq doom-themes-treemacs-theme "doom-colors")
-  (doom-themes-treemacs-config)
+  ;; (setq doom-themes-treemacs-theme "doom-colors")
+  ;; (doom-themes-treemacs-config)
   (doom-themes-org-config)
   )
 

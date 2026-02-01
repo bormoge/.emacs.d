@@ -56,7 +56,7 @@
 ;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 (setq default-text-scale-mode-amount 2)
 
-(setq forbidden-prefixes-text-scale-mode '("dape" "treemacs-mode" "dashboard-mode"))
+(setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
 
 (add-hook 'after-change-major-mode-hook
 	  (lambda ()
@@ -88,7 +88,7 @@
 ;;(horizontal-scroll-bar-mode t)
 
 ;; Replace a selected area with typed text
-(delete-selection-mode 1)
+(setopt delete-selection-mode t)
 
 ;; Add directory to desktop-path
 (with-eval-after-load 'desktop

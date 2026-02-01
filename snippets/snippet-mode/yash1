@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: yash1
+# key: yash1
+# uuid: yash1
+# --
+# -*- mode: $1 -*-
+# name: $2
+# key: ${3:$2}
+# uuid: ${4:$2}
+# --

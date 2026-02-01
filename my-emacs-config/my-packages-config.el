@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg treemacs-tab-bar treemacs-magit forge yasnippet treemacs doom-themes magit diff-hl))
+      '(consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -190,111 +190,6 @@
   :defer t
   :after magit)
 
-;; File and project explorer
-;; Most of this config is taken from Alexander-Miller's repository
-(use-package treemacs
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
-          treemacs-deferred-git-apply-delay        0.5
-          treemacs-directory-name-transformer      #'identity
-          treemacs-display-in-side-window          t
-          treemacs-eldoc-display                   'simple
-          treemacs-file-event-delay                2000
-          treemacs-file-extension-regex            treemacs-last-period-regex-value
-          treemacs-file-follow-delay               0.2
-          treemacs-file-name-transformer           #'identity
-          treemacs-follow-after-init               t
-          treemacs-expand-after-init               t
-          treemacs-find-workspace-method           'find-for-file-or-pick-first
-          treemacs-git-command-pipe                ""
-          treemacs-goto-tag-strategy               'refetch-index
-          treemacs-header-scroll-indicators        '(nil . "^^^^^^")
-          treemacs-hide-dot-git-directory          t
-          treemacs-indentation                     2
-          treemacs-indentation-string              " "
-          treemacs-is-never-other-window           nil
-          treemacs-max-git-entries                 5000
-          treemacs-missing-project-action          'ask
-          treemacs-move-files-by-mouse-dragging    t
-          treemacs-move-forward-on-expand          nil
-          treemacs-no-png-images                   nil
-          treemacs-no-delete-other-windows         t
-          treemacs-project-follow-cleanup          nil
-          treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-          treemacs-position                        'left
-          treemacs-read-string-input               'from-child-frame
-          treemacs-recenter-distance               0.1
-          treemacs-recenter-after-file-follow      nil
-          treemacs-recenter-after-tag-follow       nil
-          treemacs-recenter-after-project-jump     'always
-          treemacs-recenter-after-project-expand   'on-distance
-          treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
-          treemacs-project-follow-into-home        nil
-          treemacs-show-cursor                     nil
-          treemacs-show-hidden-files               t
-          treemacs-silent-filewatch                nil
-          treemacs-silent-refresh                  nil
-          treemacs-sorting                         'alphabetic-asc
-          treemacs-select-when-already-in-treemacs 'move-back
-          treemacs-space-between-root-nodes        nil ;;default: t
-          treemacs-tag-follow-cleanup              t
-          treemacs-tag-follow-delay                1.5
-          treemacs-text-scale                      nil
-          treemacs-user-mode-line-format           nil
-          treemacs-user-header-line-format         nil
-          treemacs-wide-toggle-width               70
-          treemacs-width                           35
-          treemacs-width-increment                 1
-          treemacs-width-is-initially-locked       t
-          treemacs-workspace-switch-cleanup        nil)
-
-    ;; Note from treemacs author Alexander-Miller:
-    ;; The default width and height of the icons is 22 pixels. If you are
-    ;; using a Hi-DPI display, uncomment this to double the icon size.
-    ;;(treemacs-resize-icons 44)
-
-    (treemacs-follow-mode t)
-    ;;(treemacs-project-follow-mode t)
-    (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode 'always)
-    (when treemacs-python-executable
-      (treemacs-git-commit-diff-mode t))
-
-    (pcase (cons (not (null (executable-find "git")))
-                 (not (null treemacs-python-executable)))
-      (`(t . t)
-       (treemacs-git-mode 'deferred))
-      (`(t . _)
-       (treemacs-git-mode 'simple)))
-
-;;    (treemacs-hide-gitignored-files-mode nil)
-    )
-  :bind
-  (:map global-map
-        ("H-x t o"   . treemacs-select-window)
-        ("H-x t 1"   . treemacs-delete-other-windows)
-        ("H-x t t"   . treemacs)
-        ("H-x t d"   . treemacs-select-directory)
-        ("H-x t B"   . treemacs-bookmark)
-        ("H-x t C-t" . treemacs-find-file)
-        ("H-x t M-t" . treemacs-find-tag))
-  
-  ) ;; Yes, this is the end of the use-package treemacs.
-
-(use-package treemacs-magit
-  :after (treemacs magit)
-  :ensure t)
-
-(use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
-  :after (treemacs)
-  :ensure t
-  :config (treemacs-set-scope-type 'Tabs))
-
-;; (treemacs-start-on-boot)
-
 ;; YASnippet for shortcuts
 (use-package yasnippet
   :ensure t
@@ -304,7 +199,9 @@
   ;; Remap the snippet expansion from TAB to H-TAB
   (define-key yas-minor-mode-map [(tab)] nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "H-<tab>") 'yas-expand)
+  (define-key yas-minor-mode-map (kbd "s-<tab>") 'yas-expand)
+  (define-key yas-minor-mode-map (kbd "s-<0x10081247> <tab>") 'yas-expand)
+  (define-key yas-minor-mode-map (kbd "s-<0x10081247> S-s-<iso-lefttab>") 'yas-expand)
   :config
   ;; YASnippet directories
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
@@ -317,15 +214,24 @@
 
 (use-package flymake
   :hook
-  ((java-mode
-    java-ts-mode
-    emacs-lisp-mode
-    nix-mode
-    nix-ts-mode
-    rust-mode
-    rust-ts-mode
-    markdown-mode
-    ) . flymake-mode)
+  (((
+     java-mode
+     java-ts-mode
+     emacs-lisp-mode
+     nix-mode
+     nix-ts-mode
+     rust-mode
+     rust-ts-mode
+     markdown-mode
+     js-mode
+     js-ts-mode
+     html-mode
+     html-ts-mode
+     css-mode
+     css-ts-mode
+     json-mode
+     json-ts-mode
+     ) . flymake-mode))
   )
 
 ;; Focus on selected text
@@ -524,16 +430,25 @@
 (use-package corfu
   :ensure t
   :defer t
-  :hook (((java-mode
-           java-ts-mode
-           emacs-lisp-mode
-           nix-mode
-           nix-ts-mode
-           rust-mode
-           rust-ts-mode
-           markdown-mode
-           ) . corfu-mode)
-	 )
+  :hook
+  (((
+     java-mode
+     java-ts-mode
+     emacs-lisp-mode
+     nix-mode
+     nix-ts-mode
+     rust-mode
+     rust-ts-mode
+     markdown-mode
+     js-mode
+     js-ts-mode
+     html-mode
+     html-ts-mode
+     css-mode
+     css-ts-mode
+     json-mode
+     json-ts-mode
+     ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
   (defun corfu-move-to-minibuffer ()
@@ -776,10 +691,10 @@
   :ensure t
   :defer t
   :bind
-  (("C-, ." . embark-act)
-   ("C-, ," . embark-dwim)
-   ("C-, b" . embark-bindings)
-   ("C-, e" . embark-export)
+  (("s-m ." . embark-act)
+   ("s-m ," . embark-dwim)
+   ("s-m b" . embark-bindings)
+   ("s-m e" . embark-export)
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
@@ -955,8 +870,11 @@
 	  (clojure-mode . clojure-ts-mode)
 	  (css-mode . css-ts-mode)
 	  (html-mode . html-ts-mode)
-	  (((js-mode javascript-mode js2-mode)) . js-ts-mode)
+	  (js-mode . js-ts-mode)
+          (javascript-mode . js-ts-mode)
+          (js2-mode . js-ts-mode)
 	  (js-json-mode . json-ts-mode)
+	  (json-mode . json-ts-mode)
 	  (typescript-tsx-mode . tsx-ts-mode)
 	  (typescript-mode . typescript-ts-mode)
 	  (nix-mode . nix-ts-mode)
