@@ -231,6 +231,8 @@
      css-ts-mode
      json-mode
      json-ts-mode
+     python-mode
+     python-ts-mode
      ) . flymake-mode))
   )
 
@@ -448,6 +450,8 @@
      css-ts-mode
      json-mode
      json-ts-mode
+     python-mode
+     python-ts-mode
      ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer

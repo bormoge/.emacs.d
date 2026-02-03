@@ -14,7 +14,7 @@
                (string-join mcli ", "))
        :warning))))
 
-(cli-sanity-check '("rustup" "uv" "java" "node"))
+(cli-sanity-check '("rustup" "uv" "java" "node" "debugpy"))
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
@@ -28,6 +28,11 @@
                 "codelldb"
                 "jdtls"
                 "java-debug-adapter"
+                "typescript-language-server"
+                "js-debug-adapter"
+                "ruff"
+                "ty"
+                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv tool.
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -60,6 +65,7 @@
 (use-package uv-mode
   :ensure t
   :hook (python-mode . uv-mode-auto-activate-hook)
+  :hook (python-ts-mode . uv-mode-auto-activate-hook)
   )
 
 ;; Package to integrate various python tools. I'll leave this here just in case I end up using it.
@@ -286,9 +292,15 @@
   ;;                  :completion
   ;;                  (:maxResults 70))))
 
+  (add-to-list 'eglot-server-programs
+               '((python-ts-mode python-mode) .
+                 ("rass" "--" "ty" "server" "--" "ruff" "server")))
+
   :hook
   ((rust-mode rust-ts-mode) . eglot-ensure)
   ((java-mode java-ts-mode) . eglot-ensure)
+  ((js-mode js-ts-mode) . eglot-ensure)
+  ((python-mode python-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -305,6 +317,29 @@
 
 (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar"))
   (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar") (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar")))
+
+(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter"))
+  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/bin/js-debug-adapter") (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter")))
+
+;; (setenv "PATH" (concat "/home/gbm/contenedores_distrobox/fedora_linux_1/.emacs.d/mason/packages/debugpy/bin:" (getenv "PATH")))
+;; (setq exec-path (cons "/home/gbm/contenedores_distrobox/fedora_linux_1/.emacs.d/mason/packages/debugpy/bin" exec-path))
+
+(add-to-list 'dape-configs
+             `(js-debug-adapter
+               modes (js-mode js-ts-mode typescript-mode typescript-ts-mode)
+               command "node"
+               command-args (,(expand-file-name "~/.emacs.d/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js") "8123")
+               :type "pwa-node"
+               :request "launch"
+               :cwd "${workspaceFolder}"
+               :program (if (buffer-file-name) ;; if buffer is visiting file, return file name, else nil
+                            (setq js-debug-buffer-filename (buffer-file-name)) ;; if buffer-file-name = non-nil set the file name
+                          js-debug-buffer-filename) ;; else either use nil or assume last file visited is target
+               ;; for some reason ${file} didn't work on :program
+               ensure dape-ensure-command command-cwd
+               dape-command-cwd command "js-debug-adapter"
+               host "localhost"
+               port 8123))
 
 ;; For now this won't be necessary
 ;; (add-to-list 'dape-configs

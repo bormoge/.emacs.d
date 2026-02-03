@@ -319,6 +319,7 @@ Convert float to fraction               calc-fraction                   c F
 Group numbers, default (,)              calc-group-digits               d g
 Save a value                            calc-store-quick                s 0 ... s 9
 Recall a value                          calc-recall-quick               r 0 ... r 9
+Rotate values                           calc-roll-down, calc-roll-up    CTRL + i, CTRL + ALT + i
 
 
 ## rectangle-mark-mode
@@ -383,6 +384,7 @@ Number of garbage collections		gcs-done
 
 # Magit
 Available magit commands		magit-dispatch				CTRL + x ALT + g
+Avaliable magit commands for file       magit-file-dispatch                     CTRL + c ALT + g
 Git status				magit-status				CTRL + x g
 
 # Treesitter
