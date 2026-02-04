@@ -14,7 +14,7 @@
                (string-join mcli ", "))
        :warning))))
 
-(cli-sanity-check '("rustup" "uv" "java" "node" "debugpy"))
+(cli-sanity-check '("rustup" "uv" "java" "node"))
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
@@ -32,7 +32,8 @@
                 "js-debug-adapter"
                 "ruff"
                 "ty"
-                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv tool.
+                "tombi"
+                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -89,6 +90,33 @@
   ;; :custom
   ;; (combobulate-key-prefix "s-o") ;; It's bugged, probably related to mickeynp/combobulate#117
   :hook ((prog-mode . combobulate-mode))
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; toml config
+(use-package toml-mode
+  :ensure t
+  :defer t
+  :config
+  (require 'tomlparse)
+  )
+
+(use-package toml-ts-mode
+  :ensure t
+  :defer t
+  :config
+  (require 'tomlparse)
+  )
+
+(use-package toml
+  :ensure t
+  :defer t
+  )
+
+(use-package tomlparse
+  :ensure t
+  :defer t
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -162,11 +190,11 @@
 ;;   :defer t
 ;;   )
 
-;; ;; json-mode config
-;; (use-package json-mode
-;;   :ensure t
-;;   :defer t
-;;   )
+;; json-mode config
+(use-package json-mode
+  :ensure t
+  :defer t
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -296,11 +324,16 @@
                '((python-ts-mode python-mode) .
                  ("rass" "--" "ty" "server" "--" "ruff" "server")))
 
+  (add-to-list 'eglot-server-programs
+               '((toml-ts-mode toml-mode) .
+                 ("tombi" "lsp"))) ;; "lint" "format" "completion"
+
   :hook
   ((rust-mode rust-ts-mode) . eglot-ensure)
   ((java-mode java-ts-mode) . eglot-ensure)
   ((js-mode js-ts-mode) . eglot-ensure)
   ((python-mode python-ts-mode) . eglot-ensure)
+  ((toml-mode toml-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -321,8 +354,8 @@
 (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter"))
   (make-symbolic-link (expand-file-name "~/.emacs.d/mason/bin/js-debug-adapter") (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter")))
 
-;; (setenv "PATH" (concat "/home/gbm/contenedores_distrobox/fedora_linux_1/.emacs.d/mason/packages/debugpy/bin:" (getenv "PATH")))
-;; (setq exec-path (cons "/home/gbm/contenedores_distrobox/fedora_linux_1/.emacs.d/mason/packages/debugpy/bin" exec-path))
+;; (setenv "PATH" (concat "~/.emacs.d/mason/bin:" (getenv "PATH")))
+;; (setq exec-path (cons "~/.emacs.d/mason/bin" exec-path))
 
 (add-to-list 'dape-configs
              `(js-debug-adapter
