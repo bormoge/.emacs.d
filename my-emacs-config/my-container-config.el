@@ -14,7 +14,7 @@
                (string-join mcli ", "))
        :warning))))
 
-(cli-sanity-check '("rustup" "uv" "java" "node"))
+(cli-sanity-check '("rustup" "uv" "java" "node")) ;"asdf"
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
@@ -140,6 +140,91 @@
   :commands (cider-jack-in))
 
 ;; Other packages to consider: clj-refactor.el, inf-clojure
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Elixir / Erlang config
+
+;; Elixir
+;; (use-package elixir-mode
+;;   :ensure t
+;;   :defer t
+;;   )
+
+;; (use-package mix
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (add-hook 'elixir-mode-hook 'mix-minor-mode)
+;;   (add-hook 'elixir-ts-mode-hook 'mix-minor-mode)
+;;   )
+
+;; (use-package exunit
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (add-hook 'elixir-mode-hook 'exunit-mode)
+;;   (add-hook 'elixir-ts-mode-hook 'exunit-mode)
+;;   )
+
+;; (use-package inf-elixir
+;;   :ensure t
+;;   :defer t
+;;   :bind (("C-c i i" . 'inf-elixir)
+;;          ("C-c i p" . 'inf-elixir-project)
+;;          ("C-c i l" . 'inf-elixir-send-line)
+;;          ("C-c i r" . 'inf-elixir-send-region)
+;;          ("C-c i b" . 'inf-elixir-send-buffer)
+;;          ("C-c i R" . 'inf-elixir-reload-module))
+;;   )
+
+;; (use-package ob-elixir
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (org-babel-do-load-languages
+;;    'org-babel-load-languages
+;;    '((emacs-lisp . t)
+;;      (elixir . t)))
+;;   )
+
+;; (use-package heex-ts-mode
+;;   :ensure t
+;;   :defer t
+;;   )
+
+;; Erlang
+;; (use-package erlang
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   ;; (setq load-path (cons "/usr/local/otp/lib/tools/emacs" ;;"/usr/local/otp/lib/tools-<ToolsVer>/emacs"
+;;   ;;                       load-path))
+;;   ;; (setq erlang-root-dir "/usr/local/otp")
+;;   ;; (setq exec-path (cons "/usr/local/otp/bin" exec-path))
+;;   ;; (require 'erlang-start)
+;;   ;; (require 'erlang-flymake)
+;;   )
+
+;; (use-package erlang-ts
+;;   :ensure t
+;;   ;; :mode ("\\.erl\\'" . erlang-ts-mode)
+;;   :defer t
+;;   )
+
+;; (use-package edts
+;;   :ensure t
+;;   :defer t
+;;   )
+
+;; (use-package ob-erlang
+;;   :vc (:url "https://github.com/B7rian/ob-erlang"
+;;        :rev :newest
+;;        :branch "master"
+;;        :vc-backend Git)
+;;   :ensure t
+;;   :defer t
+;;   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

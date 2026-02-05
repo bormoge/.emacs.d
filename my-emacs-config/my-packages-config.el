@@ -233,6 +233,10 @@
      json-ts-mode
      python-mode
      python-ts-mode
+     elixir-mode
+     elixir-ts-mode
+     erlang-mode
+     erlang-ts-mode
      ) . flymake-mode))
   )
 
@@ -452,6 +456,10 @@
      json-ts-mode
      python-mode
      python-ts-mode
+     elixir-mode
+     elixir-ts-mode
+     erlang-mode
+     erlang-ts-mode
      ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -781,7 +789,7 @@
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-sort-length-enable nil) ;; default: t
   (prescient-sort-full-matches-first t) ;; default: nil
-  (prescient-history-length 150) ;; default: 100
+  (prescient-history-length 300) ;; default: 100
   (prescient-frequency-decay 0.997) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
@@ -860,6 +868,8 @@
           (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "master"))
           (erlang . ("https://github.com/WhatsApp/tree-sitter-erlang" "main"))
           (elixir . ("https://github.com/elixir-lang/tree-sitter-elixir" "main"))
+          (toml . ("https://github.com/tree-sitter-grammars/tree-sitter-toml"))
+          (heex . ("https://github.com/phoenixframework/tree-sitter-heex"))
 	  )
         )
   ;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
@@ -884,6 +894,9 @@
 	  (nix-mode . nix-ts-mode)
           (rust-mode . rust-ts-mode)
           (python-mode . python-ts-mode)
+          (toml-mode . toml-ts-mode)
+          (elixir-mode . elixir-ts-mode)
+          (erlang-mode . erlang-ts-mode)
 	  )
         )
 

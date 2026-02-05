@@ -119,7 +119,7 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
 (setq savehist-file "~/.emacs.d/history"
-  history-length 100
+  history-length 150
   history-delete-duplicates t
   savehist-save-minibuffer-history t
   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
@@ -249,6 +249,9 @@
   :ensure nil
   :config
   (setq calc-group-digits t))
+
+;; Global lexical-binding (Emacs 31)
+;; (set-default-toplevel-value 'lexical-binding t)
 
 ;; No backup files
 (setq make-backup-files nil)
