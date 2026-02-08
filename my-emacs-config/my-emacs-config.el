@@ -68,6 +68,25 @@
 	      (text-scale-set default-text-scale-mode-amount))
 	    ))
 
+;; Reduce text size when there are more than two windows
+(advice-add 'split-window-right :after #'(lambda (&rest _)
+                                           (setq default-text-scale-mode-amount 0)
+                                           (text-scale-set default-text-scale-mode-amount)))
+
+(advice-add 'split-window-below :after #'(lambda (&rest _)
+                                           (setq default-text-scale-mode-amount 0)
+                                           (text-scale-set default-text-scale-mode-amount)))
+
+(advice-add 'delete-window :after #'(lambda (&rest _)
+                                      (when (<= (length (window-list)) 2)
+                                        (setq default-text-scale-mode-amount 2)
+                                        (text-scale-set default-text-scale-mode-amount)
+                                        )))
+
+(advice-add 'delete-other-windows :after #'(lambda (&rest _)
+                                             (setq default-text-scale-mode-amount 2)
+                                             (text-scale-set default-text-scale-mode-amount)))
+
 ;; Change font
 ;; (set-frame-font "Adwaita Mono 12" nil t)
 ;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
@@ -182,7 +201,7 @@
 
 ;; EditorConfig (https://editorconfig.org/)
 ;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
-;;(editorconfig-mode t)
+(editorconfig-mode t)
 
 ;; Short yes or no answer
 (setq use-short-answers t)

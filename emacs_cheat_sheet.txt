@@ -109,6 +109,7 @@ Other window				CTRL + x o
 Display buffer in another window	CTRL + x 4 CTRL + o
 Display file in another window		CTRL + x 4 CTRL + f
 Open dired in another window		CTRL + x 4 CTRL + j
+Dedicate one window to another one      CTRL + x w d
 
 
 New tab					CTRL + x t 2

@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
+      '(apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -103,10 +103,10 @@
   (doom-modeline-vcs-max-length 15)
   (doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
   (doom-modeline-vcs-state-faces-alist
-      '((needs-update . (doom-modeline-warning bold))
-        (removed . (doom-modeline-urgent bold))
-        (conflict . (doom-modeline-urgent bold))
-        (unregistered . (doom-modeline-urgent bold))))
+   '((needs-update . (doom-modeline-warning bold))
+     (removed . (doom-modeline-urgent bold))
+     (conflict . (doom-modeline-urgent bold))
+     (unregistered . (doom-modeline-urgent bold))))
   (doom-modeline-check-icon t)
   (doom-modeline-check-simple-format nil)
   (doom-modeline-number-limit 99)
@@ -514,7 +514,7 @@
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   ;; (add-hook 'completion-at-point-functions #'cape-history)
   ;; etc...
-)
+  )
 
 
 ;; Vertico
@@ -526,16 +526,16 @@
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
-             ("<tab>" . minibuffer-complete)
-             ("M-g M-c" . switch-to-completions)
-             ("M-<tab>" . vertico-insert)
-             ("<backtab>" . vertico-insert)
-	     ("C-M-n" . vertico-next-group)
-	     ("C-M-p" . vertico-previous-group)
-             ("<wheel-down>" . next-line)
-             ("<wheel-up>" . previous-line)
-             ("<mouse-1>" . vertico-exit)
-	     )
+              ("<tab>" . minibuffer-complete)
+              ("M-g M-c" . switch-to-completions)
+              ("M-<tab>" . vertico-insert)
+              ("<backtab>" . vertico-insert)
+	      ("C-M-n" . vertico-next-group)
+	      ("C-M-p" . vertico-previous-group)
+              ("<wheel-down>" . next-line)
+              ("<wheel-up>" . previous-line)
+              ("<mouse-1>" . vertico-exit)
+	      )
   :init
   (vertico-mode)
   )
@@ -670,20 +670,21 @@
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
 
-(when (package-installed-p 'consult)
-  (when (package-installed-p 'eglot)
-    (use-package consult-eglot
-      :ensure t
-      :defer t
-      :after consult eglot))
-  (use-package consult-eglot-embark
-      :ensure t
-      :defer t
-      :after (consult-eglot embark))
-  (when (package-installed-p 'yasnippet)
-    (use-package consult-yasnippet
-      :ensure t
-      :after consult))
+(use-package consult-eglot
+  :ensure t
+  :defer t
+  :after (consult eglot)
+  )
+
+(use-package consult-eglot-embark
+  :ensure t
+  :defer t
+  :after (consult eglot embark)
+  )
+
+(use-package consult-yasnippet
+  :ensure t
+  :after (consult yasnippet)
   )
 
 ;; Marginalia
@@ -751,7 +752,7 @@
           (setq prefix-help-command #'describe-prefix-bindings)
           (message "Changed `prefix-help-command' into `describe-prefix-bindings'")))))
 
-  (global-set-key (kbd "C-, c") 'change-between-describe-prefix-and-embark-prefix)
+  (global-set-key (kbd "s-m c") 'change-between-describe-prefix-and-embark-prefix)
   )
 
 (use-package embark-consult

@@ -32,8 +32,11 @@
                 "js-debug-adapter"
                 "ruff"
                 "ty"
-                "tombi"
                 ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
+                "tombi"
+                "quick-lint-js"
+                "prettier"
+                "clangd"
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -45,9 +48,9 @@
 ;; pgmacs
 (use-package pgmacs
   :vc (:url "https://github.com/emarsden/pgmacs"
-       :rev :newest
-       :branch "main"
-       :vc-backend Git)
+            :rev :newest
+            :branch "main"
+            :vc-backend Git)
   :ensure t
   :defer t
   )
@@ -55,9 +58,9 @@
 ;; pgmacs
 (use-package pg
   :vc (:url "https://github.com/emarsden/pg-el"
-       :rev :newest
-       :branch "main"
-       :vc-backend Git)
+            :rev :newest
+            :branch "main"
+            :vc-backend Git)
   :ensure t
   :defer t
   )
@@ -82,15 +85,20 @@
 
 (use-package combobulate
   :vc (:url "https://github.com/mickeynp/combobulate"
-       :rev :newest
-       :branch "master"
-       :vc-backend Git)
+            :rev :newest
+            :branch "master"
+            :vc-backend Git)
   :ensure t
   :defer t
   ;; :custom
   ;; (combobulate-key-prefix "s-o") ;; It's bugged, probably related to mickeynp/combobulate#117
   :hook ((prog-mode . combobulate-mode))
   )
+
+(use-package apheleia
+  :ensure t
+  :config
+  (apheleia-global-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -286,11 +294,11 @@
 ;;;; Rust config
 (use-package rust-mode
   :ensure t)
-  ;; :init
-  ;; (setq rust-mode-treesitter-derive t)
-  ;; :hook
-  ;; (rust-mode . flymake-mode))
-  ;; ;; (rust-ts-mode . flymake-mode))
+;; :init
+;; (setq rust-mode-treesitter-derive t)
+;; :hook
+;; (rust-mode . flymake-mode))
+;; ;; (rust-ts-mode . flymake-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -342,6 +350,8 @@
   (eglot-confirm-server-edits '((eglot-rename . nil)
                                 (t . maybe-summary)
                                 (t . diff)))
+  (eglot-sync-connect 2)
+  (eglot-connect-timeou1t 30)
   :bind (:map eglot-mode-map
               ("s-e c a" . eglot-code-actions)
               ("s-e o i" . eglot-code-action-organize-imports)
@@ -405,6 +415,15 @@
   ;;                  :completion
   ;;                  (:maxResults 70))))
 
+
+  (add-to-list 'eglot-server-programs
+               '(((js-mode :language-id "javascript")
+                  (js-ts-mode :language-id "javascript")
+                  (js-jsx-mode :language-id "javascriptreact")
+                  (tsx-ts-mode :language-id "typescriptreact")
+                  (typescript-ts-mode :language-id "typescript")
+                  (typescript-mode :language-id "typescript")) . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
+
   (add-to-list 'eglot-server-programs
                '((python-ts-mode python-mode) .
                  ("rass" "--" "ty" "server" "--" "ruff" "server")))
@@ -413,12 +432,17 @@
                '((toml-ts-mode toml-mode) .
                  ("tombi" "lsp"))) ;; "lint" "format" "completion"
 
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '((c++-mode c-mode) .
+  ;;                ("clangd")))
+
   :hook
   ((rust-mode rust-ts-mode) . eglot-ensure)
   ((java-mode java-ts-mode) . eglot-ensure)
   ((js-mode js-ts-mode) . eglot-ensure)
   ((python-mode python-ts-mode) . eglot-ensure)
   ((toml-mode toml-ts-mode) . eglot-ensure)
+  ((c-mode c++-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
