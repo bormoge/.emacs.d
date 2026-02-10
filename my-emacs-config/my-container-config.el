@@ -37,6 +37,8 @@
                 "quick-lint-js"
                 "prettier"
                 "clangd"
+                "html-lsp"
+                "css-lsp"
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -95,10 +97,17 @@
   :hook ((prog-mode . combobulate-mode))
   )
 
+;; Note to myself: look how to configure it.
 (use-package apheleia
   :ensure t
   :config
-  (apheleia-global-mode))
+  ;; (apheleia-global-mode)
+  :bind (
+         ("s-<0x10081247> s-a" . 'apheleia-format-buffer)
+         )
+  )
+
+(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -443,6 +452,8 @@
   ((python-mode python-ts-mode) . eglot-ensure)
   ((toml-mode toml-ts-mode) . eglot-ensure)
   ((c-mode c++-mode) . eglot-ensure)
+  ((html-mode html-ts-mode) . eglot-ensure)
+  ((css-mode css-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

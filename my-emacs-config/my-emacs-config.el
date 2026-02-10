@@ -111,7 +111,8 @@
 
 ;; Add directory to desktop-path
 (with-eval-after-load 'desktop
-  (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory)))
+  (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory))
+  (setq desktop-dirname (expand-file-name "desktop-sessions/" user-emacs-directory)))
 
 ;; Turn off clickable text highlight
 (setq mouse-highlight nil)

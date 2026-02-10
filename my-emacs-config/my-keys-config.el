@@ -2,6 +2,8 @@
 
 ;; To invoke Hyper key: CTRL + x @ h
 
+;; If you wonder what s-<0x10081247> is, it's the copilot key that comes with the new thinkpads.
+
 ;; Set keys for changing window focus
 (define-key (current-global-map) (kbd "s-<left>") 'windmove-left)
 (define-key (current-global-map) (kbd "s-<right>") 'windmove-right)
@@ -78,5 +80,12 @@
 ;; Define keys for package functions
 (define-key (current-global-map) (kbd "H-q l") 'list-packages)
 
+;; Add alternative key for list-packages
+(define-key (current-global-map) (kbd "s-<0x10081247> s-l") 'list-packages)
+
 ;; Define easy key for eldoc documentation
 (define-key (current-global-map) (kbd "s-.") 'eldoc)
+
+;; Add alternative to C-x and M-x
+(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
+(define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))

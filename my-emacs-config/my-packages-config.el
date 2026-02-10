@@ -155,6 +155,7 @@
   :config
   (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
   (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
+  ;; (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
   )
 
 ;; Used to highlight lines changed
@@ -575,6 +576,7 @@
          ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("s-<0x10081247> s-k" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
@@ -592,6 +594,7 @@
          ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
          ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
          ("M-g M-o" . consult-org-heading)
+         ("s-<0x10081247> s-o" . consult-org-heading)
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
