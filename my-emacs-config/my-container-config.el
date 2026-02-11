@@ -107,7 +107,18 @@
          )
   )
 
-(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
+(use-package disaster
+  :ensure t
+  :defer t
+  :config
+  ;; (define-key fortran-mode-map (kbd "s-d") 'disaster)
+  )
+
+(use-package cc-mode
+  :config
+  (define-key c-mode-map (kbd "s-d") 'disaster)
+  (define-key c++-mode-map (kbd "s-d") 'disaster)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

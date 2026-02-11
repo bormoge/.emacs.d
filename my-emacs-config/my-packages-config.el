@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode smartparens nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
+      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -238,6 +238,8 @@
      elixir-ts-mode
      erlang-mode
      erlang-ts-mode
+     c-mode
+     c++-mode
      ) . flymake-mode))
   )
 
@@ -254,13 +256,15 @@
 ;; avy
 (use-package avy
   :ensure t
-  :defer t
   :init
   ;; Mapping keys for avy
   (global-set-key (kbd "C-: c 1") 'avy-goto-char)
   (global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
   (global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
   (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
+  (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
+  (global-set-key (kbd "C-: e 1") 'avy-embark-collect-choose)
+  (global-set-key (kbd "C-: e 2") 'avy-embark-collect-act)
   :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
   )
 
@@ -308,7 +312,7 @@
 (use-package gnu-elpa-keyring-update
   :ensure t)
 
-;; vundo
+;; Client for `undo'
 (use-package vundo
   :ensure t
   :defer t
@@ -353,6 +357,22 @@
   (setq project-mode-line t)
   )
 
+(use-package markdown-mode
+  :ensure t
+  :defer t
+  :mode ("README\\.md\\'" . gfm-mode)
+  :init (setq markdown-command "pandoc")
+  :bind (:map markdown-mode-map
+              ("C-c C-e" . markdown-do)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Electric packages
+
+(use-package elec-pair
+  :config
+  (add-to-list 'electric-pair-pairs '(123 . 125) 'append)
+  (electric-pair-mode 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -408,24 +428,6 @@
   (nerd-icons-xref-mode)
   )
 
-(use-package smartparens
-  :ensure t
-  :hook (prog-mode text-mode markdown-mode org-mode) ;; Add `smartparens-mode` to these hooks
-  :config
-  ;; load default config
-  (require 'smartparens-config)
-  ;; (smartparens-global-strict-mode)
-  (define-key (current-global-map) (kbd "s-p <backspace>") 'sp-unwrap-sexp)
-  )
-
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :mode ("README\\.md\\'" . gfm-mode)
-  :init (setq markdown-command "pandoc")
-  :bind (:map markdown-mode-map
-              ("C-c C-e" . markdown-do)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -461,6 +463,8 @@
      elixir-ts-mode
      erlang-mode
      erlang-ts-mode
+     c-mode
+     c++-mode
      ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -711,6 +715,7 @@
    ("s-m ," . embark-dwim)
    ("s-m b" . embark-bindings)
    ("s-m e" . embark-export)
+   ("s-m l" . embark-collect)
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
@@ -760,14 +765,12 @@
 
 (use-package embark-consult
   :ensure t
-  :defer t
   :hook
   (embark-collect-mode . consult-preview-at-point-mode)
   )
 
 (use-package avy-embark-collect
   :ensure t
-  :defer t
   :after (embark avy)
   )
 

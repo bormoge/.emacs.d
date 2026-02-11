@@ -78,7 +78,7 @@
                                            (text-scale-set default-text-scale-mode-amount)))
 
 (advice-add 'delete-window :after #'(lambda (&rest _)
-                                      (when (<= (length (window-list)) 2)
+                                      (when (<= (length (window-list)) 1)
                                         (setq default-text-scale-mode-amount 2)
                                         (text-scale-set default-text-scale-mode-amount)
                                         )))
