@@ -89,3 +89,6 @@
 ;; Add alternative to C-x and M-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 (define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
+
+;; Add key for compile
+(define-key (current-global-map) (kbd "s-<0x10081247> s-c") 'compile)

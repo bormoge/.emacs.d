@@ -151,7 +151,7 @@
   ;; (doom-modeline-always-visible-segments '(mu4e irc))
   ;; (doom-modeline-before-update-env-hook nil)
   ;; (doom-modeline-after-update-env-hook nil)
-  
+
   :config
   (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
   (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
@@ -161,9 +161,14 @@
 ;; Used to highlight lines changed
 (use-package diff-hl
   :ensure t
-  :config
+  :custom
+  (diff-hl-disable-on-remote nil)
+  (diff-hl-update-async nil)
+  (diff-hl-show-staged-changes t)
+  (diff-hl-draw-borders t)
   ;; Ensure VC is enabled
-  ;;(setq vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
+  ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
+  :config
   ;; Activate diff-hl in all buffers.
   (global-diff-hl-mode)
   )
@@ -266,6 +271,9 @@
   (global-set-key (kbd "C-: e 1") 'avy-embark-collect-choose)
   (global-set-key (kbd "C-: e 2") 'avy-embark-collect-act)
   :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
+  :config
+  (setq avy-case-fold-search nil)
+  (setq avy-all-windows t)
   )
 
 ;; ledger-mode
@@ -360,7 +368,10 @@
 (use-package markdown-mode
   :ensure t
   :defer t
-  :mode ("README\\.md\\'" . gfm-mode)
+  :mode
+  (("README\\.md\\'" . gfm-mode)
+   ("\\.md\\'" . gfm-mode)
+   ("\\.markdown\\'" . gfm-mode))
   :init (setq markdown-command "pandoc")
   :bind (:map markdown-mode-map
               ("C-c C-e" . markdown-do)))
@@ -476,13 +487,15 @@
              completion-cycle-threshold completion-cycling)
          (consult-completion-in-region beg end table pred)))))
   (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
-  
+
   (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
+
+  (set-face-background 'corfu-current "#2A3456")
   :custom
   (corfu-auto t)
   (corfu-cycle t)
   (corfu-auto-prefix 2)
-  (corfu-auto-delay 0.2)
+  (corfu-auto-delay 0.5)
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
   ;; If already indented, then try to complete at point
@@ -716,6 +729,8 @@
    ("s-m b" . embark-bindings)
    ("s-m e" . embark-export)
    ("s-m l" . embark-collect)
+   ("s-m s" . embark-select)
+   ("s-m a" . embark-act-all)
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
@@ -926,13 +941,56 @@
 (use-package org
   :ensure t
   :defer t
+  ;;:custom
+  ;;(org-startup-indented nil)
+  ;;(org-return-follows-link nil)
+  ;;(org-hide-emphasis-markers nil)
+  ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
+  ;;(org-src-window-setup 'reorganize-frame ;'current-window)
+  ;;(org-imenu-depth 7)
+  ;;(org-hierarchical-todo-statistics t)
+  ;;(org-image-actual-width t)
+  ;;(org-pretty-entities nil)
+  ;;(org-log-into-drawer nil)
+  ;;(org-extend-today-until 0)
+  ;;(org-use-effective-time nil)
+  ;;(org-element-use-cache t)
+  ;;(org-tags-column -77)
+  ;;(org-reverse-note-order nil)
+  ;;(org-confirm-babel-evaluate t)
+  ;;(org-clock-clocked-in-display 'mode-line)
+  ;;(org-habit-show-habits t)
+  ;;(org-edit-src-content-indentation 2)
+  ;;(org-cycle-include-plain-lists t)
+  ;;(org-fold-core-style 'overlays)
+  ;;(org-archive-location "%s_archive::") ;;"archive/%s_archive::"
+  ;;(org-directory "~/.emacs.d/org-notes")
+  ;;(org-id-link-to-org-use-id nil
+  ;;(org-log-states-order-reversed t)
+  ;;(org-log-note-clock-out nil)
+  ;;(org-log-state-notes-insert-after-drawers nil)
+  ;;(org-log-into-drawer nil)
+  ;;(setq org-refile-targets nil) ;;'((org-agenda-files . (:maxlevel . 3))))
+  ;;(setq org-refile-use-outline-path nil);; 'file)
+  ;;(setq org-outline-path-complete-in-steps t)
+  ;;(setq org-refile-allow-creating-parent-nodes nil);;'confirm)
   ;;:config
-  ;; (setq org-startup-indented t
-  ;;       org-hide-emphasis-markers t
-  ;;       org-agenda-files '("~/org/"))
-  ;; (org-babel-do-load-languages
-  ;;  'org-babel-load-languages
-  ;;  '((js . t)))
+  ;; (with-eval-after-load 'org
+  ;;   (org-babel-do-load-languages
+  ;;    'org-babel-load-languages
+  ;;    '((emacs-lisp . t)
+  ;;      (shell . t)
+  ;;      (scheme . t)
+  ;;      (python . t)
+  ;;      (jupyter . t)
+  ;;      (elixir . t)
+  ;;      (erlang . t)
+  ;;      (haskell . t)
+  ;;      (js . t)
+  ;;      (sql . t)
+  ;;      (gnuplot . t)
+  ;;      (plantuml . t)
+  ;;      (java . t))))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -942,12 +1000,15 @@
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand)
          ("C-M-<Ungrab>" . dabbrev-expand))
+  :custom
+  (dabbrev-case-fold-search 'case-fold-search)
   :config
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode))
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -955,15 +1016,15 @@
 (when (nixos-p)
   (use-package nix-mode
     :ensure t)
-  
+
   (use-package nix-ts-mode
     :ensure t
     :hook
     (nix-ts-mode . eglot-ensure))
-  
-  (add-hook 'prog-mode-hook
-            (lambda ()
-              (add-hook 'before-save-hook 'eglot-format nil t)))
+
+  ;; (add-hook 'prog-mode-hook
+  ;;           (lambda ()
+  ;;             (add-hook 'before-save-hook 'eglot-format nil t)))
 
   (with-eval-after-load 'eglot
     (dolist (mode '((nix-mode . ("nixd"))))

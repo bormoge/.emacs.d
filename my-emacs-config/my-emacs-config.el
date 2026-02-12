@@ -10,16 +10,38 @@
 (global-font-lock-mode t)
 
 ;; Bidirectional editing config
+(setq-default bidi-display-reordering 'left-to-right)
 (setq-default bidi-paragraph-direction 'left-to-right)
 (if (version<= "27.1" emacs-version)
     (setq bidi-inhibit-bpa t))
 
+;; Disable compact font caches
+(setq inhibit-compacting-font-caches t)
+
+;; Package for miscellaneous features
+(use-package simple
+  :custom
+  (line-number-mode t)
+  (column-number-mode t)
+  (size-indication-mode t)
+  (read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
+  ;; Show character name in ‘what-cursor-position’
+  (what-cursor-show-names t)
+  :config
+  ;; Truncate long lines
+  ;;(setq-default truncate-lines t)
+  (global-visual-line-mode t)
+
+  ;; Use spaces for indentation
+  ;; Alternatively, you can modify the variable `tab-width'
+  (setq-default indent-tabs-mode nil)
+
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  )
+
 ;; Show number of the lines
 (global-display-line-numbers-mode 1)
 (setq display-line-numbers-width nil)
-(setq line-number-mode t)
-(setq column-number-mode t)
-(setq size-indication-mode t)
 
 ;; Enable use of system clipboard
 (setq select-enable-clipboard t)
@@ -96,10 +118,6 @@
 ;; (set-frame-font "Ioskeley Mono Light 12" nil t)
 (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
 
-;; Truncate long lines
-;;(setq-default truncate-lines t)
-(global-visual-line-mode t)
-
 ;; Enable Vertical Scroll Bar
 (scroll-bar-mode 'right)
 
@@ -117,12 +135,6 @@
 ;; Turn off clickable text highlight
 (setq mouse-highlight nil)
 
-;; At startup, show the messages
-;; (view-echo-area-messages)
-;; (with-current-buffer (messages-buffer)
-;;   (enlarge-window 10)
-;;   )
-
 ;; Display warnings depending of level
 (setq warning-minimum-level :warning)
 
@@ -138,11 +150,12 @@
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (savehist-mode)
-(setq savehist-file "~/.emacs.d/history"
+(setq savehist-file (concat user-emacs-directory "history")
   history-length 150
   history-delete-duplicates t
   savehist-save-minibuffer-history t
   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+  ;;save-interprogram-paste-before-kill t
   )
 
 ;; Modify the appearance of the region
@@ -169,24 +182,37 @@
 (setq scroll-preserve-screen-position nil)
 
 ;; Config for vertico package
-(context-menu-mode t)
+(setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
 (setq enable-recursive-minibuffers t)
-(setq read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
 (setq minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
 
-;; Show character name in ‘what-cursor-position’
-(setq what-cursor-show-names t)
-
 ;; Enable right click menu
-(when (display-graphic-p)
-  (context-menu-mode))
+(context-menu-mode t)
 
 ;; Always generate an empty line at the end of the file
 (setq require-final-newline t)
 
-;; Pass argument -u to command diff
-(setq diff-switches "-u")
+;; Display differences between files / buffers
+(use-package diff
+  :defer t
+  :custom
+  (diff-font-lock-syntax 'hunk-also) ;;default: t
+  (diff-font-lock-prettify t)
+  (diff-switches "-u")
+  ;; (diff-switches '("--color=never"))
+  )
+
+;; Interactively display differences between files / buffers
+(use-package ediff
+  :defer t
+  :custom
+  (ediff-keep-variants t)
+  (ediff-make-buffers-readonly-at-startup nil)
+  (ediff-show-clashes-only nil)
+  (ediff-split-window-function 'split-window-vertically)
+  (ediff-window-setup-function 'ediff-setup-windows-plain) ;;default: 'ediff-setup-windows-default
+  )
 
 ;; More detailed completions
 (setq completions-detailed t)
@@ -230,10 +256,6 @@
 ;; Blink the screen
 (setq visible-bell t)
 
-;; Use spaces for indentation
-;; Alternatively, you can modify the variable `tab-width'
-(setq-default indent-tabs-mode nil)
-
 ;; Follow the compilation buffer
 (setq compilation-scroll-output t)
 
@@ -243,10 +265,13 @@
 
 ;; Dired config
 (use-package dired
+  :defer t
   :ensure nil
   :custom
   (dired-listing-switches "-ahl --group-directories-first")
   (dired-kill-when-opening-new-dired-buffer t)
+  (dired-recursive-deletes 'always)
+  (dired-recursive-copies 'always)
   )
 
 ;; grep config
@@ -254,7 +279,7 @@
 
 ;; Rectangle mode config
 (use-package rect
-  :ensure nil
+  :defer t
   :bind
   (:map rectangle-mark-mode-map
         ("s-a" . string-rectangle))
@@ -266,12 +291,26 @@
 
 ;; Calc config
 (use-package calc
-  :ensure nil
+  :defer t
   :config
   (setq calc-group-digits t))
 
 ;; Global lexical-binding (Emacs 31)
 ;; (set-default-toplevel-value 'lexical-binding t)
+
+;; Highlight pairs of parentheses
+(setq show-paren-style 'parenthesis) ;;'mixed
+(show-paren-mode 1)
+
+(use-package vc
+  :defer t
+  :bind (:map vc-dir-mode-map
+              ("r" . vc-dir-refresh))
+  :config
+  (require 'vc-dir)
+  (setq vc-log-short-style '(directory file))
+  ;;(setq vc-git-diff-switches '("--histogram"))
+  )
 
 ;; No backup files
 (setq make-backup-files nil)
