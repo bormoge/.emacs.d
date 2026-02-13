@@ -148,15 +148,17 @@
 (setq display-time-format "%I:%M %a %d-%m-%Y")
 (display-time-mode t)
 
+;; I'm going to disable savehist for now to see if it improves or worsens my workflow.
+
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
-(savehist-mode)
-(setq savehist-file (concat user-emacs-directory "history")
-  history-length 150
-  history-delete-duplicates t
-  savehist-save-minibuffer-history t
-  ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-  ;;save-interprogram-paste-before-kill t
-  )
+;; (savehist-mode)
+;; (setq savehist-file (concat user-emacs-directory "history")
+;;   history-length 150
+;;   history-delete-duplicates t
+;;   savehist-save-minibuffer-history t
+;;   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
+;;   ;;save-interprogram-paste-before-kill t
+;;   )
 
 ;; Modify the appearance of the region
 ;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
@@ -310,6 +312,14 @@
   (require 'vc-dir)
   (setq vc-log-short-style '(directory file))
   ;;(setq vc-git-diff-switches '("--histogram"))
+  )
+
+(use-package completion-preview
+  :custom
+  (completion-preview-idle-delay 0.5)
+  (completion-preview-minimum-symbol-length 2)
+  :config
+  (global-completion-preview-mode)
   )
 
 ;; No backup files

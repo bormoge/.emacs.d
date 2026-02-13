@@ -301,6 +301,7 @@ Org occur (Search regexp)		org-occur			CTRL + c / /, CTRL + c / r
 Next sparse tree match			next-error			ALT + g n
 Previous sparse tree match		previous-error			ALT + g p
 Indent org files			org-indent-mode
+Toggle link display                     org-toggle-link-display
 
 
 ## calc

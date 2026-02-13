@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient prescient embark-consult corfu-prescient avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
+      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -385,6 +385,12 @@
   (add-to-list 'electric-pair-pairs '(123 . 125) 'append)
   (electric-pair-mode 1))
 
+(use-package electric
+  :config
+  ;; (add-to-list 'electric-indent-chars 32 'append)
+  (electric-indent-mode 1)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; Nerd Icons
@@ -444,7 +450,6 @@
 
 ;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
 ;; There is also TempEl, an alternative to YASnippet developed by minad.
-;; prescient.el will be used as the sorting algorithm of this stack.
 
 ;; Corfu
 (use-package corfu
@@ -534,7 +539,6 @@
   ;; etc...
   )
 
-
 ;; Vertico
 (use-package vertico
   :ensure t
@@ -550,9 +554,6 @@
               ("<backtab>" . vertico-insert)
 	      ("C-M-n" . vertico-next-group)
 	      ("C-M-p" . vertico-previous-group)
-              ("<wheel-down>" . next-line)
-              ("<wheel-up>" . previous-line)
-              ("<mouse-1>" . vertico-exit)
 	      )
   :init
   (vertico-mode)
@@ -804,61 +805,23 @@
   ;;(completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
   )
 
-;; Prescient
+;; Prescient (used as the sorting algorithm of this stack)
 (use-package prescient
   :ensure t
+  :demand t
   :custom
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-sort-length-enable nil) ;; default: t
   (prescient-sort-full-matches-first t) ;; default: nil
-  (prescient-history-length 300) ;; default: 100
-  (prescient-frequency-decay 0.997) ;; default: 0.997
-  (prescient-frequency-threshold 0.05) ;; default: 0.05
+  (prescient-history-length 500) ;; default: 100
+  (prescient-frequency-decay 0.957) ;; default: 0.997
+  (prescient-frequency-threshold 0.1) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
   :config
+  (setq corfu-sort-function #'prescient-completion-sort)
+  (setq vertico-sort-function #'prescient-completion-sort)
+  (setq completion-preview-sort-function #'prescient-completion-sort)
   (prescient-persist-mode 1)
-  )
-
-(use-package corfu-prescient
-  :ensure t
-  :demand t
-  :after (corfu prescient)
-  :custom
-  ;; Sorting.
-  (corfu-prescient-enable-sorting t) ;; default: t
-  ;; Don't override `display-sort-function'
-  (corfu-prescient-override-sorting nil) ;; default: nil
-
-  ;; Filtering
-  ;; Telling corfu-prescient not to use prescient to do the filtering
-  (corfu-prescient-enable-filtering nil) ;; default: t
-  ;; See also `corfu-prescient-completion-styles',
-  ;; `corfu-prescient-completion-category-overrides' and
-  ;; `prescient--completion-recommended-overrides'.  Those options apply only
-  ;; when `corfu-prescient-enable-filtering' is non-nil.
-  :config
-  (corfu-prescient-mode 1)
-  )
-
-(use-package vertico-prescient
-  :ensure t
-  :demand t
-  :after vertico prescient
-  :custom
-  ;; Sorting.
-  (vertico-prescient-enable-sorting t) ;; default: t
-  ;; Don't override `display-sort-function'
-  (vertico-prescient-override-sorting nil) ;; default: nil
-
-  ;; Filtering
-  ;; Telling vertico-prescient not to use prescient to do the filtering
-  (vertico-prescient-enable-filtering nil) ;; default: t
-  ;; See also `vertico-prescient-completion-styles',
-  ;; `vertico-prescient-completion-category-overrides', and
-  ;; `prescient--completion-recommended-overrides'.  Those options apply only
-  ;; when when `vertico-prescient-enable-filtering' is non-nil.
-  :config
-  (vertico-prescient-mode 1)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
