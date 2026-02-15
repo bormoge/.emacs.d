@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg forge yasnippet doom-themes magit diff-hl))
+      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -189,12 +189,6 @@
   (setq transient-default-level 4) ;; default: 4
   :commands (magit-status magit-dispatch)
   )
-
-;; Package used to manage git forges (GitHub, GitLab, Codeberg, etc...)
-(use-package forge
-  :ensure t
-  :defer t
-  :after magit)
 
 ;; YASnippet for shortcuts
 (use-package yasnippet

@@ -41,6 +41,7 @@
   (set-face-attribute 'tab-line-tab-modified nil
         	      ;;:background "#252526"  ;; remove this line if you want dark-violet background on modified tab lines
         	      :foreground (face-attribute 'font-lock-string-face :foreground)  ;; alt: font-lock-string-face, error, which-func
+		      :weight 'bold
         	      :height 0.9)
 
   (set-face-attribute 'tab-line-tab-special nil
