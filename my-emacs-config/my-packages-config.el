@@ -153,9 +153,17 @@
   ;; (doom-modeline-after-update-env-hook nil)
 
   :config
+  (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)
   (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
   (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
   ;; (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
+
+  ;; (advice-add 'doom-modeline-update-battery-status
+  ;;             :after #'(lambda (&rest _)
+  ;;                        (setq battery-mode-line-string (substring
+  ;;                                                        (concat
+  ;;                                                         (substring-no-properties (cdr doom-modeline--battery-status)))
+  ;;                                                        0 -1))))
   )
 
 ;; Used to highlight lines changed
@@ -395,6 +403,11 @@
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
   ;; (nerd-icons-install-fonts) ;; To install the Symbols Nerd Font
+  :config
+  ;; (advice-add 'set-frame-font :after
+  ;;             (lambda (&rest _) (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
+  (add-hook 'after-setting-font-hook (lambda ()
+                                       (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
   )
 
 (use-package nerd-icons-dired

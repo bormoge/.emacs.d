@@ -352,7 +352,9 @@
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :config
   (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
+  ;; For more info about dependencies check ~/.emacs.d/elpa/pdf-tools-1.3.0/server/autobuild
   ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
+  ;; Dependencies (NixOS Linux): automake autoconf pkg-config libpng zlib poppler
   (setq pdf-info-epdfinfo-program "~/.emacs.d/elpa/pdf-tools-1.1.0/epdfinfo")
   ;;(setq-default pdf-view-display-size 'fit-page)
   ;;(setq pdf-annot-activate-created-annotations t)
@@ -367,11 +369,10 @@
   :ensure nil
   :custom
   (eglot-autoshutdown t)
-  (eglot-confirm-server-edits '((eglot-rename . nil)
-                                (t . maybe-summary)
-                                (t . diff)))
+  (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
   (eglot-sync-connect 2)
   (eglot-connect-timeou1t 30)
+  (eglot-ignored-server-capabilities nil); Examples: '(:inlayHintProvider), '(:documentHighlightProvider)'
   :bind (:map eglot-mode-map
               ("s-e c a" . eglot-code-actions)
               ("s-e o i" . eglot-code-action-organize-imports)

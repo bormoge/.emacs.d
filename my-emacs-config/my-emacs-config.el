@@ -27,6 +27,7 @@
   (read-extended-command-predicate #'command-completion-default-include-p) ;; Other value(s): nil, transient-command-completion-not-suffix-only-p
   ;; Show character name in ‘what-cursor-position’
   (what-cursor-show-names t)
+  (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
   :config
   ;; Truncate long lines
   ;;(setq-default truncate-lines t)
@@ -36,7 +37,7 @@
   ;; Alternatively, you can modify the variable `tab-width'
   (setq-default indent-tabs-mode nil)
 
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   )
 
 ;; Show number of the lines
@@ -306,12 +307,14 @@
 
 (use-package vc
   :defer t
+  :custom
+  (vc-follow-symlinks 'ask)
+  (vc-git-diff-switches t) ;;'("--histogram")
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh))
   :config
   (require 'vc-dir)
   (setq vc-log-short-style '(directory file))
-  ;;(setq vc-git-diff-switches '("--histogram"))
   )
 
 (use-package completion-preview
@@ -320,6 +323,14 @@
   (completion-preview-minimum-symbol-length 2)
   :config
   (global-completion-preview-mode)
+  )
+
+(use-package isearch
+  :custom
+  (isearch-lax-whitespace t)
+  (isearch-lazy-count t)
+  (isearch-lazy-highlight t)
+  (isearch-wrap-pause t)
   )
 
 ;; No backup files
