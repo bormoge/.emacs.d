@@ -319,7 +319,9 @@
 
 (use-package completion-preview
   :custom
+  ;; The time before `completion-preview' appears.
   (completion-preview-idle-delay 0.5)
+  ;; The minimum amount of letters needed for `completion-preview' to appear.
   (completion-preview-minimum-symbol-length 2)
   :config
   (global-completion-preview-mode)
@@ -328,10 +330,14 @@
 (use-package isearch
   :custom
   (isearch-lax-whitespace t)
+  ;; Count the number of instances and show that number on the minibuffer.
   (isearch-lazy-count t)
   (isearch-lazy-highlight t)
   (isearch-wrap-pause t)
   )
+
+;; The default image scaling
+(setq-default image-scaling-factor 'auto)
 
 ;; No backup files
 (setq make-backup-files nil)

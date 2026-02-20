@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
+      '(elfeed disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -367,6 +367,7 @@
   (setq project-mode-line t)
   )
 
+;; Mode for markdown
 (use-package markdown-mode
   :ensure t
   :defer t
@@ -377,6 +378,26 @@
   :init (setq markdown-command "pandoc")
   :bind (:map markdown-mode-map
               ("C-c C-e" . markdown-do)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; elfeed
+
+(with-temp-buffer
+  (insert-file-contents "~/.emacs.d/rss.txt")
+  (eval-buffer))
+
+(use-package elfeed
+  :ensure t
+  :custom
+  (elfeed-feeds rss-links)
+  (elfeed-db-directory "~/.elfeed")
+  (elfeed-search-filter "@6-months-ago +unread")
+  :config
+  (setf url-queue-timeout 30)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-e e") 'elfeed)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-e u") 'elfeed-update)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
