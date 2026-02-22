@@ -155,17 +155,37 @@
 (use-package clojure-mode
   :ensure t
   :defer t
-  :commands (clojure-mode))
+  :custom
+  (clojure-indent-style 'always-align)
+  :commands (clojure-mode)
+  )
 
 (use-package clojure-ts-mode
   :ensure t
   :defer t
-  :commands (clojure-ts-mode))
+  :commands (clojure-ts-mode)
+  )
 
 (use-package cider
   :ensure t
-  :defer t
-  :commands (cider-jack-in))
+  :after (clojure-mode)
+  :custom
+  (cider-preferred-build-tool nil) ;clj
+  :config
+  (setq cider-repl-pop-to-buffer-on-connect nil)
+  (setq cider-show-error-buffer t)
+  (setq cider-auto-select-error-buffer t)
+  (setq cider-repl-history-file nil)
+  (setq cider-repl-wrap-history nil)
+  (setq cider-prompt-for-symbol nil)
+  (setq cider-repl-use-pretty-printing t)
+  (setq nrepl-log-messages nil)
+  (setq cider-font-lock-dynamically (macro core deprecated))
+  (setq cider-eldoc-display-for-symbol-at-point t)
+  (setq cider-prompt-for-symbol nil)
+  (setq cider-use-xref t)
+  :commands (cider cider-jack-in)
+  )
 
 ;; Other packages to consider: clj-refactor.el, inf-clojure
 

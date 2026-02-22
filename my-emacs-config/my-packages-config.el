@@ -320,7 +320,15 @@
 
 ;; gnu-elpa-keyring-update
 (use-package gnu-elpa-keyring-update
-  :ensure t)
+  :ensure t
+  ;; ref: https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
+  ;; ref: https://emacs.stackexchange.com/a/53142
+  ;;
+  ;; (setq package-check-signature--old package-check-signature
+  ;;       package-check-signature nil)
+  ;;
+  ;; (setq package-check-signature package-check-signature--old)
+  )
 
 ;; Client for `undo'
 (use-package vundo
@@ -339,10 +347,7 @@
   ;; Gray, with disabled underline and overline
   ;;(set-face-background 'hl-line "#303030")
   ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
-  (set-face-attribute 'hl-line nil
-                      :background "#404040"
-		      :underline nil
-                      :overline nil)
+  (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
   ;; (set-face-attribute 'show-paren-match nil
   ;;                     :background (face-attribute 'hl-line :background))
   (global-hl-line-mode t)

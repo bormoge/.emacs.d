@@ -339,6 +339,20 @@
 ;; The default image scaling
 (setq-default image-scaling-factor 'auto)
 
+;; recentf configuration
+(use-package recentf
+  :custom
+  (recentf-save-file (expand-file-name "recentf" user-emacs-directory))
+  (recentf-max-saved-items 200)
+  (recentf-max-menu-items 20)
+  (recentf-auto-cleanup 'mode)
+  :bind
+  (:map recentf-mode-map
+        ("s-<0x10081247> s-r" . recentf))
+  :config
+  (recentf-mode +1)
+  )
+
 ;; No backup files
 (setq make-backup-files nil)
 
