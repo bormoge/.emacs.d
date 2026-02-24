@@ -4,7 +4,9 @@
 (setq inhibit-startup-screen t)
 
 ;; Maximize Emacs on start
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;(toggle-frame-fullscreen)
+(toggle-frame-maximized)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -28,6 +30,7 @@
   ;; Show character name in ‘what-cursor-position’
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
+  ;;(save-interprogram-paste-before-kill t)
   :config
   ;; Truncate long lines
   ;;(setq-default truncate-lines t)
@@ -41,7 +44,7 @@
   )
 
 ;; Show number of the lines
-(global-display-line-numbers-mode 1)
+(global-display-line-numbers-mode +1)
 (setq display-line-numbers-width nil)
 
 ;; Enable use of system clipboard
@@ -149,17 +152,19 @@
 (setq display-time-format "%I:%M %a %d-%m-%Y")
 (display-time-mode t)
 
-;; I'm going to disable savehist for now to see if it improves or worsens my workflow.
-
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
-;; (savehist-mode)
-;; (setq savehist-file (concat user-emacs-directory "history")
-;;   history-length 150
-;;   history-delete-duplicates t
-;;   savehist-save-minibuffer-history t
-;;   ;;savehist-additional-variables '(kill-ring search-ring regexp-search-ring)
-;;   ;;save-interprogram-paste-before-kill t
-;;   )
+(use-package savehist
+  :defer t
+  :custom
+  (savehist-save-minibuffer-history t)
+  (savehist-file (concat user-emacs-directory "history"))
+  ;;(savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  (savehist-additional-variables '((kill-ring . 20) search-ring regexp-search-ring)) ;;(recentf-list . 50)
+  :config
+  (setq history-length 150)
+  (setq history-delete-duplicates t)
+  (savehist-mode +1)
+  )
 
 ;; Modify the appearance of the region
 ;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
@@ -175,8 +180,8 @@
 (setq auto-revert-verbose t)
 (setq auto-revert-interval 5)
 (setq auto-revert-avoid-polling nil)
-(setq global-auto-revert-non-file-buffers nil)
-(global-auto-revert-mode t) ;; Nil by default
+(setq global-auto-revert-non-file-buffers t)
+(global-auto-revert-mode +1) ;; Nil by default
 
 ;; Scroll settings
 (setq scroll-conservatively 100)
@@ -191,7 +196,7 @@
    '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
 
 ;; Enable right click menu
-(context-menu-mode t)
+(context-menu-mode +1)
 
 ;; Always generate an empty line at the end of the file
 (setq require-final-newline t)
@@ -200,7 +205,9 @@
 (use-package diff
   :defer t
   :custom
-  (diff-font-lock-syntax 'hunk-also) ;;default: t
+  ;; While (diff-font-lock-syntax 'hunk-also) looks great, it hinders me when I try to check if I added or removed something.
+  ;; (diff-font-lock-syntax 'hunk-also)
+  (diff-font-lock-syntax nil) ;; default: t
   (diff-font-lock-prettify t)
   (diff-switches "-u")
   ;; (diff-switches '("--color=never"))
@@ -303,13 +310,13 @@
 
 ;; Highlight pairs of parentheses
 (setq show-paren-style 'parenthesis) ;;'mixed
-(show-paren-mode 1)
+(show-paren-mode +1)
 
 (use-package vc
   :defer t
   :custom
   (vc-follow-symlinks 'ask)
-  (vc-git-diff-switches t) ;;'("--histogram")
+  (vc-git-diff-switches '("--histogram")) ;; default: t
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh))
   :config
@@ -343,12 +350,13 @@
 (use-package recentf
   :custom
   (recentf-save-file (expand-file-name "recentf" user-emacs-directory))
-  (recentf-max-saved-items 200)
+  (recentf-max-saved-items 50)
   (recentf-max-menu-items 20)
-  (recentf-auto-cleanup 'mode)
+  (recentf-auto-cleanup 'never) ;; default: 'mode
+  (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
   :bind
   (:map recentf-mode-map
-        ("s-<0x10081247> s-r" . recentf))
+        ("s-<0x10081247> s-r" . recentf-open))
   :config
   (recentf-mode +1)
   )
@@ -363,7 +371,7 @@
 ;; (setq backup-inhibited t)
 
 ;; Auto-Save-Mode
-;; (auto-save-mode 1)
+;; (auto-save-mode +1)
 
 ;; No auto-save files
 ;;(setq auto-save-default nil)

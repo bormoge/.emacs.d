@@ -38,7 +38,7 @@
       )
 
 (setq package-selected-packages
-      '(elfeed disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet combobulate markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
+      '(elfeed disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -53,7 +53,8 @@
   (setq dashboard-week-agenda t)
   (setq dashboard-items '(
                           (bookmarks . 30)
-                          (projects  . 15)
+                          (projects  . 20)
+                          (recents   . 20)
                           (agenda    . 5)
                           ))
   (dashboard-setup-startup-hook))
@@ -247,6 +248,8 @@
      erlang-ts-mode
      c-mode
      c++-mode
+     clojure-mode
+     clojure-ts-mode
      ) . flymake-mode))
   )
 
@@ -514,6 +517,8 @@
      erlang-ts-mode
      c-mode
      c++-mode
+     clojure-mode
+     clojure-ts-mode
      ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -577,7 +582,7 @@
   :ensure t
   :custom
   (vertico-scroll-margin 2) ;; Different scroll margin
-  (vertico-count 10) ;; Show more candidates
+  (vertico-count 12) ;; Show more candidates
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
@@ -830,7 +835,8 @@
   :custom
   ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
   ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-  (completion-styles '(orderless basic)) ;;partial-completion
+  ;; (completion-styles '(orderless basic)) ;;partial-completion
+  (completion-styles '(orderless partial-completion basic)) ;;partial-completion
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
                                    (eglot (styles orderless))

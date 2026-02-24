@@ -414,6 +414,19 @@ Start eglot                             eglot
 Start eglot programatically             eglot-ensure
 List active eglot connections           eglot-list-connections
 
+# VC
+VC status                               vc-dir                                  CTRL + x v d
+Display changes in file using VC        vc-diff
+Remove part of file diff                diff-hunk-kill
+Split file diff at point into two       diff-split-hunk
+Undo changes in diff                    diff-reverse-direction
+Apply changes in diff to source         diff-apply-hunk
+Commit changes                          vc-next-action                          CTRL + x v v
+Push changes                            vc-push                                 CTRL + x v P
+Pull changes                            vc-update                               CTRL + x v +
+Create branch                           vc-create-branch                        CTRL + x v b c
+Switch branch                           vc-switch-branch                        CTRL + x v b s
+
 
 ## Emacs tutorials
 https://www.gnu.org/software/emacs/tour/

@@ -39,6 +39,8 @@
                 "clangd"
                 "html-lsp"
                 "css-lsp"
+                "clojure-lsp"
+                "cljfmt"
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -84,18 +86,6 @@
 ;;   ;;           (setq-local python-shell-interpreter (pet-executable-find "python")
 ;;   ;;                       python-shell-virtualenv-root (pet-virtualenv-root))))
 ;;   )
-
-(use-package combobulate
-  :vc (:url "https://github.com/mickeynp/combobulate"
-            :rev :newest
-            :branch "master"
-            :vc-backend Git)
-  :ensure t
-  :defer t
-  ;; :custom
-  ;; (combobulate-key-prefix "s-o") ;; It's bugged, probably related to mickeynp/combobulate#117
-  :hook ((prog-mode . combobulate-mode))
-  )
 
 ;; Note to myself: look how to configure it.
 (use-package apheleia
@@ -392,7 +382,11 @@
   (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
   (eglot-sync-connect 2)
   (eglot-connect-timeou1t 30)
-  (eglot-ignored-server-capabilities nil); Examples: '(:inlayHintProvider), '(:documentHighlightProvider)'
+  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
+  (eglot-events-buffer-config '(:size 2000000 :format full))
+  (eglot-extend-to-xref nil)
+  (eglot-send-changes-idle-time 0.5)
+  (eglot-report-progress t)
   :bind (:map eglot-mode-map
               ("s-e c a" . eglot-code-actions)
               ("s-e o i" . eglot-code-action-organize-imports)
@@ -406,12 +400,15 @@
               ("s-e r c" . eglot-reconnect)
               )
   :config
+  ;; (fset #'jsonrpc--log-event #'ignore)
+  ;; (setq jsonrpc-event-hook nil)
+
   ;; Enable cache busting, depending on if your server returns
   ;; sufficiently many candidates in the first place.
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
-  (setopt eglot-send-changes-idle-time 0.5
-          eglot-extend-to-xref nil)
+  ;; (setopt eglot-send-changes-idle-time 0.5
+  ;;         eglot-extend-to-xref nil)
 
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) .
@@ -486,6 +483,7 @@
   ((c-mode c++-mode) . eglot-ensure)
   ((html-mode html-ts-mode) . eglot-ensure)
   ((css-mode css-ts-mode) . eglot-ensure)
+  ((clojure-mode clojure-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
