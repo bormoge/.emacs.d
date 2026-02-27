@@ -24,7 +24,7 @@
 (define-key (current-global-map) (kbd "H-M-<backspace>") 'delete-duplicate-lines)
 
 ;; Set key for replace-string
-(define-key (current-global-map) (kbd "H-f") 'replace-string)
+(define-key (current-global-map) (kbd "H-r") 'replace-string)
 
 ;; Set key for grep
 (define-key (current-global-map) (kbd "H-g") 'grep)

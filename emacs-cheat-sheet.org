@@ -326,6 +326,7 @@ Previous sparse tree match              previous-error                  ALT + g 
 Indent org files                        org-indent-mode
 Toggle link display                     org-toggle-link-display
 Add a note                              org-add-note                    CTRL + c CTRL + z
+Cut subtree or region in table          org-cut-special                 CTRL + c CTRL + x CTRL + w
 
 *** calc
 Calculator                              calc                            CTRL + x * c

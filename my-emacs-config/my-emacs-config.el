@@ -40,6 +40,9 @@
   ;; Alternatively, you can modify the variable `tab-width'
   (setq-default indent-tabs-mode nil)
 
+  ;; Auto-Save-Mode
+  (auto-save-mode +1)
+
   ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   )
 
@@ -54,7 +57,7 @@
 (setq delete-by-moving-to-trash nil)
 
 ;; Tab Bars
-(tab-bar-mode t)
+(tab-bar-mode +1)
 (setq tab-bar-history-mode nil)
 (setq tab-bar-auto-width-max '((300) 30))
 ;; tab-bar-tab-name-current, tab-bar-tab-name-current-with-count, tab-bar-tab-name-truncated, tab-bar-tab-name-all
@@ -64,19 +67,19 @@
 ;;(setq tab-bar-auto-width nil)
 
 ;; Tab Lines
-(global-tab-line-mode t)
+(global-tab-line-mode +1)
 ;; tab-line-tab-name-buffer, tab-line-tab-name-truncated-buffer
 (setq tab-line-tab-name-function #'tab-line-tab-name-buffer)
 (setq tab-line-tab-name-truncated-max 20)
 (setq tab-line-tab-name-ellipsis t)
 
 ;; Enable menus
-(menu-bar-mode t)
-(tool-bar-mode 0)
+(menu-bar-mode +1)
+(tool-bar-mode -1)
 ;;(modifier-bar-mode t)
 
 ;; Enable tooltips
-(tooltip-mode t)
+(tooltip-mode +1)
 
 ;; Increase zoom
 ;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
@@ -129,7 +132,7 @@
 ;;(horizontal-scroll-bar-mode t)
 
 ;; Replace a selected area with typed text
-(setopt delete-selection-mode t)
+(delete-selection-mode +1)
 
 ;; Add directory to desktop-path
 (with-eval-after-load 'desktop
@@ -244,24 +247,24 @@
 (setq use-short-answers t)
 
 ;; Enable Transient Mark Mode
-(setopt transient-mark-mode t)
+(transient-mark-mode +1)
 
 ;; ElDoc config
 (setq eldoc-idle-delay 0.5)
 (setq eldoc-echo-area-display-truncation-message nil)
-(setopt global-eldoc-mode t)
+(global-eldoc-mode +1)
 
 ;; Enable commands
 (put 'narrow-to-region 'disabled nil)
 (put 'widen 'disabled nil)
 
 ;; Display battery status
-(setopt display-battery-mode t)
+(display-battery-mode +1)
 
 ;; Display name of a "function" (depends of the context)
 (setq which-func-update-delay 0.5)
 (setq which-func-display 'header)
-(setopt which-function-mode t)
+(which-function-mode +1)
 
 ;; Blink the screen
 (setq visible-bell t)
@@ -316,7 +319,7 @@
   :defer t
   :custom
   (vc-follow-symlinks 'ask)
-  (vc-git-diff-switches '("--histogram")) ;; default: t
+  (vc-git-diff-switches '("-u" "--histogram")) ;; default: t
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh))
   :config
@@ -352,7 +355,7 @@
   (recentf-save-file (expand-file-name "recentf" user-emacs-directory))
   (recentf-max-saved-items 50)
   (recentf-max-menu-items 20)
-  (recentf-auto-cleanup 'never) ;; default: 'mode
+  (recentf-auto-cleanup 'mode) ;; default: 'mode
   (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
   :bind
   (:map recentf-mode-map
@@ -361,46 +364,45 @@
   (recentf-mode +1)
   )
 
-;; No backup files
-(setq make-backup-files nil)
-
 ;; Create lock files
-;; (setq create-lockfiles t)
+(setq create-lockfiles t)
 
-;; Inhibit backups
-;; (setq backup-inhibited t)
+;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
+(use-package files
+  :custom
+  ;; If nil, disable backups
+  (make-backup-files nil)
+  ;; Whether to create auto-save files or not
+  (auto-save-default t)
+  ;; Backup directory
+  (backup-directory-alist `(("." . "~/.emacs_backup_files")))
+  ;; Backup by copying instead of renaming original file
+  (backup-by-copying t)
+  ;; More than one backup
+  (version-control t)
+  (dired-kept-versions 2) ;; This should not have any effect on this specific config.
+  (kept-new-versions 2)
+  (kept-old-versions 0)
+  (delete-old-versions t)
+  :config
+  ;; (setq backup-inhibited t)
+  
+  (defun force-backup-of-file ()
+    (interactive)
+    (setq buffer-backed-up nil))
 
-;; Auto-Save-Mode
-;; (auto-save-mode +1)
+  (defun enable-or-disable-backups ()
+    (interactive)
+    (if make-backup-files
+        (progn
+          (setq make-backup-files nil)
+          (message "Disabling backups."))
+      (progn
+        (setq make-backup-files t)
+        (message "Enabling backups."))))
 
-;; No auto-save files
-;;(setq auto-save-default nil)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-b f") 'force-backup-of-file)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-b b") 'enable-or-disable-backups)
 
-;; Set backup directory
-;; (setq backup-directory-alist `(("." . "~/.saves")))
-
-;; Backup by copying instead of renaming original file
-;; (setq backup-by-copying t)
-
-;; More backups by default
-;; (setq delete-old-versions t
-;;   kept-new-versions 6
-;;   kept-old-versions 2
-;;   version-control t)
-
-;; Forced backups
-;; (defun force-backup-of-buffer ()
-;;   (setq buffer-backed-up nil))
-
-;; (add-hook 'before-save-hook  'force-backup-of-buffer)
-
-;; ;; Replace boring scratch buffer with custom buffer that contains links to files using flnkf.el
-;; (defun check-if-file-at-startup ()
-;;   "Check if a file is being opened at startup."
-;;   (if (or (buffer-file-name) (memq major-mode '(dired-mode)))
-;;       (message "Skipping flnkf buffer.")
-;;     (flnkf-open-default-buffer-list 4)
-;;     ))
-
-;; ;; Run the check after Emacs initialization
-;; (add-hook 'emacs-startup-hook 'check-if-file-at-startup)
+  ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
+  )

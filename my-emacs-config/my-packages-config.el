@@ -23,22 +23,25 @@
 
 ;; Priority for installation
 (setq package-archives
-      '(("gnu"          . "https://elpa.gnu.org/packages/")
-        ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+      '(
         ("melpa"        . "https://melpa.org/packages/")
+        ("gnu"          . "https://elpa.gnu.org/packages/")
+        ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
         ("melpa-stable" . "https://stable.melpa.org/packages/")
-        ("gnu-devel"    . "https://elpa.gnu.org/devel/"))
+        ("gnu-devel"    . "https://elpa.gnu.org/devel/")
+        )
       package-archive-priorities
-      '(("gnu"          . 5)
-        ("nongnu"       . 4)
-        ("melpa"        . 3)
+      '(
+        ("melpa"        . 5)
+        ("gnu"          . 4)
+        ("nongnu"       . 3)
         ("melpa-stable" . 2)
         ("gnu-devel"    . 1)
         )
       )
 
 (setq package-selected-packages
-      '(elfeed disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
+      '(consult-dir elfeed disaster apheleia json-mode tomlparse toml-mode toml yaml yaml-mode consult-eglot-embark consult-eglot consult-yasnippet markdown-mode dape rust-mode dashboard mason nix-ts-mode nix-mode uv-mode nerd-icons-xref nerd-icons-grep doom-modeline ef-themes doric-themes morning-star-theme zenburn-emacs spacemacs-theme nerd-icons-ibuffer nerd-icons-corfu nerd-icons-completion nerd-icons-dired cider clojure-ts-mode clojure-mode nerd-icons vertico-prescient corfu-prescient prescient embark-consult avy-embark-collect embark marginalia vertico avy vundo auctex pdf-tools consult cape gnu-elpa-keyring-update envrc flymake-hledger hledger-mode ledger-mode orderless corfu focus treesit-fold pgmacs pg yasnippet doom-themes magit diff-hl))
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -251,6 +254,13 @@
      clojure-mode
      clojure-ts-mode
      ) . flymake-mode))
+  :bind (:map flymake-mode-map
+              ("H-f l" . flymake-switch-to-log-buffer)
+              ("H-f f" . flymake-show-buffer-diagnostics)
+              ("H-f p" . flymake-show-project-diagnostics)
+              ;; ("H-f s" . flymake-show-diagnostic)
+              ;; ("H-f g" . flymake-goto-diagnostic)
+              )
   )
 
 ;; Focus on selected text
@@ -703,6 +713,9 @@
   ;; after lazily loading the package.
   :config
 
+  ;; Number of characters needed when using an async consult command (e.g. consult-grep, consult-find)
+  (setq consult-async-min-input 3)
+
   ;; Optionally configure preview. The default value
   ;; is 'any, such that any key triggers the preview.
   (setq consult-preview-key 'any)
@@ -728,6 +741,26 @@
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
+
+(use-package consult-dir
+    :ensure t
+    ;; :after (consult)
+    :custom
+    (consult-dir-sources
+     '(consult-dir--source-default
+       consult-dir--source-project
+       consult-dir--source-recentf
+       consult-dir--source-tramp-local
+       consult-dir--source-bookmark
+       ))
+    :bind ((:map vertico-map ;; minibuffer-local-completion-map
+                 ("C-x M-d" . consult-dir)
+                 ("C-x M-j" . consult-dir-jump-file)
+                 :map global-map
+                 ("C-x M-d" . consult-dir)
+                 ))
+    :commands (consult-dir consult-dir-jump-file)
+    )
 
 (use-package consult-eglot
   :ensure t
@@ -985,8 +1018,9 @@
 (use-package org
   :ensure t
   :defer t
-  ;;:custom
-  ;;(org-startup-indented nil)
+  :custom
+  (org-startup-indented t)
+  (org-startup-folded 'overview)
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
   ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
