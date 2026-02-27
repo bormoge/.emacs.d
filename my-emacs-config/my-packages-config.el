@@ -402,7 +402,7 @@
 ;;;; elfeed
 
 (with-temp-buffer
-  (insert-file-contents "~/.emacs.d/rss.txt")
+  (insert-file-contents (expand-file-name "rss.txt" user-emacs-directory))
   (eval-buffer))
 
 (use-package elfeed
@@ -1021,6 +1021,7 @@
   :custom
   (org-startup-indented t)
   (org-startup-folded 'overview)
+  (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
   ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
