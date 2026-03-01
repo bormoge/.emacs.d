@@ -1,6 +1,6 @@
-# Emacs Cheat Sheet
+* Emacs Cheat Sheet
 
-* Basic features of a text editor
+** Basic features of a text editor
 
 +---------------------------------+----------------------------+
 | Close Emacs                     | CTRL + x CTRL + c          |
@@ -38,7 +38,7 @@
 | Menu to navigate buffer (imenu) | ALT + g i                  |
 +---------------------------------+----------------------------+
 
-* Executing Emacs commands
+** Executing Emacs commands
 
 +-------------------------------------+-------------------+
 | Execute command                     | ALT + x           |
@@ -58,7 +58,7 @@
 | Quit command                        | CTRL + g          |
 +-------------------------------------+-------------------+
 
-* Basic text manipulation
+** Basic text manipulation
 
 +---------------------------------+--------------------------+
 | Select text                     | CTRL + SPACE             |
@@ -119,7 +119,7 @@
 | Tab                             | ALT + i                  |
 +---------------------------------+--------------------------+
 
-* Commenting lines (normally code)
+** Commenting lines (normally code)
 
 +----------------------------------------+-------------------+
 | Comment line(s)                        | CTRL + x CTRL + ; |
@@ -131,7 +131,7 @@
 | Remove blank lines                     | CTRL + x CTRL + o |
 +----------------------------------------+-------------------+
 
-* Movement commands
+** Movement commands
 
 +--------------------------------------+-----------------------------+
 | Move to start of file                | ALT + <                     |
@@ -163,7 +163,7 @@
 | Go to line                           | ALT + g g, ALT + g ALT + g  |
 +--------------------------------------+-----------------------------+
 
-* Errors and parentheses
+** Errors and parentheses
 
 +----------------------+----------------+
 | Next error           | ALT + g n      |
@@ -175,7 +175,7 @@
 | Previous parentheses | CTRL + ALT + p |
 +----------------------+----------------+
 
-* Text size
+** Text size
 
 +----------------------------+---------------------------+
 | Increase text scale        | CTRL + <wheel-up>         |
@@ -187,7 +187,7 @@
 | Decrease global text scale | CTRL + ALT + <wheel-down> |
 +----------------------------+---------------------------+
 
-* Deleting text
+** Deleting text
 
 +--------------------------------------+----------------------------+
 | Delete selected text                 | CTRL + SPACE <backspace>   |
@@ -201,7 +201,7 @@
 | Delete up to and including character | ALT + z                    |
 +--------------------------------------+----------------------------+
 
-* Terminal-adjacent commands
+** Terminal-adjacent commands
 
 +-----------------------------------+-------------------+
 | Shell Mode                        | ALT + x shell     |
@@ -215,7 +215,7 @@
 | Async Shell Command               | ALT + &           |
 +-----------------------------------+-------------------+
 
-* Window manipulation
+** Window manipulation
 
 +------------------------------------+---------------------+
 | New vertical window                | CTRL + x 2          |
@@ -237,7 +237,7 @@
 | Dedicate one window to another one | CTRL + x w d        |
 +------------------------------------+---------------------+
 
-* Tab manipulation
+** Tab manipulation
 
 +--------------------------+----------------------+
 | New tab                  | CTRL + x t 2         |
@@ -255,7 +255,7 @@
 | Change to left tab line  | CTRL + x <key-left>  |
 +--------------------------+----------------------+
 
-* Frame manipulation
+** Frame manipulation
 
 +---------------------------------+---------------------+
 | New frame                       | CTRL + x 5 2        |
@@ -269,7 +269,7 @@
 | Display file in another frame   | CTRL + x 5 CTRL + f |
 +---------------------------------+---------------------+
 
-* Search text / regex
+** Search text / regex
 
 +-----------------------------------+-------------------------+
 | Incremental search forward        | CTRL + s                |
@@ -291,7 +291,7 @@
 | Replace string with another one   | ALT + %                 |
 +-----------------------------------+-------------------------+
 
-* Highlight text / regex
+** Highlight text / regex
 
 +---------------------------------------+----------------------+
 | Highlight regexp on whole file        | ALT + s h r          |
@@ -303,7 +303,7 @@
 | Unhighlight all on whole file         | CTRL + u ALT + s h u |
 +---------------------------------------+----------------------+
 
-* Text information
+** Text information
 
 +----------------------------------------+---------------------+
 | Count lines inside a page              | CTRL + x l          |
@@ -317,19 +317,19 @@
 | Info on cursor position (other window) | CTRL + u CTRL + x = |
 +----------------------------------------+---------------------+
 
-* Scroll lock
+** Scroll lock
 
 +-------------+----------------+
 | Scroll lock | FN + s, FN + k |
 +-------------+----------------+
 
-* Internet
+** Internet
 
 +--------------------------+-----------------+
 | Search words on internet | ALT + s ALT + w |
 +--------------------------+-----------------+
 
-* Help
+** Help
 
 +--------------------------------------+---------------------+
 | Metahelp                             | CTRL + h CTRL + h   |
@@ -413,7 +413,7 @@
 | Emacs FAQ                            | CTRL + h CTRL + f   |
 +--------------------------------------+---------------------+
 
-* Special buffers
+** Special buffers
 
 +--------------------------------------+---+
 | Quit help buffer                     | q |
@@ -425,7 +425,7 @@
 | Refresh (dired, grep, compile, etc.) | g |
 +--------------------------------------+---+
 
-* Projects
+** Projects
 
 +-----------------------------+--------------+
 | Switch to project           | CTRL + x p p |
@@ -439,7 +439,7 @@
 | Check VC info for project   | CTRL + x p v |
 +-----------------------------+--------------+
 
-* Keyword references
+** Keyword references
 
 +-------------------------------------+---------+
 | Find references of keyword at point | ALT + ? |
@@ -449,7 +449,7 @@
 | Return from definition to keyword   | ALT + , |
 +-------------------------------------+---------+
 
-* Emacs tricks
+** Emacs tricks
 
 +-----------------------------------+-------------------------------------------------+
 | Copy entire line                  | CTRL + a CTRL + SPACE CTRL + n ALT + w CTRL + y |
@@ -459,7 +459,7 @@
 | Print Emacs version from terminal | emacs -batch -l <(echo "(message (version))")   |
 +-----------------------------------+-------------------------------------------------+
 
-* Miscellaneous Emacs Functions
+** Miscellaneous Emacs Functions
 
 +-------------------------------------+------------------------------+
 | Emacs version                       | emacs-version                |
@@ -585,7 +585,7 @@
 | Check buffer docs for style errors  | checkdoc                     |
 +-------------------------------------+------------------------------+
 
-* Miscellaneous Emacs Variables
+** Miscellaneous Emacs Variables
 
 +--------------------------------------+---------------------------------+
 | Check directory native compilation   | native-comp-eln-load-path       |
@@ -643,9 +643,9 @@
 | Number of garbage collections        | gcs-done                        |
 +--------------------------------------+---------------------------------+
 
-* Packages
-** Built-in packages
-*** org
+** Packages
+*** Built-in packages
+**** org
 
 +--------------------------------------+-------------------------+----------------------------+
 | Open link                            | org-open-at-point       | CTRL + c CTRL + o          |
@@ -672,7 +672,7 @@
 | Edit special org structures          | org-edit-special        | CTRL + c '                 |
 +--------------------------------------+-------------------------+----------------------------+
 
-*** calc
+**** calc
 
 +----------------------------------+------------------------------+--------------------------+
 | Calculator                       | calc                         | CTRL + x * c             |
@@ -711,7 +711,7 @@
 |                                  | calc-roll-up                 | CTRL + ALT + i           |
 +----------------------------------+------------------------------+--------------------------+
 
-*** rect
+**** rect
 
 +--------------------------------------+------------------------+------------------------+
 | Rectangle mode                       | rectangle-mark-mode    | CTRL + x SPACE         |
@@ -735,7 +735,7 @@
 | Put number of line left of rectangle | rectangle-number-lines | CTRL + x r N           |
 +--------------------------------------+------------------------+------------------------+
 
-*** profiler (analyze Emacs performance)
+**** profiler (analyze Emacs performance)
 
 +-------------------------+-----------------+
 | Start profiler          | profiler-start  |
@@ -745,7 +745,7 @@
 | Stop profiler           | profiler-stop   |
 +-------------------------+-----------------+
 
-*** debug
+**** debug
 
 +---------------------------------+------------------+
 | Debug if message matches regexp | debug-on-message |
@@ -753,7 +753,7 @@
 | Debug if there is an error      | debug-on-error   |
 +---------------------------------+------------------+
 
-*** repeat
+**** repeat
 
 +---------------------------------------+----------------------+------------+
 | Repeat most recently executed command | repeat               | CTRL + x z |
@@ -763,7 +763,7 @@
 | Repeat mode transient keymaps         | describe-repeat-maps |            |
 +---------------------------------------+----------------------+------------+
 
-*** treesit
+**** treesit
 
 +--------------------------------------+----------------------------------+
 | Check sources for treesit.el         | treesit-language-source-alist    |
@@ -777,7 +777,7 @@
 | Explore current buffer’s syntax tree | treesit-explore-mode             |
 +--------------------------------------+----------------------------------+
 
-*** eglot
+**** eglot
 
 +-------------------------------+------------------------+
 | Start eglot                   | eglot                  |
@@ -787,7 +787,7 @@
 | List active eglot connections | eglot-list-connections |
 +-------------------------------+------------------------+
 
-*** vc
+**** vc
 
 +-----------------------------------+------------------------+----------------+
 | VC status                         | vc-dir                 | CTRL + x v d   |
@@ -815,8 +815,8 @@
 | Revert file                       | vc-revert              | CTRL + x v u   |
 +-----------------------------------+------------------------+----------------+
 
-** External packages
-*** magit
+*** External packages
+**** magit
 
 +-----------------------------------+---------------------+------------------+
 | Available magit commands          | magit-dispatch      | CTRL + x ALT + g |
@@ -826,7 +826,7 @@
 | Git status                        | magit-status        | CTRL + x g       |
 +-----------------------------------+---------------------+------------------+
 
-*** lsp
+**** lsp
 
 +---------------------------------------+-------------------------+---------------+
 | Install specified lsp server          | lsp-install-server      |               |
@@ -846,13 +846,13 @@
 | Execute an action depending on server | lsp-execute-code-action | SUPER + l a a |
 +---------------------------------------+-------------------------+---------------+
 
-*** flycheck
+**** flycheck
 
 +----------------------------------+----------------------+
 | List errors detected by Flycheck | flycheck-list-errors |
 +----------------------------------+----------------------+
 
-* Emacs tutorials
+** Emacs tutorials
 
 +-----------------------------------------------------------------+
 | https://www.gnu.org/software/emacs/tour/                        |
