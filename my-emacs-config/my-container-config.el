@@ -23,24 +23,24 @@
   (mason-ensure
    (lambda ()
      (dolist (pkg
-              '("rassumfrassum"
-                "rust-analyzer"
-                "codelldb"
-                "jdtls"
-                "java-debug-adapter"
-                "typescript-language-server"
-                "js-debug-adapter"
-                "ruff"
-                "ty"
-                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
-                "tombi"
-                "quick-lint-js"
-                "prettier"
+              '(
                 "clangd"
-                "html-lsp"
-                "css-lsp"
-                "clojure-lsp"
                 "cljfmt"
+                "clojure-lsp"
+                "codelldb"
+                "css-lsp"
+                "html-lsp"
+                "java-debug-adapter"
+                "jdtls"
+                "js-debug-adapter"
+                "prettier"
+                "rassumfrassum"
+                "ruff"
+                "rust-analyzer"
+                "tombi"
+                "ty"
+                "typescript-language-server"
+                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -74,6 +74,7 @@
   :ensure t
   :hook (python-mode . uv-mode-auto-activate-hook)
   :hook (python-ts-mode . uv-mode-auto-activate-hook)
+  :if (executable-find "uv")
   )
 
 ;; Package to integrate various python tools. I'll leave this here just in case I end up using it.
@@ -108,6 +109,7 @@
   :config
   (define-key c-mode-map (kbd "s-d") 'disaster)
   (define-key c++-mode-map (kbd "s-d") 'disaster)
+  (setq-default c-basic-offset 4)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -406,6 +408,7 @@
   ;; Enable cache busting, depending on if your server returns
   ;; sufficiently many candidates in the first place.
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
 
   ;; (setopt eglot-send-changes-idle-time 0.5
   ;;         eglot-extend-to-xref nil)
@@ -460,7 +463,9 @@
                   (js-jsx-mode :language-id "javascriptreact")
                   (tsx-ts-mode :language-id "typescriptreact")
                   (typescript-ts-mode :language-id "typescript")
-                  (typescript-mode :language-id "typescript")) . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
+                  (typescript-mode :language-id "typescript"))
+                 . ("typescript-language-server" "--stdio")))
+                 ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
 
   (add-to-list 'eglot-server-programs
                '((python-ts-mode python-mode) .

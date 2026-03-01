@@ -1,12 +1,55 @@
 (require 'cl-lib)
 
-;; Remove startup screen
-(setq inhibit-startup-screen t)
+(use-package emacs
+  :custom
+  ;; Remove startup screen
+  (inhibit-startup-screen t)
+  (inhibit-startup-echo-area-message nil) ;;user-login-name
+  (inhibit-default-init nil)
+  ;; Remove scratch text
+  (initial-scratch-message nil)
+  ;; Turn off clickable text highlight
+  (mouse-highlight nil)
+  ;; Disable use of system trash
+  (delete-by-moving-to-trash nil)
+  ;; Highlight active region in nonselected windows.
+  (highlight-nonselected-windows t)
+  ;; Dialog boxes
+  (use-file-dialog t)
+  (use-dialog-box t)
+  ;; Create lock files
+  (create-lockfiles t)
+  (enable-recursive-minibuffers t)
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
+  ;; If already indented, try to complete the text.
+  (tab-always-indent 'complete)
+  ;; Blink the screen
+  (visible-bell t)
+
+  :config
+  ;; Disable compact font caches
+  (setq inhibit-compacting-font-caches t)
+  ;; Change default cursor type
+  (setq-default cursor-type t)
+  ;; (setq-default cursor-type '(bar . 7)) ;; default: t
+  ;; Default image scaling
+  (setq-default image-scaling-factor 'auto)
+  )
 
 ;; Maximize Emacs on start
 ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
 ;;(toggle-frame-fullscreen)
 (toggle-frame-maximized)
+
+;; Change font
+;; (set-frame-font "Adwaita Mono 12" nil t)
+;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
+;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
+;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
+;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
+;; (set-frame-font "Ioskeley Mono Light 12" nil t)
+(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
 
 ;; Enable syntax highlighting
 (global-font-lock-mode t)
@@ -16,9 +59,6 @@
 (setq-default bidi-paragraph-direction 'left-to-right)
 (if (version<= "27.1" emacs-version)
     (setq bidi-inhibit-bpa t))
-
-;; Disable compact font caches
-(setq inhibit-compacting-font-caches t)
 
 ;; Package for miscellaneous features
 (use-package simple
@@ -31,19 +71,21 @@
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
   ;;(save-interprogram-paste-before-kill t)
+  (kill-whole-line t)
+  (line-move-visual t)
+  (set-mark-command-repeat-pop t)
   :config
   ;; Truncate long lines
   ;;(setq-default truncate-lines t)
   (global-visual-line-mode t)
-
   ;; Use spaces for indentation
   ;; Alternatively, you can modify the variable `tab-width'
   (setq-default indent-tabs-mode nil)
-
+  ;; Show trailing whitespaces
+  (setq-default show-trailing-whitespace t)
+  ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   ;; Auto-Save-Mode
   (auto-save-mode +1)
-
-  ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   )
 
 ;; Show number of the lines
@@ -52,9 +94,6 @@
 
 ;; Enable use of system clipboard
 (setq select-enable-clipboard t)
-
-;; Disable use of system trash
-(setq delete-by-moving-to-trash nil)
 
 ;; Tab Bars
 (tab-bar-mode +1)
@@ -116,36 +155,28 @@
                                              (setq default-text-scale-mode-amount 2)
                                              (text-scale-set default-text-scale-mode-amount)))
 
-;; Change font
-;; (set-frame-font "Adwaita Mono 12" nil t)
-;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
-;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
-;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
-;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
-;; (set-frame-font "Ioskeley Mono Light 12" nil t)
-(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
-
 ;; Enable Vertical Scroll Bar
 (scroll-bar-mode 'right)
 
-;; Enable Horizontal Scroll Bar
-;;(horizontal-scroll-bar-mode t)
-
 ;; Replace a selected area with typed text
-(delete-selection-mode +1)
+(use-package delsel
+  :config
+  (delete-selection-mode +1)
+  )
 
 ;; Add directory to desktop-path
-(with-eval-after-load 'desktop
+(use-package desktop
+  :defer t
+  :config
   (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory))
-  (setq desktop-dirname (expand-file-name "desktop-sessions/" user-emacs-directory)))
-
-;; Turn off clickable text highlight
-(setq mouse-highlight nil)
+  (setq desktop-dirname (expand-file-name "desktop-sessions/" user-emacs-directory))
+  :commands (desktop-save desktop-read desktop-remove)
+  )
 
 ;; Display warnings depending of level
 (setq warning-minimum-level :warning)
 
-;; Nice to have if you are dealing with packages. Disables docstring warnings
+;; Disables docstring warnings
 (setq byte-compile-warnings
       '(not docstrings))
 
@@ -174,17 +205,19 @@
 
 ;; Change cursor's appearance
 (setq blink-cursor-mode t)
-(set-default 'cursor-type t)
-;; (set-default 'cursor-type '(bar . 7)) ;; default: t
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
-(setq global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
-(setq auto-revert-remote-files nil)
-(setq auto-revert-verbose t)
-(setq auto-revert-interval 5)
-(setq auto-revert-avoid-polling nil)
-(setq global-auto-revert-non-file-buffers t)
-(global-auto-revert-mode +1) ;; Nil by default
+(use-package autorevert
+  :custom
+  (global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
+  (auto-revert-remote-files nil)
+  (auto-revert-verbose t)
+  (auto-revert-interval 5)
+  (auto-revert-avoid-polling nil)
+  (global-auto-revert-non-file-buffers t)
+  :config
+  (global-auto-revert-mode +1)
+  )
 
 ;; Scroll settings
 (setq scroll-conservatively 100)
@@ -194,19 +227,17 @@
 
 ;; Config for vertico package
 (setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
-(setq enable-recursive-minibuffers t)
-(setq minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
 
 ;; Enable right click menu
 (context-menu-mode +1)
 
-;; Always generate an empty line at the end of the file
-(setq require-final-newline t)
-
 ;; Display differences between files / buffers
 (use-package diff
   :defer t
+  ;; Define keys for diff
+  :bind (:map global-map
+              ("H-d 1" . diff)
+              ("H-d 2" . diff-buffers))
   :custom
   ;; While (diff-font-lock-syntax 'hunk-also) looks great, it hinders me when I try to check if I added or removed something.
   ;; (diff-font-lock-syntax 'hunk-also)
@@ -219,6 +250,11 @@
 ;; Interactively display differences between files / buffers
 (use-package ediff
   :defer t
+  ;; Define keys for ediff
+  :bind (:map global-map
+              ("H-d 3" . ediff)
+              ("H-d 4" . ediff-buffers))
+  :hook (ediff-prepare-buffer . outline-show-all)
   :custom
   (ediff-keep-variants t)
   (ediff-make-buffers-readonly-at-startup nil)
@@ -266,15 +302,23 @@
 (setq which-func-display 'header)
 (which-function-mode +1)
 
-;; Blink the screen
-(setq visible-bell t)
-
 ;; Follow the compilation buffer
-(setq compilation-scroll-output t)
+(use-package compile
+  ;; Add key for compile
+  :bind (:map global-map
+              ("s-<0x10081247> s-c" . compile))
+  :custom
+  (compilation-scroll-output t)
+  :commands (compile)
+  )
 
 ;; Native compilation for Emacs
-(setq native-comp-jit-compilation t)
-(setq native-comp-speed 2)
+(use-package comp
+  :custom
+  (native-comp-speed 2)
+  :config
+  (setq native-comp-jit-compilation t)
+  )
 
 ;; Dired config
 (use-package dired
@@ -288,7 +332,16 @@
   )
 
 ;; grep config
-(setq grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
+(use-package grep
+  ;; Set key for grep
+  :bind (:map global-map
+              ("H-g" . grep))
+  :custom
+  ;; This setting is a pre-requirement for nerd-icons-grep, so an
+  ;; icon can be displayed near each heading
+  (grep-use-headings t)
+  (grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
+  )
 
 ;; Rectangle mode config
 (use-package rect
@@ -298,22 +351,29 @@
         ("s-a" . string-rectangle))
   :defer t)
 
-;; Control how you want to show info using `what-cursor-position'
-;; (setq describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
-(setq describe-char-unidata-list t)
+(use-package descr-text
+  :custom
+  ;; Control how you want to show info using `what-cursor-position'
+  ;; (describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
+  (describe-char-unidata-list t)
+  )
 
 ;; Calc config
 (use-package calc
   :defer t
   :config
-  (setq calc-group-digits t))
-
-;; Global lexical-binding (Emacs 31)
-;; (set-default-toplevel-value 'lexical-binding t)
+  (setq calc-group-digits t)
+  )
 
 ;; Highlight pairs of parentheses
-(setq show-paren-style 'parenthesis) ;;'mixed
-(show-paren-mode +1)
+(use-package paren
+  :custom
+  (show-paren-style 'mixed) ;; default: 'parenthesis
+  (show-paren-when-point-inside-paren t)
+  (show-paren-when-point-in-periphery t)
+  :config
+  (show-paren-mode +1)
+  )
 
 (use-package vc
   :defer t
@@ -346,9 +406,6 @@
   (isearch-wrap-pause t)
   )
 
-;; The default image scaling
-(setq-default image-scaling-factor 'auto)
-
 ;; recentf configuration
 (use-package recentf
   :custom
@@ -363,9 +420,6 @@
   :config
   (recentf-mode +1)
   )
-
-;; Create lock files
-(setq create-lockfiles t)
 
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
@@ -384,9 +438,11 @@
   (kept-new-versions 2)
   (kept-old-versions 0)
   (delete-old-versions t)
+  ;; Always generate an empty line at the end of the file
+  (require-final-newline t)
   :config
   ;; (setq backup-inhibited t)
-  
+
   (defun force-backup-of-file ()
     (interactive)
     (setq buffer-backed-up nil))
@@ -406,3 +462,18 @@
 
   ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
   )
+
+(use-package windmove
+  ;; Set keys for changing window focus
+  :bind (:map global-map
+              ("s-<left>" . windmove-left)
+              ("s-<right>" . windmove-right)
+              ("s-<up>" . windmove-up)
+              ("s-<down>" . windmove-down)
+              ))
+
+;; Global lexical-binding (Emacs 31)
+;; (set-default-toplevel-value 'lexical-binding t)
+
+;; Enable Semantic Font Lock for Emacs (Emacs 31)
+;; (setq elisp-fontify-semantically t)

@@ -173,6 +173,7 @@
 ;; Used to highlight lines changed
 (use-package diff-hl
   :ensure t
+  :hook (dired-mode . diff-hl-dired-mode)
   :custom
   (diff-hl-disable-on-remote nil)
   (diff-hl-update-async nil)
@@ -189,6 +190,9 @@
 (use-package magit
   :ensure t
   :defer t
+  :custom
+  (magit-diff-refine-hunk nil)
+  (git-commit-major-mode 'text-mode) ;; 'git-commit-elisp-text-mode
   :config
   ;; Integrate diff-hl with magit.
   (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
@@ -261,6 +265,10 @@
               ;; ("H-f s" . flymake-show-diagnostic)
               ;; ("H-f g" . flymake-goto-diagnostic)
               )
+  :custom
+  (flymake-no-changes-timeout 0.5)
+  (flymake-fringe-indicator-position 'left-fringe)
+  (flymake-margin-indicator-position 'left-margin)
   )
 
 ;; Focus on selected text
@@ -285,10 +293,11 @@
   (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
   (global-set-key (kbd "C-: e 1") 'avy-embark-collect-choose)
   (global-set-key (kbd "C-: e 2") 'avy-embark-collect-act)
+  :custom
+  (avy-case-fold-search nil)
+  (avy-all-windows nil)
+  (avy-all-windows-alt t)
   :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
-  :config
-  (setq avy-case-fold-search nil)
-  (setq avy-all-windows t)
   )
 
 ;; ledger-mode
@@ -350,6 +359,8 @@
   :init
   ;; Map the `undo' function onto C-x M-u
   (define-key (current-global-map) (kbd "C-x M-u") 'vundo)
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols)
   :commands (vundo)
   )
 
@@ -393,9 +404,21 @@
   (("README\\.md\\'" . gfm-mode)
    ("\\.md\\'" . gfm-mode)
    ("\\.markdown\\'" . gfm-mode))
-  :init (setq markdown-command "pandoc")
   :bind (:map markdown-mode-map
-              ("C-c C-e" . markdown-do)))
+              ("C-c C-e" . markdown-do))
+  :init (setq markdown-command "pandoc")
+  ;; :custom
+  ;; (markdown-enable-wiki-links t)
+  ;; (markdown-italic-underscore t)
+  ;; (markdown-asymmetric-header t)
+  ;; (markdown-make-gfm-checkboxes-buttons t)
+  ;; (markdown-gfm-uppercase-checkbox t)
+  ;; (markdown-fontify-code-blocks-natively t)
+  ;; (markdown-gfm-additional-languages "Mermaid")
+  ;; :config
+  ;; (add-to-list 'markdown-code-lang-modes '("mermaid" . mermaid-mode))
+  :if (executable-find "pandoc")
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -422,6 +445,8 @@
 ;;;; Electric packages
 
 (use-package elec-pair
+  :custom
+  (electric-pair-inhibit-predicate #'electric-pair-default-inhibit)
   :config
   (add-to-list 'electric-pair-pairs '(123 . 125) 'append)
   (electric-pair-mode 1))
@@ -458,9 +483,9 @@
 (use-package nerd-icons-completion
   :ensure t
   :after marginalia
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
   :config
   (nerd-icons-completion-mode)
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup)
   )
 
 (use-package nerd-icons-corfu
@@ -479,10 +504,6 @@
   :ensure t
   :init
   (nerd-icons-grep-mode)
-  :custom
-  ;; This setting is a pre-requirement, so an icon can be displayed near each
-  ;; heading
-  (grep-use-headings t)
   )
 
 (use-package nerd-icons-xref
@@ -578,6 +599,7 @@
   ;;        ("C-c p f" . cape-file)
   ;;        etc...)
   :init
+  (add-hook 'completion-at-point-functions #'cape-abbrev)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-dict)

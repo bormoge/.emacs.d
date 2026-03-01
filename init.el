@@ -16,6 +16,9 @@
 
 (setq package-user-dir "~/.emacs.d/elpa")
 
+;; This needs to be set before use-package is loaded
+(setq use-package-enable-imenu-support t)
+
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
 

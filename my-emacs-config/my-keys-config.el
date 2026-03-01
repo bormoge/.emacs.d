@@ -4,12 +4,6 @@
 
 ;; If you wonder what s-<0x10081247> is, it's the copilot key that comes with the new thinkpads.
 
-;; Set keys for changing window focus
-(define-key (current-global-map) (kbd "s-<left>") 'windmove-left)
-(define-key (current-global-map) (kbd "s-<right>") 'windmove-right)
-(define-key (current-global-map) (kbd "s-<up>") 'windmove-up)
-(define-key (current-global-map) (kbd "s-<down>") 'windmove-down)
-
 ;; Set key for swapping windows
 (define-key (current-global-map) (kbd "C-x M-o") 'window-swap-states)
 
@@ -25,9 +19,6 @@
 
 ;; Set key for replace-string
 (define-key (current-global-map) (kbd "H-r") 'replace-string)
-
-;; Set key for grep
-(define-key (current-global-map) (kbd "H-g") 'grep)
 
 ;; Count words in a region
 (define-key (current-global-map) (kbd "H-w") 'count-words)
@@ -64,12 +55,6 @@
 (define-key (current-global-map) (kbd "s->") 'repeat-mode)
 (define-key (current-global-map) (kbd "s-z") 'describe-repeat-maps)
 
-;; Define keys for diff and ediff
-(define-key (current-global-map) (kbd "H-d 1") 'diff)
-(define-key (current-global-map) (kbd "H-d 2") 'diff-buffers)
-(define-key (current-global-map) (kbd "H-d 3") 'ediff)
-(define-key (current-global-map) (kbd "H-d 4") 'ediff-buffers)
-
 ;; Convert tabs to spaces or spaces to tabs
 (define-key (current-global-map) (kbd "H-x s-<tab>") 'tabify)
 (define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
@@ -89,6 +74,3 @@
 ;; Add alternative to C-x and M-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 (define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
-
-;; Add key for compile
-(define-key (current-global-map) (kbd "s-<0x10081247> s-c") 'compile)
