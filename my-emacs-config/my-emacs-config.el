@@ -26,6 +26,13 @@
   (tab-always-indent 'complete)
   ;; Blink the screen
   (visible-bell t)
+  ;; Scroll settings
+  (scroll-conservatively 100000)
+  (scroll-margin 6)
+  (scroll-step 1)
+  (scroll-preserve-screen-position nil)
+  ;; Short yes or no answer
+  (use-short-answers t)
 
   :config
   ;; Disable compact font caches
@@ -115,7 +122,7 @@
 ;; Enable menus
 (menu-bar-mode +1)
 (tool-bar-mode -1)
-;;(modifier-bar-mode t)
+;;(modifier-bar-mode -1)
 
 ;; Enable tooltips
 (tooltip-mode +1)
@@ -181,10 +188,14 @@
       '(not docstrings))
 
 ;; Display time and date on the minibuffer (neat stuff)
-(setq display-time-day-and-date t)
-(setq display-time-default-load-average nil)
-(setq display-time-format "%I:%M %a %d-%m-%Y")
-(display-time-mode t)
+(use-package time
+  :custom
+  (display-time-day-and-date t)
+  (display-time-default-load-average nil)
+  (display-time-format "%I:%M %a %d-%m-%Y")
+  :config
+  (display-time-mode t)
+  )
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
@@ -218,12 +229,6 @@
   :config
   (global-auto-revert-mode +1)
   )
-
-;; Scroll settings
-(setq scroll-conservatively 100)
-(setq scroll-margin 6)
-(setq scroll-step 1)
-(setq scroll-preserve-screen-position nil)
 
 ;; Config for vertico package
 (setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
@@ -279,16 +284,17 @@
 ;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
 (editorconfig-mode t)
 
-;; Short yes or no answer
-(setq use-short-answers t)
-
 ;; Enable Transient Mark Mode
 (transient-mark-mode +1)
 
 ;; ElDoc config
-(setq eldoc-idle-delay 0.5)
-(setq eldoc-echo-area-display-truncation-message nil)
-(global-eldoc-mode +1)
+(use-package eldoc
+  :custom
+  (eldoc-idle-delay 0.5)
+  (eldoc-echo-area-display-truncation-message nil)
+  :config
+  (global-eldoc-mode +1)
+  )
 
 ;; Enable commands
 (put 'narrow-to-region 'disabled nil)
@@ -477,3 +483,355 @@
 
 ;; Enable Semantic Font Lock for Emacs (Emacs 31)
 ;; (setq elisp-fontify-semantically t)
+
+(use-package mwheel
+  :custom
+  (mouse-wheel-progressive-speed t))
+
+(use-package prog-mode
+  :hook (prog-mode . prettify-symbols-mode)
+  ;; Note: `prettify-symbols-alist' is the list of symbols that are prettified by `prettify-symbols-mode'
+  )
+
+(use-package package
+  :custom
+  ;; Priority for installation
+  (package-archives
+   '(("melpa"        . "https://melpa.org/packages/")
+     ("gnu"          . "https://elpa.gnu.org/packages/")
+     ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
+     ("melpa-stable" . "https://stable.melpa.org/packages/")
+     ("gnu-devel"    . "https://elpa.gnu.org/devel/")
+     ))
+  (package-archive-priorities
+   '(("melpa"        . 5)
+     ("gnu"          . 4)
+     ("nongnu"       . 3)
+     ("melpa-stable" . 2)
+     ("gnu-devel"    . 1)
+     ))
+  (package-selected-packages
+   '(devdocs
+     consult-dir
+     elfeed
+     disaster
+     apheleia
+     json-mode
+     tomlparse
+     toml-mode
+     toml
+     yaml
+     yaml-mode
+     consult-eglot-embark
+     consult-eglot
+     consult-yasnippet
+     markdown-mode
+     dape
+     rust-mode
+     dashboard
+     mason
+     nix-ts-mode
+     nix-mode
+     uv-mode
+     nerd-icons-xref
+     nerd-icons-grep
+     doom-modeline
+     ef-themes
+     doric-themes
+     morning-star-theme
+     zenburn-emacs
+     spacemacs-theme
+     nerd-icons-ibuffer
+     nerd-icons-corfu
+     nerd-icons-completion
+     nerd-icons-dired
+     cider
+     clojure-ts-mode
+     clojure-mode
+     nerd-icons
+     vertico-prescient
+     corfu-prescient
+     prescient
+     embark-consult
+     avy-embark-collect
+     embark
+     marginalia
+     vertico
+     avy
+     vundo
+     auctex
+     pdf-tools
+     consult
+     cape
+     gnu-elpa-keyring-update
+     envrc
+     flymake-hledger
+     hledger-mode
+     ledger-mode
+     orderless
+     corfu
+     focus
+     treesit-fold
+     pgmacs
+     pg
+     yasnippet
+     doom-themes
+     magit
+     diff-hl
+     )))
+
+(use-package xref
+  :custom
+  ;; Use Consult to select xref locations with preview
+  (xref-show-xrefs-function #'consult-xref) ;; default: xref--show-xref-buffer
+  (xref-show-definitions-function #'consult-xref) ;;default: xref-show-definitions-buffer
+  )
+
+;; Highlight cursor line
+(use-package hl-line
+  :ensure nil
+  :config
+  ;; Gray, with disabled underline and overline
+  ;;(set-face-background 'hl-line "#303030")
+  ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
+  (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
+  ;; (set-face-attribute 'show-paren-match nil
+  ;;                     :background (face-attribute 'hl-line :background))
+  (global-hl-line-mode t)
+  :hook ((eshell-mode
+          ;;eat-mode
+          shell-mode
+          term-mode
+	  ;;vterm-mode
+          comint-mode
+          cfrs-input-mode
+          image-mode
+	  magit-diff-mode)
+         ;; Disable hl-line for some modes
+         . (lambda () (setq-local global-hl-line-mode nil))))
+
+;; Project manager
+(use-package project
+  ;; Use demand to load the package automatically
+  :demand t
+  :config
+  ;; Show project name on mode-line
+  (setq project-mode-line t)
+  )
+
+;; Electric packages
+(use-package elec-pair
+  :custom
+  (electric-pair-inhibit-predicate #'electric-pair-default-inhibit)
+  :config
+  (add-to-list 'electric-pair-pairs '(123 . 125) 'append)
+  (electric-pair-mode 1))
+
+(use-package electric
+  :config
+  ;; (add-to-list 'electric-indent-chars 32 'append)
+  (electric-indent-mode 1)
+  )
+
+;; Automatically show available commands
+(use-package which-key
+  :ensure t
+  :config
+  (setq which-key-idle-delay 5.0)
+  (which-key-setup-side-window-right-bottom)
+  ;; `prefix-help-command' becomes  `which-key-C-h-dispatch'
+  (which-key-mode)
+  )
+
+(use-package flymake
+  :hook
+  (((
+     java-mode
+     java-ts-mode
+     emacs-lisp-mode
+     nix-mode
+     nix-ts-mode
+     rust-mode
+     rust-ts-mode
+     markdown-mode
+     js-mode
+     js-ts-mode
+     html-mode
+     html-ts-mode
+     css-mode
+     css-ts-mode
+     json-mode
+     json-ts-mode
+     python-mode
+     python-ts-mode
+     elixir-mode
+     elixir-ts-mode
+     erlang-mode
+     erlang-ts-mode
+     c-mode
+     c++-mode
+     clojure-mode
+     clojure-ts-mode
+     ) . flymake-mode))
+  :bind (:map flymake-mode-map
+              ("H-f l" . flymake-switch-to-log-buffer)
+              ("H-f f" . flymake-show-buffer-diagnostics)
+              ("H-f p" . flymake-show-project-diagnostics)
+              ;; ("H-f s" . flymake-show-diagnostic)
+              ;; ("H-f g" . flymake-goto-diagnostic)
+              )
+  :custom
+  (flymake-no-changes-timeout 0.5)
+  (flymake-fringe-indicator-position 'left-fringe)
+  (flymake-margin-indicator-position 'left-margin)
+  )
+
+;; Dabbrev config
+(use-package dabbrev
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand)
+         ("C-M-<Ungrab>" . dabbrev-expand))
+  :custom
+  (dabbrev-case-fold-search 'case-fold-search)
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
+  )
+
+;; Org configuration
+(use-package org
+  :ensure t
+  :defer t
+  :custom
+  (org-startup-indented t)
+  (org-startup-folded 'overview)
+  (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
+  ;;(org-return-follows-link nil)
+  ;;(org-hide-emphasis-markers nil)
+  ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
+  ;;(org-src-window-setup 'reorganize-frame ;'current-window)
+  ;;(org-imenu-depth 8)
+  ;;(org-hierarchical-todo-statistics t)
+  ;;(org-image-actual-width t)
+  ;;(org-pretty-entities nil)
+  ;;(org-log-into-drawer nil)
+  ;;(org-extend-today-until 0)
+  ;;(org-use-effective-time nil)
+  ;;(org-element-use-cache t)
+  ;;(org-tags-column -77)
+  ;;(org-reverse-note-order nil)
+
+  ;;(org-confirm-babel-evaluate t)
+  ;;(org-src-fontify-natively t)
+  ;;(org-src-tab-acts-natively t)
+
+  ;;(org-clock-clocked-in-display 'mode-line)
+  ;;(org-habit-show-habits t)
+  ;;(org-edit-src-content-indentation 2)
+  ;;(org-cycle-include-plain-lists t)
+  ;;(org-fold-core-style 'overlays)
+  ;;(org-archive-location "%s_archive::") ;;"archive/%s_archive::"
+  ;;(org-directory "~/.emacs.d/org-notes")
+  ;;(org-id-link-to-org-use-id nil
+  ;;(org-log-states-order-reversed t)
+  ;;(org-log-note-clock-out nil)
+  ;;(org-log-state-notes-insert-after-drawers nil)
+  ;;(org-log-into-drawer nil)
+  ;;(setq org-refile-targets nil) ;;'((org-agenda-files . (:maxlevel . 3))))
+  ;;(setq org-refile-use-outline-path nil);; 'file)
+  ;;(setq org-outline-path-complete-in-steps t)
+  ;;(setq org-refile-allow-creating-parent-nodes nil);;'confirm)
+  ;;:config
+  ;; (with-eval-after-load 'org
+  ;;   (org-babel-do-load-languages
+  ;;    'org-babel-load-languages
+  ;;    '((emacs-lisp . t)
+  ;;      (shell . t)
+  ;;      (scheme . t)
+  ;;      (python . t)
+  ;;      (ruby . t)
+  ;;      (jupyter . t)
+  ;;      (elixir . t)
+  ;;      (erlang . t)
+  ;;      (haskell . t)
+  ;;      (js . t)
+  ;;      (css . t)
+  ;;      (sql . t)
+  ;;      (gnuplot . t)
+  ;;      (plantuml . t)
+  ;;      (java . t)
+  ;;      (c . t)
+  ;;      )))
+  )
+
+;; Treesitter
+
+(use-package treesit
+  :ensure nil
+  :config
+  ;; Treesitter grammar repositories.
+  (setq treesit-language-source-alist
+        '(
+	  (java . ("https://github.com/tree-sitter/tree-sitter-java"))
+	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
+	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+	  (nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
+	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
+	  (python . ("https://github.com/tree-sitter/tree-sitter-python" "master"))
+          (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "master"))
+          (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src"))
+          (markdown-inline . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src"))
+          (regex . ("https://github.com/tree-sitter/tree-sitter-regex" "master"))
+          (c . ("https://github.com/tree-sitter/tree-sitter-c" "master"))
+          (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp" "master"))
+          (erlang . ("https://github.com/WhatsApp/tree-sitter-erlang" "main"))
+          (elixir . ("https://github.com/elixir-lang/tree-sitter-elixir" "main"))
+          (toml . ("https://github.com/tree-sitter-grammars/tree-sitter-toml"))
+          (heex . ("https://github.com/phoenixframework/tree-sitter-heex"))
+	  )
+        )
+  ;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  (dolist (lang treesit-language-source-alist)
+    (unless (treesit-language-available-p (car lang))
+      (treesit-install-language-grammar (car lang))))
+
+  ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
+  (setq major-mode-remap-alist
+        '(
+	  (java-mode . java-ts-mode)
+	  (clojure-mode . clojure-ts-mode)
+	  (css-mode . css-ts-mode)
+	  (html-mode . html-ts-mode)
+	  (js-mode . js-ts-mode)
+          (javascript-mode . js-ts-mode)
+          (js2-mode . js-ts-mode)
+	  (js-json-mode . json-ts-mode)
+	  (json-mode . json-ts-mode)
+	  (typescript-tsx-mode . tsx-ts-mode)
+	  (typescript-mode . typescript-ts-mode)
+	  (nix-mode . nix-ts-mode)
+          (rust-mode . rust-ts-mode)
+          (python-mode . python-ts-mode)
+          (toml-mode . toml-ts-mode)
+          (elixir-mode . elixir-ts-mode)
+          (erlang-mode . erlang-ts-mode)
+	  )
+        )
+
+  ;; Initialize major modes on these file extensions
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
+
+  ;; 16.13.2 Parser-based Font Lock
+  ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
+  (setopt treesit-font-lock-level 4)
+  )

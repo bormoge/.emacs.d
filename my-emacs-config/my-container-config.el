@@ -102,13 +102,13 @@
   :ensure t
   :defer t
   :config
-  ;; (define-key fortran-mode-map (kbd "s-d") 'disaster)
+  ;; (define-key fortran-mode-map (kbd "s-d s") 'disaster)
   )
 
 (use-package cc-mode
   :config
-  (define-key c-mode-map (kbd "s-d") 'disaster)
-  (define-key c++-mode-map (kbd "s-d") 'disaster)
+  (define-key c-mode-map (kbd "s-d s") 'disaster)
+  (define-key c++-mode-map (kbd "s-d s") 'disaster)
   (setq-default c-basic-offset 4)
   )
 
@@ -328,6 +328,7 @@
   :ensure t)
 ;; :init
 ;; (setq rust-mode-treesitter-derive t)
+;; ;; (setq rust-format-on-save t) ;; You can also use Apheleia as an alternative for this variable.
 ;; :hook
 ;; (rust-mode . flymake-mode))
 ;; ;; (rust-ts-mode . flymake-mode))

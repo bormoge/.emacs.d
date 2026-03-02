@@ -1,3 +1,6 @@
+#-*- mode: org -*-
+#+STARTUP: nofold
+
 * Emacs Cheat Sheet
 
 ** Basic features of a text editor
