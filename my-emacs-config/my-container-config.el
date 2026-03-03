@@ -29,6 +29,7 @@
                 "clojure-lsp"
                 "codelldb"
                 "css-lsp"
+                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
                 "html-lsp"
                 "java-debug-adapter"
                 "jdtls"
@@ -40,7 +41,7 @@
                 "tombi"
                 "ty"
                 "typescript-language-server"
-                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
+                "yaml-language-server"
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -114,6 +115,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; json config
+(use-package json-mode
+  :ensure t
+  :defer t
+  )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;; toml config
 (use-package toml-mode
   :ensure t
@@ -138,6 +147,15 @@
   :ensure t
   :defer t
   )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; yaml config
+(use-package yaml
+  :ensure t)
+
+(use-package yaml-mode
+  :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -315,12 +333,6 @@
 ;;   :defer t
 ;;   )
 
-;; json-mode config
-(use-package json-mode
-  :ensure t
-  :defer t
-  )
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; Rust config
@@ -373,123 +385,6 @@
   ;;(setq pdf-annot-activate-created-annotations t)
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;; eglot configuration
-(use-package eglot
-  :ensure nil
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
-  (eglot-sync-connect 2)
-  (eglot-connect-timeou1t 30)
-  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
-  (eglot-events-buffer-config '(:size 2000000 :format full))
-  (eglot-extend-to-xref nil)
-  (eglot-send-changes-idle-time 0.5)
-  (eglot-report-progress t)
-  :bind (:map eglot-mode-map
-              ("s-e c a" . eglot-code-actions)
-              ("s-e o i" . eglot-code-action-organize-imports)
-              ("s-e q f" . eglot-code-action-quickfix)
-              ("s-e s d" . eglot-shutdown)
-              ("s-e f t" . eglot-find-typeDefinition)
-              ("s-e f b" . eglot-format-buffer)
-              ("s-e f r" . eglot-format)
-              ("s-e r n" . eglot-rename)
-              ("s-e r w" . eglot-code-action-rewrite)
-              ("s-e r c" . eglot-reconnect)
-              )
-  :config
-  ;; (fset #'jsonrpc--log-event #'ignore)
-  ;; (setq jsonrpc-event-hook nil)
-
-  ;; Enable cache busting, depending on if your server returns
-  ;; sufficiently many candidates in the first place.
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
-
-  ;; (setopt eglot-send-changes-idle-time 0.5
-  ;;         eglot-extend-to-xref nil)
-
-  (add-to-list 'eglot-server-programs
-               '((rust-ts-mode rust-mode) .
-                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
-
-  ;; You need a Java compiler to use the lsp server JDTLS.
-  ;; Also, you need to concat the absolute path, not relative.
-  ;; (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
-
-  ;; You can find the settings for JDTLS here: marketplace dot visualstudio dot com / items ?itemName=redhat.java
-
-  (add-to-list 'eglot-server-programs
-               `((java-mode java-ts-mode) .
-                 ("jdtls"
-                  :initializationOptions
-                  (:bundles
-                   ;; This needs to be the absolute path to java-debug-adapter
-                   [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]
-                   :settings
-                   (:java
-                    (:format
-                     (:settings
-                      (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
-                      :enabled t)
-                     :completion
-                     (:maxResults "100")))))))
-
-  ;;   (add-to-list 'eglot-server-programs
-  ;;              `((java-mode java-ts-mode) .
-  ;;                ("jdtls"
-  ;;                 :initializationOptions
-  ;;                 (:bundles
-  ;;                  ;; This needs to be the absolute path to java-debug-adapter
-  ;;                  [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]))))
-
-  ;; (setq-default eglot-workspace-configuration
-  ;;               `(:java
-  ;;                 (:format
-  ;;                  (:settings
-  ;;                   (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
-  ;;                   :enabled t)
-  ;;                  :completion
-  ;;                  (:maxResults 70))))
-
-
-  (add-to-list 'eglot-server-programs
-               '(((js-mode :language-id "javascript")
-                  (js-ts-mode :language-id "javascript")
-                  (js-jsx-mode :language-id "javascriptreact")
-                  (tsx-ts-mode :language-id "typescriptreact")
-                  (typescript-ts-mode :language-id "typescript")
-                  (typescript-mode :language-id "typescript"))
-                 . ("typescript-language-server" "--stdio")))
-                 ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
-
-  (add-to-list 'eglot-server-programs
-               '((python-ts-mode python-mode) .
-                 ("rass" "--" "ty" "server" "--" "ruff" "server")))
-
-  (add-to-list 'eglot-server-programs
-               '((toml-ts-mode toml-mode) .
-                 ("tombi" "lsp"))) ;; "lint" "format" "completion"
-
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '((c++-mode c-mode) .
-  ;;                ("clangd")))
-
-  :hook
-  ((rust-mode rust-ts-mode) . eglot-ensure)
-  ((java-mode java-ts-mode) . eglot-ensure)
-  ((js-mode js-ts-mode) . eglot-ensure)
-  ((python-mode python-ts-mode) . eglot-ensure)
-  ((toml-mode toml-ts-mode) . eglot-ensure)
-  ((c-mode c++-mode) . eglot-ensure)
-  ((html-mode html-ts-mode) . eglot-ensure)
-  ((css-mode css-ts-mode) . eglot-ensure)
-  ((clojure-mode clojure-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

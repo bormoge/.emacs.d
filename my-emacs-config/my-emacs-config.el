@@ -33,6 +33,10 @@
   (scroll-preserve-screen-position nil)
   ;; Short yes or no answer
   (use-short-answers t)
+  ;; Use mark even when region is inactive
+  (mark-even-if-inactive t)
+  ;; Limit on depth in ‘eval’, ‘apply’ and ‘funcall’ before error.
+  (max-lisp-eval-depth 1600)
 
   :config
   ;; Disable compact font caches
@@ -81,6 +85,14 @@
   (kill-whole-line t)
   (line-move-visual t)
   (set-mark-command-repeat-pop t)
+  (delete-active-region t)
+  ;; Allow / disallow "region-aware" commands to act on empty regions
+  (use-empty-active-region nil)
+  ;; Enable auto-save-mode only when the buffer is associated with a file.
+  :hook (after-change-major-mode . (lambda ()
+                                     (if (buffer-file-name)
+                                         (auto-save-mode +1)
+                                       (auto-save-mode -1))))
   :config
   ;; Truncate long lines
   ;;(setq-default truncate-lines t)
@@ -92,7 +104,7 @@
   (setq-default show-trailing-whitespace t)
   ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   ;; Auto-Save-Mode
-  (auto-save-mode +1)
+  ;; (auto-save-mode +1)
   )
 
 ;; Show number of the lines
@@ -103,21 +115,29 @@
 (setq select-enable-clipboard t)
 
 ;; Tab Bars
-(tab-bar-mode +1)
-(setq tab-bar-history-mode nil)
-(setq tab-bar-auto-width-max '((300) 30))
-;; tab-bar-tab-name-current, tab-bar-tab-name-current-with-count, tab-bar-tab-name-truncated, tab-bar-tab-name-all
-(setq tab-bar-tab-name-function #'tab-bar-tab-name-current)
-(setq tab-bar-tab-name-truncated-max 20)
-(setq tab-bar-tab-name-ellipsis t)
-;;(setq tab-bar-auto-width nil)
+(use-package tab-bar
+  :custom
+  (tab-bar-history-mode nil)
+  (tab-bar-auto-width-max '((300) 30))
+  ;; tab-bar-tab-name-current, tab-bar-tab-name-current-with-count, tab-bar-tab-name-truncated, tab-bar-tab-name-all
+  (tab-bar-tab-name-function #'tab-bar-tab-name-current)
+  (tab-bar-tab-name-truncated-max 20)
+  (tab-bar-auto-width t)
+  :config
+  (setq tab-bar-tab-name-ellipsis t)
+  (tab-bar-mode +1)
+  )
 
 ;; Tab Lines
-(global-tab-line-mode +1)
-;; tab-line-tab-name-buffer, tab-line-tab-name-truncated-buffer
-(setq tab-line-tab-name-function #'tab-line-tab-name-buffer)
-(setq tab-line-tab-name-truncated-max 20)
-(setq tab-line-tab-name-ellipsis t)
+(use-package tab-line
+  :custom
+  ;; tab-line-tab-name-buffer, tab-line-tab-name-truncated-buffer
+  (tab-line-tab-name-function #'tab-line-tab-name-buffer)
+  (tab-line-tab-name-truncated-max 20)
+  :config
+  (setq tab-line-tab-name-ellipsis t)
+  (global-tab-line-mode +1)
+  )
 
 ;; Enable menus
 (menu-bar-mode +1)
@@ -127,46 +147,13 @@
 ;; Enable tooltips
 (tooltip-mode +1)
 
-;; Increase zoom
-;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
-(setq default-text-scale-mode-amount 2)
-
-(setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
-
-(add-hook 'after-change-major-mode-hook
-	  (lambda ()
-	    ;; (if (derived-mode-p 'treemacs-mode)
-            (unless (cl-some (lambda (prefix)
-                               (string-prefix-p prefix (symbol-name major-mode)))
-                             forbidden-prefixes-text-scale-mode)
-	        ;(text-scale-set 0)
-	      (text-scale-set default-text-scale-mode-amount))
-	    ))
-
-;; Reduce text size when there are more than two windows
-(advice-add 'split-window-right :after #'(lambda (&rest _)
-                                           (setq default-text-scale-mode-amount 0)
-                                           (text-scale-set default-text-scale-mode-amount)))
-
-(advice-add 'split-window-below :after #'(lambda (&rest _)
-                                           (setq default-text-scale-mode-amount 0)
-                                           (text-scale-set default-text-scale-mode-amount)))
-
-(advice-add 'delete-window :after #'(lambda (&rest _)
-                                      (when (<= (length (window-list)) 1)
-                                        (setq default-text-scale-mode-amount 2)
-                                        (text-scale-set default-text-scale-mode-amount)
-                                        )))
-
-(advice-add 'delete-other-windows :after #'(lambda (&rest _)
-                                             (setq default-text-scale-mode-amount 2)
-                                             (text-scale-set default-text-scale-mode-amount)))
-
 ;; Enable Vertical Scroll Bar
 (scroll-bar-mode 'right)
 
 ;; Replace a selected area with typed text
 (use-package delsel
+  :custom
+  (delete-selection-temporary-region nil)
   :config
   (delete-selection-mode +1)
   )
@@ -672,6 +659,8 @@
      c++-mode
      clojure-mode
      clojure-ts-mode
+     yaml-mode
+     yaml-ts-mode
      ) . flymake-mode))
   :bind (:map flymake-mode-map
               ("H-f l" . flymake-switch-to-log-buffer)
@@ -835,3 +824,168 @@
   ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
   (setopt treesit-font-lock-level 4)
   )
+
+;;;; eglot configuration
+(use-package eglot
+  :ensure nil
+  :defer t
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
+  (eglot-sync-connect 2)
+  (eglot-connect-timeou1t 30)
+  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
+  (eglot-events-buffer-config '(:size 2000000 :format full))
+  (eglot-extend-to-xref nil)
+  (eglot-send-changes-idle-time 0.5)
+  (eglot-report-progress t)
+  :bind (:map eglot-mode-map
+              ("s-e c a" . eglot-code-actions)
+              ("s-e o i" . eglot-code-action-organize-imports)
+              ("s-e q f" . eglot-code-action-quickfix)
+              ("s-e s d" . eglot-shutdown)
+              ("s-e f t" . eglot-find-typeDefinition)
+              ("s-e f b" . eglot-format-buffer)
+              ("s-e f r" . eglot-format)
+              ("s-e r n" . eglot-rename)
+              ("s-e r w" . eglot-code-action-rewrite)
+              ("s-e r c" . eglot-reconnect)
+              )
+  :config
+  ;; (fset #'jsonrpc--log-event #'ignore)
+  ;; (setq jsonrpc-event-hook nil)
+
+  ;; Enable cache busting, depending on if your server returns
+  ;; sufficiently many candidates in the first place.
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
+
+  ;; (setopt eglot-send-changes-idle-time 0.5
+  ;;         eglot-extend-to-xref nil)
+
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) .
+                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+
+  ;; You need a Java compiler to use the lsp server JDTLS.
+  ;; Also, you need to concat the absolute path, not relative.
+  ;; (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
+
+  ;; You can find the settings for JDTLS here: marketplace dot visualstudio dot com / items ?itemName=redhat.java
+
+  (add-to-list 'eglot-server-programs
+               `((java-mode java-ts-mode) .
+                 ("jdtls"
+                  :initializationOptions
+                  (:bundles
+                   ;; This needs to be the absolute path to java-debug-adapter
+                   [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]
+                   :settings
+                   (:java
+                    (:format
+                     (:settings
+                      (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
+                      :enabled t)
+                     :completion
+                     (:maxResults "100")))))))
+
+  ;;   (add-to-list 'eglot-server-programs
+  ;;              `((java-mode java-ts-mode) .
+  ;;                ("jdtls"
+  ;;                 :initializationOptions
+  ;;                 (:bundles
+  ;;                  ;; This needs to be the absolute path to java-debug-adapter
+  ;;                  [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]))))
+
+  ;; (setq-default eglot-workspace-configuration
+  ;;               `(:java
+  ;;                 (:format
+  ;;                  (:settings
+  ;;                   (:url "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml")
+  ;;                   :enabled t)
+  ;;                  :completion
+  ;;                  (:maxResults 70))))
+
+
+  (add-to-list 'eglot-server-programs
+               '(((js-mode :language-id "javascript")
+                  (js-ts-mode :language-id "javascript")
+                  (js-jsx-mode :language-id "javascriptreact")
+                  (tsx-ts-mode :language-id "typescriptreact")
+                  (typescript-ts-mode :language-id "typescript")
+                  (typescript-mode :language-id "typescript"))
+                 . ("typescript-language-server" "--stdio")))
+                 ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
+
+  (add-to-list 'eglot-server-programs
+               '((python-ts-mode python-mode) .
+                 ("rass" "--" "ty" "server" "--" "ruff" "server")))
+
+  (add-to-list 'eglot-server-programs
+               '((toml-ts-mode toml-mode) .
+                 ("tombi" "lsp"))) ;; "lint" "format" "completion"
+
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '((c++-mode c-mode) .
+  ;;                ("clangd")))
+
+  ;; (add-hook 'prog-mode-hook
+  ;;           (lambda ()
+  ;;             (add-hook 'before-save-hook 'eglot-format nil t)))
+
+  (add-to-list 'eglot-server-programs
+               '((nix-mode) .
+                 ("nixd")))
+
+  (add-to-list 'eglot-server-programs
+               '((yaml-mode yaml-ts-mode) .
+                 ("yaml-language-server" "--stdio")))
+
+  :hook
+  ((nix-mode nix-ts-mode) . eglot-ensure)
+  ((rust-mode rust-ts-mode) . eglot-ensure)
+  ((java-mode java-ts-mode) . eglot-ensure)
+  ((js-mode js-ts-mode) . eglot-ensure)
+  ((python-mode python-ts-mode) . eglot-ensure)
+  ((toml-mode toml-ts-mode) . eglot-ensure)
+  ((yaml-mode yaml-ts-mode) . eglot-ensure)
+  ((c-mode c++-mode) . eglot-ensure)
+  ((html-mode html-ts-mode) . eglot-ensure)
+  ((css-mode css-ts-mode) . eglot-ensure)
+  ((clojure-mode clojure-ts-mode) . eglot-ensure)
+  )
+
+;; Increase zoom
+;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
+(setq default-text-scale-mode-amount 2)
+
+(setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
+
+(add-hook 'after-change-major-mode-hook
+	  (lambda ()
+	    ;; (if (derived-mode-p 'treemacs-mode)
+            (unless (cl-some (lambda (prefix)
+                               (string-prefix-p prefix (symbol-name major-mode)))
+                             forbidden-prefixes-text-scale-mode)
+	        ;(text-scale-set 0)
+	      (text-scale-set default-text-scale-mode-amount))
+	    ))
+
+;; Reduce text size when there are more than two windows
+(advice-add 'split-window-right :after #'(lambda (&rest _)
+                                           (setq default-text-scale-mode-amount 0)
+                                           (text-scale-set default-text-scale-mode-amount)))
+
+(advice-add 'split-window-below :after #'(lambda (&rest _)
+                                           (setq default-text-scale-mode-amount 0)
+                                           (text-scale-set default-text-scale-mode-amount)))
+
+(advice-add 'delete-window :after #'(lambda (&rest _)
+                                      (when (<= (length (window-list)) 1)
+                                        (setq default-text-scale-mode-amount 2)
+                                        (text-scale-set default-text-scale-mode-amount)
+                                        )))
+
+(advice-add 'delete-other-windows :after #'(lambda (&rest _)
+                                             (setq default-text-scale-mode-amount 2)
+                                             (text-scale-set default-text-scale-mode-amount)))

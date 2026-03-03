@@ -19,6 +19,9 @@
 ;; This needs to be set before use-package is loaded
 (setq use-package-enable-imenu-support t)
 
+;; Apply vanilla configuration
+(load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
+
 ;; Load theme(s)
 (load-file "~/.emacs.d/my-emacs-config/my-themes-config.el")
 
@@ -28,9 +31,6 @@
 ;; When inside a (podman) container, apply this configuration
 (when (container-p)
   (load-file "~/.emacs.d/my-emacs-config/my-container-config.el"))
-
-;; Apply configuration after loading .el files
-(load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
 
 ;; Define Emacs keys
 (load-file "~/.emacs.d/my-emacs-config/my-keys-config.el")

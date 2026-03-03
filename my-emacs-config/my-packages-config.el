@@ -436,6 +436,8 @@
      c++-mode
      clojure-mode
      clojure-ts-mode
+     yaml-mode
+     yaml-ts-mode
      ) . corfu-mode))
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
@@ -555,8 +557,8 @@
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
          ;;("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-'" . consult-register-store)
-         ("C-M-#" . consult-register)
+         ("C-M-?" . consult-register-store)
+         ("C-M-¡" . consult-register)
          ;; Other custom bindings
          ("M-y" . consult-yank-pop)                ;; orig. yank-pop
          ;; M-g bindings in `goto-map'
@@ -786,9 +788,13 @@
   :ensure t
   :demand t
   :custom
-  (prescient-aggressive-file-save nil) ;; default: nil
-  (prescient-sort-length-enable nil) ;; default: t
+  ;; Works well with `initialism'.
   (prescient-sort-full-matches-first t) ;; default: nil
+  (prescient-filter-method '(literal initialism prefix regexp))
+  (prescient-use-char-folding t)
+  (prescient-use-case-folding 'smart)
+  (prescient-sort-length-enable t) ;; default: t
+  (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
   (prescient-frequency-decay 0.957) ;; default: 0.997
   (prescient-frequency-threshold 0.1) ;; default: 0.05
@@ -844,20 +850,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; When using NixOS, set up the appropriate environment.
+;; When using NixOS, install nix-mode and nix-ts-mode
 (when (nixos-p)
   (use-package nix-mode
     :ensure t)
 
   (use-package nix-ts-mode
-    :ensure t
-    :hook
-    (nix-ts-mode . eglot-ensure))
-
-  ;; (add-hook 'prog-mode-hook
-  ;;           (lambda ()
-  ;;             (add-hook 'before-save-hook 'eglot-format nil t)))
-
-  (with-eval-after-load 'eglot
-    (dolist (mode '((nix-mode . ("nixd"))))
-      (add-to-list 'eglot-server-programs mode))))
+    :ensure t))
