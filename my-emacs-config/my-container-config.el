@@ -95,7 +95,7 @@
   :config
   ;; (apheleia-global-mode)
   :bind (
-         ("s-<0x10081247> s-a" . 'apheleia-format-buffer)
+         ("s-<0x10081247> s-A" . 'apheleia-format-buffer)
          )
   )
 

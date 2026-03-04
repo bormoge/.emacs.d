@@ -241,12 +241,14 @@
   :defer t
   :config
   (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+  :if (executable-find "ledger")
   )
 
 ;; hledger-mode
 (use-package hledger-mode
   :ensure t
   :defer t
+  :if (executable-find "hledger")
   )
 
 ;; flymake-hledger
@@ -258,7 +260,10 @@
 ;; Directory-specific environments (direnv)
 (use-package envrc
   :ensure t
-  ;; :hook (after-init . envrc-global-mode)
+  :bind (:map global-map
+              ("C-c e" . envrc-command-map)
+              )
+  :hook (after-init . envrc-global-mode)
   ;; :config
   ;; (with-eval-after-load 'envrc
   ;;   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
@@ -335,12 +340,13 @@
   :custom
   (elfeed-feeds rss-links)
   (elfeed-db-directory "~/.elfeed")
-  (elfeed-search-filter "@6-months-ago +unread")
+  ;; (elfeed-search-filter )
+  (elfeed-search-filter "+unread") ;; default: "@6-months-ago +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
   :config
   (setf url-queue-timeout 30)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-e e") 'elfeed)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-e u") 'elfeed-update)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-E e") 'elfeed)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-E u") 'elfeed-update)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -552,7 +558,7 @@
          ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("s-<0x10081247> s-k" . consult-bookmark)            ;; orig. bookmark-jump
+         ("s-<0x10081247> s-K" . consult-bookmark)            ;; orig. bookmark-jump
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
@@ -570,7 +576,7 @@
          ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
          ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
          ("M-g M-o" . consult-org-heading)
-         ("s-<0x10081247> s-o" . consult-org-heading)
+         ("s-<0x10081247> s-O" . consult-org-heading)
          ("M-g m" . consult-mark)
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
@@ -617,6 +623,22 @@
 
   ;; Configure other variables and modes in the :config section,
   ;; after lazily loading the package.
+  :custom
+  (consult-buffer-sources
+   '(consult-source-buffer
+     consult-source-hidden-buffer
+     consult-source-modified-buffer
+     consult-source-other-buffer
+     consult-source-recent-file
+     consult-source-buffer-register
+     consult-source-file-register
+     consult-source-bookmark
+     consult-source-project-buffer
+     consult-source-project-recent-file
+     consult-source-project-root
+     consult-source-project-buffer-hidden
+     consult-source-project-recent-file-hidden
+     consult-source-project-root-hidden))
   :config
 
   ;; Number of characters needed when using an async consult command (e.g. consult-grep, consult-find)
@@ -659,6 +681,7 @@
        consult-dir--source-tramp-local
        consult-dir--source-bookmark
        ))
+    (consult-dir-sort-candidates nil)
     :bind ((:map vertico-map ;; minibuffer-local-completion-map
                  ("C-x M-d" . consult-dir)
                  ("C-x M-j" . consult-dir-jump-file)
@@ -796,8 +819,8 @@
   (prescient-sort-length-enable t) ;; default: t
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
-  (prescient-frequency-decay 0.957) ;; default: 0.997
-  (prescient-frequency-threshold 0.1) ;; default: 0.05
+  (prescient-frequency-decay 0.907) ;; default: 0.997
+  (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
   :config
   (setq corfu-sort-function #'prescient-completion-sort)

@@ -37,6 +37,15 @@
   (mark-even-if-inactive t)
   ;; Limit on depth in ‘eval’, ‘apply’ and ‘funcall’ before error.
   (max-lisp-eval-depth 1600)
+  ;; Whether to ignore case when searching
+  (case-fold-search nil) ;; For some reason setting t to this variable doesn't seem to work. At least setting 1 does work.
+  ;; Undo limits
+  (undo-limit 160000) ;(* 13 160000)
+  (undo-strong-limit 240000) ;(* 13 240000)
+  (undo-outer-limit 24000000) ;(* 13 24000000)
+  ;; Disable fontification during user input to reduce lag in large buffers.
+  (redisplay-skip-fontification-on-input t)
+  (fill-column 80)
 
   :config
   ;; Disable compact font caches
@@ -73,6 +82,17 @@
 
 ;; Package for miscellaneous features
 (use-package simple
+  :bind (:map global-map
+              ("H-x s-q" . indent-tabs-mode)
+              ("H-w" . count-words)
+              ("C-S-/". undo-only)
+              ("s-<0x10081247> s-P" . auto-fill-mode)
+              )
+  ;; Enable auto-save-mode only when the buffer is associated with a file.
+  :hook (after-change-major-mode . (lambda ()
+                                     (if (buffer-file-name)
+                                         (auto-save-mode +1)
+                                       (auto-save-mode -1))))
   :custom
   (line-number-mode t)
   (column-number-mode t)
@@ -88,17 +108,20 @@
   (delete-active-region t)
   ;; Allow / disallow "region-aware" commands to act on empty regions
   (use-empty-active-region nil)
-  ;; Enable auto-save-mode only when the buffer is associated with a file.
-  :hook (after-change-major-mode . (lambda ()
-                                     (if (buffer-file-name)
-                                         (auto-save-mode +1)
-                                       (auto-save-mode -1))))
+  ;; Disable truncation of printed s-expressions in the message buffer
+  (eval-expression-print-length nil)
+  (eval-expression-print-level nil)
+  (kill-do-not-save-duplicates t)
+  (blink-matching-paren t)
+  (next-line-add-newlines nil)
   :config
   ;; Truncate long lines
   ;;(setq-default truncate-lines t)
+  ;;(setq-default word-wrap nil) ;; Visual Line mode sets this to t
   (global-visual-line-mode t)
   ;; Use spaces for indentation
   ;; Alternatively, you can modify the variable `tab-width'
+  ;; (setq-default tab-width 4)
   (setq-default indent-tabs-mode nil)
   ;; Show trailing whitespaces
   (setq-default show-trailing-whitespace t)
@@ -190,8 +213,14 @@
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "history"))
-  ;;(savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-  (savehist-additional-variables '((kill-ring . 20) search-ring regexp-search-ring)) ;;(recentf-list . 50)
+  ;; (savehist-additional-variables '((kill-ring . 20)
+  ;;                                  search-ring
+  ;;                                  regexp-search-ring
+  ;;                                  register-alist
+  ;;                                  mark-ring
+  ;;                                  global-mark-ring
+  ;;                                  (recentf-list . 50)
+  ;;                                  ))
   :config
   (setq history-length 150)
   (setq history-delete-duplicates t)
@@ -212,6 +241,7 @@
   (auto-revert-verbose t)
   (auto-revert-interval 5)
   (auto-revert-avoid-polling nil)
+  (auto-revert-stop-on-user-input nil)
   (global-auto-revert-non-file-buffers t)
   :config
   (global-auto-revert-mode +1)
@@ -251,8 +281,8 @@
   (ediff-keep-variants t)
   (ediff-make-buffers-readonly-at-startup nil)
   (ediff-show-clashes-only nil)
-  (ediff-split-window-function 'split-window-vertically)
-  (ediff-window-setup-function 'ediff-setup-windows-plain) ;;default: 'ediff-setup-windows-default
+  (ediff-split-window-function 'split-window-horizontally) ;; default: 'split-window-vertically
+  (ediff-window-setup-function 'ediff-setup-windows-plain) ;; default: 'ediff-setup-windows-default
   )
 
 ;; More detailed completions
@@ -260,12 +290,6 @@
 
 ;; Use real function / variables names when customizing
 (setq custom-unlispify-tag-names nil)
-
-;; When created, change focus to Help buffer
-(setopt help-window-select nil)
-
-;; Reuse Help window in contexts other than another Help buffer
-(setopt help-window-keep-selected t)
 
 ;; EditorConfig (https://editorconfig.org/)
 ;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
@@ -283,10 +307,6 @@
   (global-eldoc-mode +1)
   )
 
-;; Enable commands
-(put 'narrow-to-region 'disabled nil)
-(put 'widen 'disabled nil)
-
 ;; Display battery status
 (display-battery-mode +1)
 
@@ -295,13 +315,16 @@
 (setq which-func-display 'header)
 (which-function-mode +1)
 
-;; Follow the compilation buffer
 (use-package compile
   ;; Add key for compile
   :bind (:map global-map
-              ("s-<0x10081247> s-c" . compile))
+              ("s-<0x10081247> s-C" . compile))
   :custom
-  (compilation-scroll-output t)
+  ;; Follow the compilation buffer
+  (compilation-scroll-output t) ;; 'first-error
+  (compilation-ask-about-save t)
+  (compilation-always-kill t)
+  (compilation-max-output-line-length nil)
   :commands (compile)
   )
 
@@ -322,6 +345,14 @@
   (dired-kill-when-opening-new-dired-buffer t)
   (dired-recursive-deletes 'always)
   (dired-recursive-copies 'always)
+  (dired-free-space 'first)
+  (dired-dwim-target t)
+  (dired-vc-rename-file t)
+  (dired-create-destination-dirs 'ask)
+  (dired-clean-confirm-killing-deleted-buffers t)
+  (dired-auto-revert-buffer nil)
+  ;; :config
+  ;; (setq dired-deletion-confirmer 'y-or-n-p)
   )
 
 ;; grep config
@@ -354,8 +385,15 @@
 ;; Calc config
 (use-package calc
   :defer t
+  :bind (:map global-map
+              ("<Calculator>" . full-calc)
+              )
+  :init
+  ;; Open full-calc
+  ;; (define-key (current-global-map) (kbd "<Calculator>") 'full-calc)
   :config
   (setq calc-group-digits t)
+  :commands (full-calc)
   )
 
 ;; Highlight pairs of parentheses
@@ -364,6 +402,8 @@
   (show-paren-style 'mixed) ;; default: 'parenthesis
   (show-paren-when-point-inside-paren t)
   (show-paren-when-point-in-periphery t)
+  (show-paren-highlight-openparen t)
+  (show-paren-delay 0.15) ;; default: 0.125
   :config
   (show-paren-mode +1)
   )
@@ -372,7 +412,9 @@
   :defer t
   :custom
   (vc-follow-symlinks 'ask)
-  (vc-git-diff-switches '("-u" "--histogram")) ;; default: t
+  (vc-git-diff-switches '("--histogram")) ;; default: t
+  (vc-git-print-log-follow nil)
+  (vc-make-backup-files nil)
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh))
   :config
@@ -407,11 +449,20 @@
   (recentf-max-menu-items 20)
   (recentf-auto-cleanup 'mode) ;; default: 'mode
   (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
+  (recentf-exclude nil)
   :bind
   (:map recentf-mode-map
-        ("s-<0x10081247> s-r" . recentf-open))
+        ("s-<0x10081247> s-R" . recentf-open))
   :config
   (recentf-mode +1)
+  )
+
+(use-package saveplace
+  :custom
+  (save-place-file (expand-file-name "saveplace" user-emacs-directory))
+  (save-place-limit 600)
+  :config
+  (save-place-mode +1)
   )
 
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
@@ -421,6 +472,7 @@
   (make-backup-files nil)
   ;; Whether to create auto-save files or not
   (auto-save-default t)
+  (auto-save-no-message nil)
   ;; Backup directory
   (backup-directory-alist `(("." . "~/.emacs_backup_files")))
   ;; Backup by copying instead of renaming original file
@@ -433,6 +485,8 @@
   (delete-old-versions t)
   ;; Always generate an empty line at the end of the file
   (require-final-newline t)
+  (find-file-visit-truename t)
+  (confirm-nonexistent-file-or-buffer 'after-completion)
   :config
   ;; (setq backup-inhibited t)
 
@@ -450,8 +504,8 @@
         (setq make-backup-files t)
         (message "Enabling backups."))))
 
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-b f") 'force-backup-of-file)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-b b") 'enable-or-disable-backups)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-B f") 'force-backup-of-file)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'enable-or-disable-backups)
 
   ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
   )
@@ -480,7 +534,130 @@
   ;; Note: `prettify-symbols-alist' is the list of symbols that are prettified by `prettify-symbols-mode'
   )
 
+;; Some security config from minimal-emacs.d
+(use-package gnutls
+  :defer t
+  :custom
+  (gnutls-verify-error t) ;; Prompts user if there are certificate issues
+  (gnutls-min-prime-bits 3072) ;; Stronger GnuTLS encryption
+  )
+
+(use-package tls
+  :defer t
+  :custom
+  (tls-checktrust t)  ; Ensure SSL/TLS connections undergo trust verification
+  )
+
+(use-package cus-edit
+  :custom
+  ;; Exiting a custom buffer kills it
+  (custom-buffer-done-kill t)
+  )
+
+(use-package uniquify
+  :custom
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  )
+
+(use-package whitespace
+  :bind (:map global-map
+              ("H-x s-w" . whitespace-mode)
+              )
+  :custom
+  (whitespace-line-column nil) ;; Use `fill-column' as the value of `whitespace-line-column'.
+  )
+
+(use-package epg-config
+  :custom
+  ;; Directs gpg-agent to use the minibuffer for passphrase entry.
+  (epg-pinentry-mode 'loopback)
+  )
+
+(use-package auth-source
+  :custom
+  ;; Use GPG to encrypt the authinfo file. For more information check `(auth)Help for users' on the Emacs auth-source manual.
+  (auth-sources (list "~/.authinfo.gpg"))
+  )
+
+(use-package imenu
+  :custom
+  (imenu-auto-rescan t)
+  (imenu-max-item-length 160)
+  )
+
+(use-package comint
+  :custom
+  (comint-prompt-read-only t)
+  (comint-buffer-maximum-size 4096)
+  )
+
+(use-package ansi-color
+  :custom
+  (ansi-color-for-comint-mode t)
+  )
+
+(use-package newcomment
+  :custom
+  (comment-multi-line t)
+  (comment-empty-lines t)
+  )
+
+(use-package paragraphs
+  :defer t
+  :custom
+  (sentence-end nil)
+  (sentence-end-double-space t)
+  (sentence-end-without-period nil)
+  (sentence-end-base "[.?!…‽][]\"'”’)}»›]*")
+  )
+
+(use-package fill
+  :defer t
+  :custom
+  (colon-double-space nil)
+  )
+
+(use-package apropos
+  :custom
+  (apropos-do-all t)
+  )
+
+(use-package help
+  :custom
+  (help-enable-completion-autoload nil)
+  (help-enable-autoload nil)
+  (help-enable-symbol-autoload nil)
+  ;; When created, change focus to Help buffer
+  (help-window-select nil)
+  ;; Reuse Help window in contexts other than another Help buffer
+  (help-window-keep-selected t)
+  )
+
+(use-package ispell
+  :defer t
+  :custom
+  (ispell-silently-savep t)
+  )
+
+(use-package flyspell
+  :defer t
+  ;; :custom
+  ;; (flyspell-issue-message-flag nil)
+  ;; (flyspell-issue-welcome-flag nil)
+  )
+
+(use-package text-mode
+  :defer t
+  :custom
+  (text-mode-ispell-word-completion nil)
+  )
+
+;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
 (use-package package
+  :bind (:map global-map
+              ("H-q l" . list-packages)
+              ("s-<0x10081247> s-L" . list-packages)
+              )
   :custom
   ;; Priority for installation
   (package-archives
@@ -570,21 +747,15 @@
 (use-package xref
   :custom
   ;; Use Consult to select xref locations with preview
+  ;; alt value: #'xref-show-definitions-completing-read
   (xref-show-xrefs-function #'consult-xref) ;; default: xref--show-xref-buffer
+  ;; alt value: #'xref-show-definitions-completing-read
   (xref-show-definitions-function #'consult-xref) ;;default: xref-show-definitions-buffer
   )
 
 ;; Highlight cursor line
 (use-package hl-line
   :ensure nil
-  :config
-  ;; Gray, with disabled underline and overline
-  ;;(set-face-background 'hl-line "#303030")
-  ;;(custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
-  (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
-  ;; (set-face-attribute 'show-paren-match nil
-  ;;                     :background (face-attribute 'hl-line :background))
-  (global-hl-line-mode t)
   :hook ((eshell-mode
           ;;eat-mode
           shell-mode
@@ -595,7 +766,18 @@
           image-mode
 	  magit-diff-mode)
          ;; Disable hl-line for some modes
-         . (lambda () (setq-local global-hl-line-mode nil))))
+         . (lambda () (setq-local global-hl-line-mode nil)))
+  :custom
+  (global-hl-line-sticky-flag t)
+  :config
+  ;; Gray, with disabled underline and overline
+  ;; (set-face-background 'hl-line "#303030")
+  ;; (custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
+  ;; (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
+  ;; (set-face-attribute 'show-paren-match nil
+  ;;                     :background (face-attribute 'hl-line :background))
+  (global-hl-line-mode t)
+  )
 
 ;; Project manager
 (use-package project
@@ -616,7 +798,7 @@
 
 (use-package electric
   :config
-  ;; (add-to-list 'electric-indent-chars 32 'append)
+  ;; (add-to-list 'electric-indent-chars 32 'append) ;; '(?\n ?\^?)
   (electric-indent-mode 1)
   )
 
@@ -673,6 +855,14 @@
   (flymake-no-changes-timeout 0.5)
   (flymake-fringe-indicator-position 'left-fringe)
   (flymake-margin-indicator-position 'left-margin)
+  (flymake-show-diagnostics-at-end-of-line t)
+  (flymake-wrap-around t)
+  )
+
+(use-package abbrev
+  :custom
+  (abbrev-file-name (expand-file-name "abbrev_defs" user-emacs-directory))
+  (save-abbrevs 'silently)
   )
 
 ;; Dabbrev config
@@ -681,8 +871,16 @@
          ("C-M-/" . dabbrev-expand)
          ("C-M-<Ungrab>" . dabbrev-expand))
   :custom
+  (dabbrev-upcase-means-case-search t)
   (dabbrev-case-fold-search 'case-fold-search)
+  ;; (dabbrev-ignored-buffer-regexps
+  ;;     '(;; - Buffers starting with a space (internal or temporary buffers)
+  ;;       "\\` "
+  ;;       ;; Tags files such as ETAGS, GTAGS, RTAGS, TAGS, e?tags, and GPATH,
+  ;;       ;; including versions with numeric extensions like <123>
+  ;;       "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?"))
   :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?")
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
@@ -955,6 +1153,10 @@
   ((clojure-mode clojure-ts-mode) . eglot-ensure)
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;; Miscellaneous
+
 ;; Increase zoom
 ;; (add-hook 'after-change-major-mode-hook (lambda () (text-scale-set 3)))
 (setq default-text-scale-mode-amount 2)
@@ -989,3 +1191,37 @@
 (advice-add 'delete-other-windows :after #'(lambda (&rest _)
                                              (setq default-text-scale-mode-amount 2)
                                              (text-scale-set default-text-scale-mode-amount)))
+
+
+;; Enable commands
+(put 'narrow-to-region 'disabled nil)
+(put 'widen 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;; narrow-to-region
+;; narrow-to-page
+;; upcase-region
+;; downcase-region
+;; list-threads
+;; erase-buffer
+;; scroll-left
+;; dired-find-alternate-file
+;; set-goal-column
+
+
+;; Tooltips at cursor point on minibuffer
+(defun display-help-echo-at-point ()
+  "Display the 'help-echo' text property at cursor point in the minibuffer."
+  (interactive)
+  (let ((help-text (get-text-property (point) 'help-echo)))
+    (if help-text
+        (message "%s" help-text)
+      (message "No help-echo at point"))))
+
+(define-key (current-global-map) (kbd "s-. p") 'display-help-echo-at-point)
+
+
+;; Add alternative keys for C-x and M-x
+(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
+(define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))

@@ -20,14 +20,8 @@
 ;; Set key for replace-string
 (define-key (current-global-map) (kbd "H-r") 'replace-string)
 
-;; Count words in a region
-(define-key (current-global-map) (kbd "H-w") 'count-words)
-
 ;; Set key for finding built-in Emacs libraries / files
 (define-key (current-global-map) (kbd "H-h l") 'find-library)
-
-;; Set key for undo-only
-(define-key (current-global-map) (kbd "C-S-/") 'undo-only)
 
 ;; Define help keys for `find-library', `describe-keymap', `describe-char', and `describe-face'
 (define-key (current-global-map) (kbd "C-h M-l") 'find-library)
@@ -47,9 +41,6 @@
 ;; Replace string
 (define-key (current-global-map) (kbd "M-s-r s") 'query-replace)
 
-;; Open full-calc
-(define-key (current-global-map) (kbd "<Calculator>") 'full-calc)
-
 ;; Define keys for library repeat.el
 (define-key (current-global-map) (kbd "s-<") 'repeat)
 (define-key (current-global-map) (kbd "s->") 'repeat-mode)
@@ -59,18 +50,6 @@
 (define-key (current-global-map) (kbd "H-x s-<tab>") 'tabify)
 (define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
 (define-key (current-global-map) (kbd "H-x s-<iso-lefttab>") 'untabify)
-(define-key (current-global-map) (kbd "H-x s-w") 'whitespace-mode)
-(define-key (current-global-map) (kbd "H-x s-q") 'indent-tabs-mode)
-
-;; Define keys for package functions
-(define-key (current-global-map) (kbd "H-q l") 'list-packages)
-
-;; Add alternative key for list-packages
-(define-key (current-global-map) (kbd "s-<0x10081247> s-l") 'list-packages)
 
 ;; Define easy key for eldoc documentation
-(define-key (current-global-map) (kbd "s-.") 'eldoc)
-
-;; Add alternative to C-x and M-x
-(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
-(define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
+(define-key (current-global-map) (kbd "s-. .") 'eldoc)

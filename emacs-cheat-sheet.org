@@ -486,6 +486,10 @@
 +-----------------------------------+-------------------------------------------------+
 | Print Emacs version from terminal | emacs -batch -l <(echo "(message (version))")   |
 +-----------------------------------+-------------------------------------------------+
+| Show help-echo text property      | ALT + : (get-text-property (point) 'help-echo)  |
+| (tooltip text) at cursor point    |                                                 |
+| on the minibuffer                 |                                                 |
++-----------------------------------+-------------------------------------------------+
 
 ** Miscellaneous Emacs Functions
 
@@ -611,6 +615,17 @@
 | Find a file by name                 | find-name-dired              |
 +-------------------------------------+------------------------------+
 | Check buffer docs for style errors  | checkdoc                     |
++-------------------------------------+------------------------------+
+| Check if package exists             | package-installed-p          |
++-------------------------------------+------------------------------+
+| Check if feature in `features' list | featurep                     |
+| exits                               |                              |
++-------------------------------------+------------------------------+
+| Load file                           | load-file                    |
++-------------------------------------+------------------------------+
+| Load theme                          | load-theme                   |
++-------------------------------------+------------------------------+
+| Load package / library              | load-library                 |
 +-------------------------------------+------------------------------+
 
 ** Miscellaneous Emacs Variables

@@ -61,11 +61,12 @@
 ;; doom-themes
 (use-package doom-themes
   :ensure t
-  :config
+  :custom
   ;; Global settings (defaults)
-  (setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
-        doom-themes-enable-italic nil  ; if nil, italics is universally disabled
-        doom-dark+-blue-modeline nil)
+  (doom-themes-enable-bold nil)    ; if nil, bold is universally disabled
+  (doom-themes-enable-italic nil)  ; if nil, italics is universally disabled
+  (doom-dark+-blue-modeline nil)
+  :config
   (load-theme 'doom-dark+ t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -73,6 +74,8 @@
   ;; (setq doom-themes-treemacs-theme "doom-colors")
   ;; (doom-themes-treemacs-config)
   (doom-themes-org-config)
+
+  (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
   )
 
 ;; spacemacs-theme
