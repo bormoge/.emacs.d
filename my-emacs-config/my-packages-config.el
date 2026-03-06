@@ -327,6 +327,21 @@
   (devdocs-data-dir (expand-file-name ".cache/devdocs" user-emacs-directory))
   )
 
+;; When using NixOS, install nix-mode and nix-ts-mode
+(when (nixos-p)
+  (use-package nix-mode
+    :ensure t)
+
+  (use-package nix-ts-mode
+    :ensure t))
+
+;; Emacs headerline for projects
+(use-package breadcrumb
+  :ensure t
+  :config
+  (breadcrumb-mode)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; elfeed
@@ -638,7 +653,8 @@
      consult-source-project-root
      consult-source-project-buffer-hidden
      consult-source-project-recent-file-hidden
-     consult-source-project-root-hidden))
+     consult-source-project-root-hidden
+     ))
   :config
 
   ;; Number of characters needed when using an async consult command (e.g. consult-grep, consult-find)
@@ -872,11 +888,3 @@
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; When using NixOS, install nix-mode and nix-ts-mode
-(when (nixos-p)
-  (use-package nix-mode
-    :ensure t)
-
-  (use-package nix-ts-mode
-    :ensure t))

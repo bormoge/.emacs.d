@@ -30,7 +30,7 @@
   (scroll-conservatively 100000)
   (scroll-margin 6)
   (scroll-step 1)
-  (scroll-preserve-screen-position nil)
+  (scroll-preserve-screen-position t)
   ;; Short yes or no answer
   (use-short-answers t)
   ;; Use mark even when region is inactive
@@ -301,7 +301,7 @@
 ;; ElDoc config
 (use-package eldoc
   :custom
-  (eldoc-idle-delay 0.5)
+  (eldoc-idle-delay 0.7) ;; default: 0.5
   (eldoc-echo-area-display-truncation-message nil)
   :config
   (global-eldoc-mode +1)
@@ -415,6 +415,7 @@
   (vc-git-diff-switches '("--histogram")) ;; default: t
   (vc-git-print-log-follow nil)
   (vc-make-backup-files nil)
+  (vc-command-messages nil)
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh))
   :config
@@ -1027,16 +1028,24 @@
 (use-package eglot
   :ensure nil
   :defer t
-  :custom
-  (eglot-autoshutdown t)
-  (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
-  (eglot-sync-connect 2)
-  (eglot-connect-timeou1t 30)
-  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
-  (eglot-events-buffer-config '(:size 2000000 :format full))
-  (eglot-extend-to-xref nil)
-  (eglot-send-changes-idle-time 0.5)
-  (eglot-report-progress t)
+  :preface
+  ;; https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
+  (defun mp-eglot-eldoc ()
+    (setq eldoc-documentation-strategy
+          'eldoc-documentation-compose-eagerly))
+  :hook
+  (eglot-managed-mode . mp-eglot-eldoc)
+  ((nix-mode nix-ts-mode) . eglot-ensure)
+  ((rust-mode rust-ts-mode) . eglot-ensure)
+  ((java-mode java-ts-mode) . eglot-ensure)
+  ((js-mode js-ts-mode) . eglot-ensure)
+  ((python-mode python-ts-mode) . eglot-ensure)
+  ((toml-mode toml-ts-mode) . eglot-ensure)
+  ((yaml-mode yaml-ts-mode) . eglot-ensure)
+  ((c-mode c++-mode) . eglot-ensure)
+  ((html-mode html-ts-mode) . eglot-ensure)
+  ((css-mode css-ts-mode) . eglot-ensure)
+  ((clojure-mode clojure-ts-mode) . eglot-ensure)
   :bind (:map eglot-mode-map
               ("s-e c a" . eglot-code-actions)
               ("s-e o i" . eglot-code-action-organize-imports)
@@ -1049,6 +1058,16 @@
               ("s-e r w" . eglot-code-action-rewrite)
               ("s-e r c" . eglot-reconnect)
               )
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
+  (eglot-sync-connect 2)
+  (eglot-connect-timeou1t 30)
+  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
+  (eglot-events-buffer-config '(:size 2000000 :format full))
+  (eglot-extend-to-xref nil)
+  (eglot-send-changes-idle-time 0.5)
+  (eglot-report-progress t)
   :config
   ;; (fset #'jsonrpc--log-event #'ignore)
   ;; (setq jsonrpc-event-hook nil)
@@ -1138,19 +1157,6 @@
   (add-to-list 'eglot-server-programs
                '((yaml-mode yaml-ts-mode) .
                  ("yaml-language-server" "--stdio")))
-
-  :hook
-  ((nix-mode nix-ts-mode) . eglot-ensure)
-  ((rust-mode rust-ts-mode) . eglot-ensure)
-  ((java-mode java-ts-mode) . eglot-ensure)
-  ((js-mode js-ts-mode) . eglot-ensure)
-  ((python-mode python-ts-mode) . eglot-ensure)
-  ((toml-mode toml-ts-mode) . eglot-ensure)
-  ((yaml-mode yaml-ts-mode) . eglot-ensure)
-  ((c-mode c++-mode) . eglot-ensure)
-  ((html-mode html-ts-mode) . eglot-ensure)
-  ((css-mode css-ts-mode) . eglot-ensure)
-  ((clojure-mode clojure-ts-mode) . eglot-ensure)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
