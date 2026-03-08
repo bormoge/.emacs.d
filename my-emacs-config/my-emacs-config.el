@@ -86,7 +86,8 @@
               ("H-x s-q" . indent-tabs-mode)
               ("H-w" . count-words)
               ("C-S-/". undo-only)
-              ("s-<0x10081247> s-P" . auto-fill-mode)
+              ("s-<0x10081247> s-P p" . auto-fill-mode)
+              ("s-<0x10081247> s-P d" . display-fill-column-indicator-mode)
               )
   ;; Enable auto-save-mode only when the buffer is associated with a file.
   :hook (after-change-major-mode . (lambda ()
@@ -128,6 +129,7 @@
   ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   ;; Auto-Save-Mode
   ;; (auto-save-mode +1)
+  ;; (global-display-fill-column-indicator-mode +1)
   )
 
 ;; Show number of the lines
@@ -676,7 +678,9 @@
      ("gnu-devel"    . 1)
      ))
   (package-selected-packages
-   '(devdocs
+   '(
+     breadcrumb
+     devdocs
      consult-dir
      elfeed
      disaster
@@ -1061,7 +1065,8 @@
   :custom
   (eglot-autoshutdown t)
   (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
-  (eglot-sync-connect 2)
+  ;; async
+  (eglot-sync-connect 0) ;; default: 3
   (eglot-connect-timeou1t 30)
   (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
   (eglot-events-buffer-config '(:size 2000000 :format full))

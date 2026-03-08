@@ -2,14 +2,14 @@
 ;; (byte-recompile-directory package-user-dir nil 'force)
 
 ;; Check if Emacs is inside a (podman) container
-(defun container-p ()
+(defun podman-container-p ()
   "Return non-nil if Emacs is inside a (podman) container."
-  (let ((exit-code (call-process-shell-command
-                    "env | grep container=podman"
-                    nil
-                    nil
-                    nil)))
-
+  (let ((exit-code
+         (call-process-shell-command
+          "env | grep container=podman"
+          nil
+          nil
+          nil)))
     (eq exit-code 0)))
 
 ;; Check if the operating system is NixOS.
@@ -255,6 +255,7 @@
 (use-package flymake-hledger
   :ensure t
   :defer t
+  :after (flymake hledger)
   )
 
 ;; Directory-specific environments (direnv)
@@ -739,7 +740,6 @@
 ;; Embark
 (use-package embark
   :ensure t
-  :defer t
   :bind
   (("s-m ." . embark-act)
    ("s-m ," . embark-dwim)
