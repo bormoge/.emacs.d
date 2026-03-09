@@ -46,6 +46,7 @@
   ;; Disable fontification during user input to reduce lag in large buffers.
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
+  (display-line-numbers-width nil)
 
   :config
   ;; Disable compact font caches
@@ -55,30 +56,35 @@
   ;; (setq-default cursor-type '(bar . 7)) ;; default: t
   ;; Default image scaling
   (setq-default image-scaling-factor 'auto)
+
+  ;; Bidirectional editing config
+  (setq-default bidi-display-reordering 'left-to-right)
+  (setq-default bidi-paragraph-direction 'left-to-right)
+  (if (version<= "27.1" emacs-version)
+      (setq bidi-inhibit-bpa t))
   )
 
-;; Maximize Emacs on start
-;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-;;(toggle-frame-fullscreen)
-(toggle-frame-maximized)
-
-;; Change font
-;; (set-frame-font "Adwaita Mono 12" nil t)
-;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
-;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
-;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
-;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
-;; (set-frame-font "Ioskeley Mono Light 12" nil t)
-(set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+(use-package frame
+  :config
+  ;; Change font
+  ;; (set-frame-font "Adwaita Mono 12" nil t)
+  ;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
+  ;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
+  ;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
+  ;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
+  ;; (set-frame-font "Ioskeley Mono Light 12" nil t)
+  (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+  ;; Maximize Emacs on start
+  ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
+  ;;(toggle-frame-fullscreen)
+  (toggle-frame-maximized)
+  )
 
 ;; Enable syntax highlighting
-(global-font-lock-mode t)
-
-;; Bidirectional editing config
-(setq-default bidi-display-reordering 'left-to-right)
-(setq-default bidi-paragraph-direction 'left-to-right)
-(if (version<= "27.1" emacs-version)
-    (setq bidi-inhibit-bpa t))
+(use-package font-core
+  :config
+  (global-font-lock-mode t)
+  )
 
 ;; Package for miscellaneous features
 (use-package simple
@@ -88,6 +94,7 @@
               ("C-S-/". undo-only)
               ("s-<0x10081247> s-P p" . auto-fill-mode)
               ("s-<0x10081247> s-P d" . display-fill-column-indicator-mode)
+              ("s-<0x10081247> s-P f" . fill-paragraph)
               )
   ;; Enable auto-save-mode only when the buffer is associated with a file.
   :hook (after-change-major-mode . (lambda ()
@@ -132,12 +139,24 @@
   ;; (global-display-fill-column-indicator-mode +1)
   )
 
+(use-package visual-wrap
+  :custom
+  (visual-wrap-extra-indent 0)
+  :config
+  (global-visual-wrap-prefix-mode +1)
+  )
+
 ;; Show number of the lines
-(global-display-line-numbers-mode +1)
-(setq display-line-numbers-width nil)
+(use-package display-line-numbers
+  :config
+  (global-display-line-numbers-mode +1)
+  )
 
 ;; Enable use of system clipboard
-(setq select-enable-clipboard t)
+(use-package select
+  :custom
+  (select-enable-clipboard t)
+  )
 
 ;; Tab Bars
 (use-package tab-bar
