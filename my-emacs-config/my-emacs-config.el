@@ -698,6 +698,9 @@
      ))
   (package-selected-packages
    '(
+     package-build
+     package-lint
+     guava-themes
      breadcrumb
      devdocs
      consult-dir

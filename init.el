@@ -35,6 +35,9 @@
 ;; Define Emacs keys
 (load-file "~/.emacs.d/my-emacs-config/my-keys-config.el")
 
+;; Define configuration environment for packages authored by me.
+(load-file "~/.emacs.d/my-emacs-config/my-own-packages-config.el")
+
 ;; Comment this if you don't have the file
 ;; (load-file "~/.emacs.d/my-emacs-config/functions/tetris.el")
 
