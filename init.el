@@ -28,10 +28,6 @@
 ;; Apply packages configuration
 (load-file "~/.emacs.d/my-emacs-config/my-packages-config.el")
 
-;; When inside a (podman) container, apply this configuration
-(when (podman-container-p)
-  (load-file "~/.emacs.d/my-emacs-config/my-container-config.el"))
-
 ;; Define Emacs keys
 (load-file "~/.emacs.d/my-emacs-config/my-keys-config.el")
 

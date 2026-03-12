@@ -38,7 +38,7 @@
   ;; Limit on depth in ‘eval’, ‘apply’ and ‘funcall’ before error.
   (max-lisp-eval-depth 1600)
   ;; Whether to ignore case when searching
-  (case-fold-search nil) ;; For some reason setting t to this variable doesn't seem to work. At least setting 1 does work.
+  (case-fold-search 1) ;; For some reason setting t to this variable doesn't seem to work. At least setting 1 does work.
   ;; Undo limits
   (undo-limit 160000) ;(* 13 160000)
   (undo-strong-limit 240000) ;(* 13 240000)
@@ -47,6 +47,7 @@
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
   (display-line-numbers-width nil)
+  (fast-but-imprecise-scrolling t)
 
   :config
   ;; Disable compact font caches
@@ -62,9 +63,16 @@
   (setq-default bidi-paragraph-direction 'left-to-right)
   (if (version<= "27.1" emacs-version)
       (setq bidi-inhibit-bpa t))
+
+  ;; Modify the appearance of the region
+  ;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
   )
 
 (use-package frame
+  :custom
+  ;; Change cursor's appearance
+  (blink-cursor-mode t)
+  (window-divider-default-places t)
   :config
   ;; Change font
   ;; (set-frame-font "Adwaita Mono 12" nil t)
@@ -72,11 +80,14 @@
   ;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
   ;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
   ;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
+  ;; (set-frame-font "UbuntuSansMono Nerd Font Mono 13" nil t)
   ;; (set-frame-font "Ioskeley Mono Light 12" nil t)
-  (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+  ;; (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
+  (set-frame-font "JuliaMono Light 12" nil t)
   ;; Maximize Emacs on start
   ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
   ;;(toggle-frame-fullscreen)
+  (window-divider-mode +1)
   (toggle-frame-maximized)
   )
 
@@ -90,6 +101,7 @@
 (use-package simple
   :bind (:map global-map
               ("H-x s-q" . indent-tabs-mode)
+              ("H-x s-e" . delete-trailing-whitespace)
               ("H-w" . count-words)
               ("C-S-/". undo-only)
               ("s-<0x10081247> s-P p" . auto-fill-mode)
@@ -110,7 +122,7 @@
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
   ;;(save-interprogram-paste-before-kill t)
-  (kill-whole-line t)
+  (kill-whole-line nil)
   (line-move-visual t)
   (set-mark-command-repeat-pop t)
   (delete-active-region t)
@@ -137,6 +149,8 @@
   ;; Auto-Save-Mode
   ;; (auto-save-mode +1)
   ;; (global-display-fill-column-indicator-mode +1)
+  ;; Enable Transient Mark Mode
+  (transient-mark-mode +1)
   )
 
 (use-package visual-wrap
@@ -183,16 +197,32 @@
   (global-tab-line-mode +1)
   )
 
-;; Enable menus
-(menu-bar-mode +1)
-(tool-bar-mode -1)
-;;(modifier-bar-mode -1)
+;; Enable menu-bar
+(use-package menu-bar
+  :config
+  (menu-bar-mode +1)
+  )
+
+;; Disable tool-bar
+(use-package tool-bar
+  :defer t
+  :config
+  (tool-bar-mode -1)
+  ;;(modifier-bar-mode -1)
+  )
 
 ;; Enable tooltips
-(tooltip-mode +1)
+(use-package tooltip
+  :config
+  (tooltip-mode +1)
+  )
 
 ;; Enable Vertical Scroll Bar
-(scroll-bar-mode 'right)
+(use-package scroll-bar
+  :config
+  ;; (scroll-bar-mode 'right)
+  (scroll-bar-mode -1)
+  )
 
 ;; Replace a selected area with typed text
 (use-package delsel
@@ -212,11 +242,17 @@
   )
 
 ;; Display warnings depending of level
-(setq warning-minimum-level :warning)
+(use-package warnings
+  :custom
+  (warning-minimum-level :warning)
+  )
 
 ;; Disables docstring warnings
-(setq byte-compile-warnings
+(use-package bytecomp
+  :custom
+  (byte-compile-warnings
       '(not docstrings))
+  )
 
 ;; Display time and date on the minibuffer (neat stuff)
 (use-package time
@@ -248,12 +284,6 @@
   (savehist-mode +1)
   )
 
-;; Modify the appearance of the region
-;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
-
-;; Change cursor's appearance
-(setq blink-cursor-mode t)
-
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
 (use-package autorevert
   :custom
@@ -268,11 +298,20 @@
   (global-auto-revert-mode +1)
   )
 
-;; Config for vertico package
-(setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
+(use-package minibuffer
+  :custom
+  ;; More detailed completions
+  (completions-detailed t)
+  :config
+  ;; Config for vertico package
+  (setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
+  )
 
 ;; Enable right click menu
-(context-menu-mode +1)
+(use-package mouse
+  :config
+  (context-menu-mode +1)
+  )
 
 ;; Display differences between files / buffers
 (use-package diff
@@ -306,18 +345,12 @@
   (ediff-window-setup-function 'ediff-setup-windows-plain) ;; default: 'ediff-setup-windows-default
   )
 
-;; More detailed completions
-(setq completions-detailed t)
-
-;; Use real function / variables names when customizing
-(setq custom-unlispify-tag-names nil)
-
 ;; EditorConfig (https://editorconfig.org/)
 ;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
-(editorconfig-mode t)
-
-;; Enable Transient Mark Mode
-(transient-mark-mode +1)
+(use-package editorconfig
+  :config
+  (editorconfig-mode t)
+  )
 
 ;; ElDoc config
 (use-package eldoc
@@ -328,13 +361,20 @@
   (global-eldoc-mode +1)
   )
 
-;; Display battery status
-(display-battery-mode +1)
+;; Display battery status on mode-line
+(use-package battery
+  :config
+  (display-battery-mode +1)
+  )
 
 ;; Display name of a "function" (depends of the context)
-(setq which-func-update-delay 0.5)
-(setq which-func-display 'header)
-(which-function-mode +1)
+(use-package which-func
+  :custom
+  (which-func-update-delay 0.5)
+  (which-func-display 'header)
+  :config
+  (which-function-mode +1)
+  )
 
 (use-package compile
   ;; Add key for compile
@@ -509,6 +549,8 @@
   (require-final-newline t)
   (find-file-visit-truename t)
   (confirm-nonexistent-file-or-buffer 'after-completion)
+  (safe-local-variable-values
+   '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
   :config
   ;; (setq backup-inhibited t)
 
@@ -541,12 +583,6 @@
               ("s-<down>" . windmove-down)
               ))
 
-;; Global lexical-binding (Emacs 31)
-;; (set-default-toplevel-value 'lexical-binding t)
-
-;; Enable Semantic Font Lock for Emacs (Emacs 31)
-;; (setq elisp-fontify-semantically t)
-
 (use-package mwheel
   :custom
   (mouse-wheel-progressive-speed t))
@@ -574,6 +610,8 @@
   :custom
   ;; Exiting a custom buffer kills it
   (custom-buffer-done-kill t)
+  ;; Use real function / variables names when customizing
+  (custom-unlispify-tag-names nil)
   )
 
 (use-package uniquify
@@ -700,6 +738,7 @@
    '(
      package-build
      package-lint
+     package-lint-flymake
      guava-themes
      breadcrumb
      devdocs
@@ -923,11 +962,11 @@
   (org-startup-indented t)
   (org-startup-folded 'overview)
   (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
+  (org-imenu-depth 8)
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
   ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
-  ;;(org-imenu-depth 8)
   ;;(org-hierarchical-todo-statistics t)
   ;;(org-image-actual-width t)
   ;;(org-pretty-entities nil)
@@ -1258,3 +1297,14 @@
 ;; Add alternative keys for C-x and M-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 (define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
+
+
+;; Global lexical-binding (Emacs 31)
+;; (set-default-toplevel-value 'lexical-binding t)
+
+;; Enable Semantic Font Lock for Emacs (Emacs 31)
+;; (setq elisp-fontify-semantically t)
+
+;; Review policy (Emacs 31)
+;; (setq package-review-policy t
+;;      package-review-diff-command '("git" "diff" "--no-index" "--color=never" "--diff-filter=d"))
