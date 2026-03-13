@@ -4,9 +4,6 @@
 
 ;; If you wonder what s-<0x10081247> is, it's the copilot key that comes with the new thinkpads.
 
-;; Set key for swapping windows
-(define-key (current-global-map) (kbd "C-x M-o") 'window-swap-states)
-
 ;; Set keys for shell, eshell, term
 (define-key (current-global-map) (kbd "H-s e b") 'eshell)
 (define-key (current-global-map) (kbd "H-s e c") 'eshell-command)
@@ -32,9 +29,6 @@
 ;; Define key for ibuffer
 (define-key (current-global-map) (kbd "C-x M-b") 'ibuffer)
 
-;; Define key for bury-buffer
-(define-key (current-global-map) (kbd "H-x k") 'bury-buffer)
-
 ;; Replace regexp
 (define-key (current-global-map) (kbd "M-s-r r") 'query-replace-regexp)
 
@@ -50,6 +44,3 @@
 (define-key (current-global-map) (kbd "H-x s-<tab>") 'tabify)
 (define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
 (define-key (current-global-map) (kbd "H-x s-<iso-lefttab>") 'untabify)
-
-;; Define easy key for eldoc documentation
-(define-key (current-global-map) (kbd "s-. .") 'eldoc)

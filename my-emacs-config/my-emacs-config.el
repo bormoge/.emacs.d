@@ -91,6 +91,16 @@
   (toggle-frame-maximized)
   )
 
+(use-package window
+  :bind
+  (:map global-map
+        ;; Set key for burying buffers without deleting them
+        ("C-x M-k" . bury-buffer)
+        ;; Set key for swapping windows
+        ("C-x M-o" . window-swap-states)
+   )
+  )
+
 ;; Enable syntax highlighting
 (use-package font-core
   :config
@@ -352,8 +362,13 @@
   (editorconfig-mode t)
   )
 
-;; ElDoc config
+;; eldoc config
 (use-package eldoc
+  :bind
+  (:map global-map
+        ;; Define easy key for eldoc documentation
+        ("s-. ." . eldoc)
+   )
   :custom
   (eldoc-idle-delay 0.7) ;; default: 0.5
   (eldoc-echo-area-display-truncation-message nil)
@@ -830,7 +845,9 @@
           comint-mode
           cfrs-input-mode
           image-mode
-	  magit-diff-mode)
+	  magit-diff-mode
+          diff-mode
+          )
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil)))
   :custom
