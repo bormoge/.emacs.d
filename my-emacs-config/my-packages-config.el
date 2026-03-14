@@ -338,6 +338,8 @@
 
 ;; Emacs headerline for projects
 (use-package breadcrumb
+  :bind(:map global-map
+             ("s-<0x10081247> s-J" . breadcrumb-jump))
   :ensure t
   :config
   (breadcrumb-mode)

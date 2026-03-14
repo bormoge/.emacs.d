@@ -191,6 +191,8 @@
   (tab-bar-tab-name-function #'tab-bar-tab-name-current)
   (tab-bar-tab-name-truncated-max 20)
   (tab-bar-auto-width t)
+  (tab-bar-new-button-show nil)
+  (tab-bar-close-button-show nil)
   :config
   (setq tab-bar-tab-name-ellipsis t)
   (tab-bar-mode +1)
@@ -202,8 +204,11 @@
   ;; tab-line-tab-name-buffer, tab-line-tab-name-truncated-buffer
   (tab-line-tab-name-function #'tab-line-tab-name-buffer)
   (tab-line-tab-name-truncated-max 20)
+  (tab-line-new-button-show nil)
+  (tab-line-close-button-show nil)
   :config
   (setq tab-line-tab-name-ellipsis t)
+  (add-to-list 'tab-line-tab-face-functions #'tab-line-tab-face-inactive-alternating)
   (global-tab-line-mode +1)
   )
 
