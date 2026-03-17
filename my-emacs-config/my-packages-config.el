@@ -24,20 +24,22 @@
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
   :ensure t
+  :custom
+  (dashboard-center-content t)
+  (dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+  (dashboard-icon-type 'nerd-icons) ; use `nerd-icons' package
+  (dashboard-items '(
+                     (bookmarks . 30)
+                     (projects  . 20)
+                     (recents   . 20)
+                     (agenda    . 10)
+                     (registers . 10)
+                     ))
+  (dashboard-set-heading-icons t)
+  (dashboard-set-file-icons t)
+  (dashboard-week-agenda t)
   :config
-  (setq dashboard-center-content t)
-  (set-face-attribute 'dashboard-items-face nil :height 163 :inherit 'widget-button)
-  (setq dashboard-display-icons-p t)     ; display icons on both GUI and terminal
-  (setq dashboard-icon-type 'nerd-icons) ; use `nerd-icons' package
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-week-agenda t)
-  (setq dashboard-items '(
-                          (bookmarks . 30)
-                          (projects  . 20)
-                          (recents   . 20)
-                          (agenda    . 5)
-                          ))
+  ;; (set-face-attribute 'dashboard-items-face nil :height 163 :inherit 'widget-button)
   (dashboard-setup-startup-hook))
 
 ;; doom-modeline, a modified version of the modeline
@@ -524,11 +526,6 @@
 ;; Vertico
 (use-package vertico
   :ensure t
-  :custom
-  (vertico-scroll-margin 2) ;; Different scroll margin
-  (vertico-count 12) ;; Show more candidates
-  (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
-  (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :bind (:map vertico-map
               ("<tab>" . minibuffer-complete)
               ("M-g M-c" . switch-to-completions)
@@ -536,9 +533,15 @@
               ("<backtab>" . vertico-insert)
 	      ("C-M-n" . vertico-next-group)
 	      ("C-M-p" . vertico-previous-group)
+	      ("s-b" . vertico-buffer-mode)
 	      )
   :init
   (vertico-mode)
+  :custom
+  (vertico-scroll-margin 2) ;; Different scroll margin
+  (vertico-count 12) ;; Show more candidates
+  (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
+  (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   )
 
 ;; List of vertico extensions found in github@minad/vertico.
@@ -967,12 +970,13 @@
   )
 
 ;; Integration for uv, the Python package manager
-(use-package uv-mode
-  :ensure t
-  :hook (python-mode . uv-mode-auto-activate-hook)
-  :hook (python-ts-mode . uv-mode-auto-activate-hook)
-  :if (executable-find "uv")
-  )
+;; (use-package uv-mode
+;;   :ensure t
+;;   :defer t
+;;   :hook (python-mode . uv-mode-auto-activate-hook)
+;;   :hook (python-ts-mode . uv-mode-auto-activate-hook)
+;;   :if (executable-find "uv")
+;;   )
 
 ;; Package to integrate various python tools. I'll leave this here just in case I end up using it.
 ;; (use-package pet
@@ -1049,10 +1053,14 @@
 
 ;;;; yaml config
 (use-package yaml
-  :ensure t)
+  :ensure t
+  :defer t
+  )
 
 (use-package yaml-mode
-  :ensure t)
+  :ensure t
+  :defer t
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1234,7 +1242,9 @@
 
 ;;;; Rust config
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :defer t
+  )
 ;; :init
 ;; (setq rust-mode-treesitter-derive t)
 ;; ;; (setq rust-format-on-save t) ;; You can also use Apheleia as an alternative for this variable.
@@ -1266,7 +1276,8 @@
 
 ;; RefTeX
 (use-package reftex ;; Not necessary, just a formality
-  :defer t)
+  :defer t
+  )
 
 ;; pdf-tools
 (use-package pdf-tools
@@ -1289,49 +1300,55 @@
 ;;;; dape configuration
 (use-package dape
   :ensure t
+  :defer t
+  :bind (:map global-map
+              ("C-x C-a d" . dape)
+              )
   :config
-  (setq dape-buffer-window-arrangement 'right))
+  (setq dape-buffer-window-arrangement 'right)
 
-;; Put symlinks on debug-adapters directory so dape sees where the debuggers are located.
-(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))
-  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/codelldb/") (expand-file-name "~/.emacs.d/debug-adapters/codelldb/")))
+  ;; Put symlinks on debug-adapters directory so dape sees where the debuggers are located.
+  (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))
+    (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/codelldb/") (expand-file-name "~/.emacs.d/debug-adapters/codelldb/")))
 
-(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar"))
-  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar") (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar")))
+  (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar"))
+    (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar") (expand-file-name "~/.emacs.d/debug-adapters/com.microsoft.java.debug.plugin-0.53.2.jar")))
 
-(unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter"))
-  (make-symbolic-link (expand-file-name "~/.emacs.d/mason/bin/js-debug-adapter") (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter")))
+  (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter"))
+    (make-symbolic-link (expand-file-name "~/.emacs.d/mason/bin/js-debug-adapter") (expand-file-name "~/.emacs.d/debug-adapters/js-debug-adapter")))
 
-;; (setenv "PATH" (concat "~/.emacs.d/mason/bin:" (getenv "PATH")))
-;; (setq exec-path (cons "~/.emacs.d/mason/bin" exec-path))
+  ;; (setenv "PATH" (concat "~/.emacs.d/mason/bin:" (getenv "PATH")))
+  ;; (setq exec-path (cons "~/.emacs.d/mason/bin" exec-path))
 
-(add-to-list 'dape-configs
-             `(js-debug-adapter
-               modes (js-mode js-ts-mode typescript-mode typescript-ts-mode)
-               command "node"
-               command-args (,(expand-file-name "~/.emacs.d/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js") "8123")
-               :type "pwa-node"
-               :request "launch"
-               :cwd "${workspaceFolder}"
-               :program (if (buffer-file-name) ;; if buffer is visiting file, return file name, else nil
-                            (setq js-debug-buffer-filename (buffer-file-name)) ;; if buffer-file-name = non-nil set the file name
-                          js-debug-buffer-filename) ;; else either use nil or assume last file visited is target
-               ;; for some reason ${file} didn't work on :program
-               ensure dape-ensure-command command-cwd
-               dape-command-cwd command "js-debug-adapter"
-               host "localhost"
-               port 8123))
+  (add-to-list 'dape-configs
+               `(js-debug-adapter
+                 modes (js-mode js-ts-mode typescript-mode typescript-ts-mode)
+                 command "node"
+                 command-args (,(expand-file-name "~/.emacs.d/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js") "8123")
+                 :type "pwa-node"
+                 :request "launch"
+                 :cwd "${workspaceFolder}"
+                 :program (if (buffer-file-name) ;; if buffer is visiting file, return file name, else nil
+                              (setq js-debug-buffer-filename (buffer-file-name)) ;; if buffer-file-name = non-nil set the file name
+                            js-debug-buffer-filename) ;; else either use nil or assume last file visited is target
+                 ;; for some reason ${file} didn't work on :program
+                 ensure dape-ensure-command command-cwd
+                 dape-command-cwd command "js-debug-adapter"
+                 host "localhost"
+                 port 8123))
 
-;; For now this won't be necessary
-;; (add-to-list 'dape-configs
-;;              `(codelldb-rust-2 modes (rust-mode rust-ts-mode) command-args
-;;                                ("--port" :autoport "--settings"
-;;                                 "{\"sourceLanguages\":[\"rust\"]}")
-;;                                ensure dape-ensure-command command-cwd
-;;                                dape-command-cwd command "codelldb" port :autoport :type "lldb"
-;;                                :request "launch" :cwd "." :program
-;;                                (file-name-concat "target" "debug"
-;;                                                  (car
-;;                                                   (last
-;;                                                    (file-name-split
-;;                                                     (directory-file-name (dape-cwd))))))))
+  ;; For now this won't be necessary
+  ;; (add-to-list 'dape-configs
+  ;;              `(codelldb-rust-2 modes (rust-mode rust-ts-mode) command-args
+  ;;                                ("--port" :autoport "--settings"
+  ;;                                 "{\"sourceLanguages\":[\"rust\"]}")
+  ;;                                ensure dape-ensure-command command-cwd
+  ;;                                dape-command-cwd command "codelldb" port :autoport :type "lldb"
+  ;;                                :request "launch" :cwd "." :program
+  ;;                                (file-name-concat "target" "debug"
+  ;;                                                  (car
+  ;;                                                   (last
+  ;;                                                    (file-name-split
+  ;;                                                     (directory-file-name (dape-cwd))))))))
+
+  )

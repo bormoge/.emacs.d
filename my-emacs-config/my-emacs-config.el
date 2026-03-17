@@ -164,6 +164,11 @@
   )
 
 (use-package visual-wrap
+  :hook ((org-mode
+          )
+         ;; Disable visual-wrap-prefix-mode for some modes
+         . (lambda ()
+             (visual-wrap-prefix-mode -1)))
   :custom
   (visual-wrap-extra-indent 0)
   :config
@@ -454,7 +459,44 @@
   :bind
   (:map rectangle-mark-mode-map
         ("s-a" . string-rectangle))
-  :defer t)
+  :defer t
+  )
+
+(use-package register
+  :config
+  (unless savehist-mode
+    (defvar register-file
+      (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
+
+    (defun save-register ()
+      (unless (file-exists-p register-file)
+        (make-empty-file register-file))
+      (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
+        (when register-alist
+          (with-temp-file register-file
+            (prin1 pruned (current-buffer))))))
+
+    (defun load-register ()
+      (when (file-exists-p register-file)
+        (with-temp-buffer
+          (insert-file-contents register-file)
+          (condition-case err
+              (setq register-alist (read (current-buffer)))
+            (error
+             (message "Failed to load registers: %s" err)))
+          ;; (setq register-alist (read (current-buffer)))
+          )))
+
+    (defun clear-register ()
+      (interactive)
+      (setq register-alist nil)
+      (with-temp-file register-file (insert ""))
+      )
+
+    (load-register)
+    (add-hook 'kill-emacs-hook #'save-register 'append)
+    )
+  )
 
 (use-package descr-text
   :custom
@@ -571,6 +613,7 @@
   (confirm-nonexistent-file-or-buffer 'after-completion)
   (safe-local-variable-values
    '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
+  (auto-save-visited-interval 30)
   :config
   ;; (setq backup-inhibited t)
 
@@ -592,6 +635,8 @@
   (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'enable-or-disable-backups)
 
   ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
+
+  (auto-save-visited-mode -1)
   )
 
 (use-package windmove
@@ -607,10 +652,10 @@
   :custom
   (mouse-wheel-progressive-speed t))
 
-(use-package prog-mode
-  :hook (prog-mode . prettify-symbols-mode)
-  ;; Note: `prettify-symbols-alist' is the list of symbols that are prettified by `prettify-symbols-mode'
-  )
+;; (use-package prog-mode
+;;   :hook (prog-mode . prettify-symbols-mode)
+;;   ;; Note: `prettify-symbols-alist' is the list of symbols that are prettified by `prettify-symbols-mode'
+;;   )
 
 ;; Some security config from minimal-emacs.d
 (use-package gnutls
@@ -756,6 +801,7 @@
      ))
   (package-selected-packages
    '(
+     vscode-dark-plus-theme
      package-build
      package-lint
      package-lint-flymake
@@ -782,7 +828,6 @@
      mason
      nix-ts-mode
      nix-mode
-     uv-mode
      nerd-icons-xref
      nerd-icons-grep
      doom-modeline
@@ -871,9 +916,10 @@
 (use-package project
   ;; Use demand to load the package automatically
   :demand t
-  :config
+  :custom
   ;; Show project name on mode-line
-  (setq project-mode-line t)
+  (project-mode-line t)
+  (project-vc-extra-root-markers '(".envrc"))
   )
 
 ;; Electric packages
@@ -1281,6 +1327,12 @@
                                         (setq default-text-scale-mode-amount 2)
                                         (text-scale-set default-text-scale-mode-amount)
                                         )))
+
+(advice-add 'bury-buffer :after #'(lambda (&rest _)
+                                    (when (<= (length (window-list)) 1)
+                                      (setq default-text-scale-mode-amount 2)
+                                      (text-scale-set default-text-scale-mode-amount)
+                                      )))
 
 (advice-add 'delete-other-windows :after #'(lambda (&rest _)
                                              (setq default-text-scale-mode-amount 2)
