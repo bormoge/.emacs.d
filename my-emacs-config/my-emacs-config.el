@@ -46,6 +46,7 @@
   ;; Disable fontification during user input to reduce lag in large buffers.
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
+  (display-line-numbers t)
   (display-line-numbers-width nil)
   (fast-but-imprecise-scrolling t)
 
@@ -145,10 +146,10 @@
   (blink-matching-paren t)
   (next-line-add-newlines nil)
   :config
-  ;; Truncate long lines
-  ;;(setq-default truncate-lines t)
-  ;;(setq-default word-wrap nil) ;; Visual Line mode sets this to t
-  (global-visual-line-mode t)
+  ;; Enable / disable truncated lines
+  (setq-default truncate-lines nil)
+  (setq-default word-wrap t) ;; Visual Line mode sets this variable to t
+  ;;(global-visual-line-mode t)
   ;; Use spaces for indentation
   ;; Alternatively, you can modify the variable `tab-width'
   ;; (setq-default tab-width 4)
@@ -164,11 +165,11 @@
   )
 
 (use-package visual-wrap
-  :hook ((org-mode
-          )
-         ;; Disable visual-wrap-prefix-mode for some modes
-         . (lambda ()
-             (visual-wrap-prefix-mode -1)))
+  ;; :hook ((org-mode
+  ;;         )
+  ;;        ;; Disable visual-wrap-prefix-mode for some modes
+  ;;        . (lambda ()
+  ;;            (visual-wrap-prefix-mode -1)))
   :custom
   (visual-wrap-extra-indent 0)
   :config
@@ -639,6 +640,14 @@
   (auto-save-visited-mode -1)
   )
 
+(use-package page
+  :bind (:map global-map
+              ;; To use this, use C-q C-l to put form-feeds on the buffers.
+              ("s-<prior>" . backward-page)
+              ("s-<next>" . forward-page)
+              )
+  )
+
 (use-package windmove
   ;; Set keys for changing window focus
   :bind (:map global-map
@@ -775,6 +784,17 @@
   :defer t
   :custom
   (text-mode-ispell-word-completion nil)
+  )
+
+;; Commands to repeat other commands.
+(use-package repeat
+  :defer t
+  :bind (:map global-map
+              ("s-<" . repeat)
+              ("s->" . repeat-mode)
+              ("s-z" . describe-repeat-maps)
+              )
+  :commands (repeat repeat-mode describe-repeat-maps)
   )
 
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
@@ -1024,16 +1044,16 @@
 
 ;; Org configuration
 (use-package org
-  :ensure t
+  :ensure nil
   :defer t
   :custom
-  (org-startup-indented t)
+  (org-startup-indented nil)
   (org-startup-folded 'overview)
   (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
   (org-imenu-depth 8)
+  (org-startup-truncated t)
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
-  ;;(org-agenda-files '("~/.emacs.d/org-agenda/"))
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
   ;;(org-hierarchical-todo-statistics t)
   ;;(org-image-actual-width t)
@@ -1086,6 +1106,19 @@
   ;;      (java . t)
   ;;      (c . t)
   ;;      )))
+  )
+
+(use-package org-agenda
+  :bind (:map global-map
+              ("s-<0x10081247> s-U" . org-agenda)
+              )
+  :custom
+  (org-agenda-include-diary t)
+  (org-agenda-files '("~/.emacs.d/org-agenda/"))
+  (org-agenda-start-on-weekday 1)
+  (org-agenda-span 'month)
+  (org-agenda-skip-scheduled-if-done nil)
+  (org-agenda-skip-deadline-if-done nil)
   )
 
 ;; Treesitter
@@ -1327,12 +1360,6 @@
                                         (setq default-text-scale-mode-amount 2)
                                         (text-scale-set default-text-scale-mode-amount)
                                         )))
-
-(advice-add 'bury-buffer :after #'(lambda (&rest _)
-                                    (when (<= (length (window-list)) 1)
-                                      (setq default-text-scale-mode-amount 2)
-                                      (text-scale-set default-text-scale-mode-amount)
-                                      )))
 
 (advice-add 'delete-other-windows :after #'(lambda (&rest _)
                                              (setq default-text-scale-mode-amount 2)

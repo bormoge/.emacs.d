@@ -29,10 +29,10 @@
   (dashboard-display-icons-p t) ;; display icons on both GUI and terminal
   (dashboard-icon-type 'nerd-icons) ; use `nerd-icons' package
   (dashboard-items '(
+                     (agenda    . 30)
                      (bookmarks . 30)
                      (projects  . 20)
                      (recents   . 20)
-                     (agenda    . 10)
                      (registers . 10)
                      ))
   (dashboard-set-heading-icons t)
@@ -40,7 +40,8 @@
   (dashboard-week-agenda t)
   :config
   ;; (set-face-attribute 'dashboard-items-face nil :height 163 :inherit 'widget-button)
-  (dashboard-setup-startup-hook))
+  (dashboard-setup-startup-hook)
+  )
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
@@ -343,7 +344,7 @@
   :bind(:map global-map
              ("s-<0x10081247> s-J" . breadcrumb-jump))
   :ensure t
-  :config
+  :init
   (breadcrumb-mode)
   )
 
@@ -542,6 +543,8 @@
   (vertico-count 12) ;; Show more candidates
   (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :config
+  (vertico-mouse-mode +1)
   )
 
 ;; List of vertico extensions found in github@minad/vertico.

@@ -35,11 +35,6 @@
 ;; Replace string
 (define-key (current-global-map) (kbd "M-s-r s") 'query-replace)
 
-;; Define keys for library repeat.el
-(define-key (current-global-map) (kbd "s-<") 'repeat)
-(define-key (current-global-map) (kbd "s->") 'repeat-mode)
-(define-key (current-global-map) (kbd "s-z") 'describe-repeat-maps)
-
 ;; Convert tabs to spaces or spaces to tabs
 (define-key (current-global-map) (kbd "H-x s-<tab>") 'tabify)
 (define-key (current-global-map) (kbd "H-x s-<backspace>") 'untabify)
