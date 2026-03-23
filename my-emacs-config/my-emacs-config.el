@@ -686,6 +686,7 @@
   (custom-buffer-done-kill t)
   ;; Use real function / variables names when customizing
   (custom-unlispify-tag-names nil)
+  (custom-raised-buttons t)
   )
 
 (use-package uniquify
@@ -821,6 +822,8 @@
      ))
   (package-selected-packages
    '(
+     consult-symbol
+     helpful
      vscode-dark-plus-theme
      package-build
      package-lint
@@ -936,10 +939,20 @@
 (use-package project
   ;; Use demand to load the package automatically
   :demand t
+  :bind (:map global-map
+              ("s-<0x10081247> s-?" . project-other-window-command)
+              )
   :custom
   ;; Show project name on mode-line
   (project-mode-line t)
-  (project-vc-extra-root-markers '(".envrc"))
+  (project-vc-extra-root-markers
+   '(
+     ".dir-locals.el"
+     ".envrc"
+     ".editorconfig"
+     "flake.nix"
+     "shell.nix"
+     ))
   )
 
 ;; Electric packages
@@ -1395,9 +1408,32 @@
 (define-key (current-global-map) (kbd "s-. p") 'display-help-echo-at-point)
 
 
+;; Display face used at point.
+(defun display-face-property-at-point ()
+  "Display the 'face' text property at cursor point on another window."
+  (interactive)
+  (let ((face-property (get-text-property (point) 'face)))
+    (if face-property
+        (describe-face face-property)
+      (message "No 'face' text property at point"))))
+
+(define-key (current-global-map) (kbd "s-<0x10081247> s-I") 'display-face-property-at-point)
+
+
 ;; Add alternative keys for C-x and M-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 (define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
+
+
+(defun delete-lines-without-specific-string (STR)
+  "Delete all lines in the buffer that do not contain the string STR."
+  (interactive "sEnter string: ")
+  (save-excursion
+    (goto-char (point-min))
+    (while (not (eobp))
+      (if (not (search-forward STR (line-end-position) t))
+          (delete-region (line-beginning-position) (line-end-position)))
+      (forward-line 1))))
 
 
 ;; Global lexical-binding (Emacs 31)

@@ -348,6 +348,22 @@
   (breadcrumb-mode)
   )
 
+(use-package helpful
+  :ensure t
+  :defer
+  :bind (:map global-map
+              ("C-h s-f" . helpful-callable)
+              ("C-h s-v" . helpful-variable)
+              ("C-h s-k" . helpful-key)
+              ("C-h s-x" . helpful-command)
+              ("C-h s-d" . helpful-at-point)
+              ("C-h s-F" . helpful-function)
+              )
+  :config
+  (require 'shortdoc)
+  :commands (helpful-callable helpful-variable helpful-key helpful-command helpful-at-point helpful-function)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; elfeed
@@ -731,6 +747,11 @@
 (use-package consult-yasnippet
   :ensure t
   :after (consult yasnippet)
+  )
+
+(use-package consult-symbol
+  :ensure t
+  :bind ("C-h o" . consult-symbol)
   )
 
 ;; Marginalia
