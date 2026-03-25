@@ -453,34 +453,36 @@
   :defer t
   :hook
   (((
-     java-mode
-     java-ts-mode
-     emacs-lisp-mode
-     nix-mode
-     nix-ts-mode
-     rust-mode
-     rust-ts-mode
-     markdown-mode
-     js-mode
-     js-ts-mode
-     html-mode
-     html-ts-mode
-     css-mode
-     css-ts-mode
-     json-mode
-     json-ts-mode
-     python-mode
-     python-ts-mode
-     elixir-mode
-     elixir-ts-mode
-     erlang-mode
-     erlang-ts-mode
-     c-mode
-     c++-mode
-     clojure-mode
-     clojure-ts-mode
-     yaml-mode
-     yaml-ts-mode
+     prog-mode
+     eglot--managed-mode
+     ;; java-mode
+     ;; java-ts-mode
+     ;; emacs-lisp-mode
+     ;; nix-mode
+     ;; nix-ts-mode
+     ;; rust-mode
+     ;; rust-ts-mode
+     ;; markdown-mode
+     ;; js-mode
+     ;; js-ts-mode
+     ;; html-mode
+     ;; html-ts-mode
+     ;; css-mode
+     ;; css-ts-mode
+     ;; json-mode
+     ;; json-ts-mode
+     ;; python-mode
+     ;; python-ts-mode
+     ;; elixir-mode
+     ;; elixir-ts-mode
+     ;; erlang-mode
+     ;; erlang-ts-mode
+     ;; c-mode
+     ;; c++-mode
+     ;; clojure-mode
+     ;; clojure-ts-mode
+     ;; yaml-mode
+     ;; yaml-ts-mode
      ) . corfu-mode))
   :bind
   (:map corfu-map
@@ -957,6 +959,7 @@
                 "java-debug-adapter"
                 "jdtls"
                 "js-debug-adapter"
+                "json-lsp"
                 "prettier"
                 "rassumfrassum"
                 "ruff"
@@ -1244,12 +1247,6 @@
 ;;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
 ;;   ;; if you use treesitter based typescript-ts-mode (emacs 29+)
 ;;   (add-hook 'typescript-ts-mode-hook #'setup-tide-mode)
-;;   )
-
-;; ;; web-mode package config
-;; (use-package web-mode
-;;   :ensure t
-;;   :defer t
 ;;   )
 
 ;; ;;;; tsx-mode config

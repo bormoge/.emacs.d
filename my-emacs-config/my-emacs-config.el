@@ -38,7 +38,7 @@
   ;; Limit on depth in ‘eval’, ‘apply’ and ‘funcall’ before error.
   (max-lisp-eval-depth 1600)
   ;; Whether to ignore case when searching
-  (case-fold-search 1) ;; For some reason setting t to this variable doesn't seem to work. At least setting 1 does work.
+  (case-fold-search nil) ;; For some reason setting t to this variable doesn't seem to work. At least setting 1 does work.
   ;; Undo limits
   (undo-limit 160000) ;(* 13 160000)
   (undo-strong-limit 240000) ;(* 13 240000)
@@ -46,8 +46,6 @@
   ;; Disable fontification during user input to reduce lag in large buffers.
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
-  (display-line-numbers t)
-  (display-line-numbers-width nil)
   (fast-but-imprecise-scrolling t)
 
   :config
@@ -178,6 +176,11 @@
 
 ;; Show number of the lines
 (use-package display-line-numbers
+  :custom
+  (display-line-numbers t)
+  (display-line-numbers-width nil)
+  (display-line-numbers-minor-tick 25)
+  (display-line-numbers-major-tick 100)
   :config
   (global-display-line-numbers-mode +1)
   )
@@ -280,7 +283,7 @@
   :custom
   (display-time-day-and-date t)
   (display-time-default-load-average nil)
-  (display-time-format "%I:%M %a %d-%m-%Y")
+  (display-time-format "%H:%M %a %d-%m-%Y")
   :config
   (display-time-mode t)
   )
@@ -548,12 +551,16 @@
   )
 
 (use-package completion-preview
+  :bind (:map completion-preview-active-mode-map
+              ("s-<up>" . completion-preview-prev-candidate)
+              ("s-<down>" . completion-preview-next-candidate)
+         )
   :custom
   ;; The time before `completion-preview' appears.
   (completion-preview-idle-delay 0.5)
   ;; The minimum amount of letters needed for `completion-preview' to appear.
   (completion-preview-minimum-symbol-length 2)
-  :config
+  :init
   (global-completion-preview-mode)
   )
 
@@ -982,34 +989,36 @@
 (use-package flymake
   :hook
   (((
-     java-mode
-     java-ts-mode
-     emacs-lisp-mode
-     nix-mode
-     nix-ts-mode
-     rust-mode
-     rust-ts-mode
-     markdown-mode
-     js-mode
-     js-ts-mode
-     html-mode
-     html-ts-mode
-     css-mode
-     css-ts-mode
-     json-mode
-     json-ts-mode
-     python-mode
-     python-ts-mode
-     elixir-mode
-     elixir-ts-mode
-     erlang-mode
-     erlang-ts-mode
-     c-mode
-     c++-mode
-     clojure-mode
-     clojure-ts-mode
-     yaml-mode
-     yaml-ts-mode
+     prog-mode
+     eglot--managed-mode
+     ;; java-mode
+     ;; java-ts-mode
+     ;; emacs-lisp-mode
+     ;; nix-mode
+     ;; nix-ts-mode
+     ;; rust-mode
+     ;; rust-ts-mode
+     ;; markdown-mode
+     ;; js-mode
+     ;; js-ts-mode
+     ;; html-mode
+     ;; html-ts-mode
+     ;; css-mode
+     ;; css-ts-mode
+     ;; json-mode
+     ;; json-ts-mode
+     ;; python-mode
+     ;; python-ts-mode
+     ;; elixir-mode
+     ;; elixir-ts-mode
+     ;; erlang-mode
+     ;; erlang-ts-mode
+     ;; c-mode
+     ;; c++-mode
+     ;; clojure-mode
+     ;; clojure-ts-mode
+     ;; yaml-mode
+     ;; yaml-ts-mode
      ) . flymake-mode))
   :bind (:map flymake-mode-map
               ("H-f l" . flymake-switch-to-log-buffer)
@@ -1221,6 +1230,7 @@
   ((python-mode python-ts-mode) . eglot-ensure)
   ((toml-mode toml-ts-mode) . eglot-ensure)
   ((yaml-mode yaml-ts-mode) . eglot-ensure)
+  ((json-mode json-ts-mode) . eglot-ensure)
   ((c-mode c++-mode) . eglot-ensure)
   ((html-mode html-ts-mode) . eglot-ensure)
   ((css-mode css-ts-mode) . eglot-ensure)
@@ -1332,7 +1342,16 @@
 
   (add-to-list 'eglot-server-programs
                '((nix-mode) .
-                 ("nixd")))
+                 ("nixd"
+                  :initializationOptions
+                  (:settings
+                   (:nixd
+                    (:formatting
+                     (:command "nixfmt")
+                     )
+                    )
+                   )
+                  )))
 
   (add-to-list 'eglot-server-programs
                '((yaml-mode yaml-ts-mode) .
