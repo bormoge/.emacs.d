@@ -199,9 +199,12 @@
   (define-key yas-minor-mode-map (kbd "s-<tab>") 'yas-expand)
   (define-key yas-minor-mode-map (kbd "s-<0x10081247> <tab>") 'yas-expand)
   (define-key yas-minor-mode-map (kbd "s-<0x10081247> S-s-<iso-lefttab>") 'yas-expand)
+  :custom
+  (yas-verbosity 4)
   :config
   ;; YASnippet directories
   (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
+  (yas-reload-all)
   )
 
 ;; Package to fold code using tree-sitter technology
@@ -326,7 +329,13 @@
   :defer t
   :ensure t
   :bind (:map global-map
-              ("s-d d" . devdocs-lookup))
+              ("s-d d" . devdocs-lookup)
+              ("s-d i" . devdocs-install)
+              ("s-d l" . devdocs-delete)
+              ("s-d a" . devdocs-update-all)
+              ("s-d s" . devdocs-search)
+              ("s-d p" . devdocs-peruse)
+              )
   :custom
   (devdocs-data-dir (expand-file-name ".cache/devdocs" user-emacs-directory))
   )
@@ -341,8 +350,6 @@
 
 ;; Emacs headerline for projects
 (use-package breadcrumb
-  :bind(:map global-map
-             ("s-<0x10081247> s-J" . breadcrumb-jump))
   :ensure t
   :init
   (breadcrumb-mode)
@@ -496,6 +503,7 @@
 	("S-<down>" . corfu-popupinfo-scroll-up)
 	("S-<up>" . corfu-popupinfo-scroll-down)
         ("M-m" . corfu-move-to-minibuffer)
+        ("C-g" . corfu-quit)
 	)
   :custom
   (corfu-auto t)
@@ -504,9 +512,8 @@
   (corfu-auto-delay 0.5)
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
-  ;; If already indented, then try to complete at point
-  ;;(setopt tab-always-indent 'complete)
-  (text-mode-ispell-word-completion nil) ;; For Emacs 30 and newer
+  (corfu-popupinfo-delay '(2.0 . 0.5))
+  (corfu-quit-no-match 'separator)
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
   (defun corfu-move-to-minibuffer ()
@@ -559,7 +566,7 @@
   :custom
   (vertico-scroll-margin 2) ;; Different scroll margin
   (vertico-count 12) ;; Show more candidates
-  (vertico-resize 'grow-only) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
+  (vertico-resize t) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :config
   (vertico-mouse-mode +1)
@@ -850,7 +857,9 @@
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
                                    (eglot (styles orderless))
                                    (eglot-capf (styles orderless))))
-  ;;(completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
+  (completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
+  :config
+  (setq completion-preview-completion-styles completion-styles)
   )
 
 ;; Prescient (used as the sorting algorithm of this stack)

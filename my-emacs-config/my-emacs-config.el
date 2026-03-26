@@ -118,10 +118,14 @@
               ("s-<0x10081247> s-P f" . fill-paragraph)
               )
   ;; Enable auto-save-mode only when the buffer is associated with a file.
-  :hook (after-change-major-mode . (lambda ()
+  :hook ((after-change-major-mode . (lambda ()
                                      (if (buffer-file-name)
                                          (auto-save-mode +1)
                                        (auto-save-mode -1))))
+         (special-mode . (lambda ()
+                           (setq-local show-trailing-whitespace nil)
+                           ))
+         )
   :custom
   (line-number-mode t)
   (column-number-mode t)
@@ -622,6 +626,8 @@
   (safe-local-variable-values
    '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
   (auto-save-visited-interval 30)
+  ;; Confirm killing processes on exit
+  (confirm-kill-processes t)
   :config
   ;; (setq backup-inhibited t)
 
@@ -645,6 +651,11 @@
   ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
 
   (auto-save-visited-mode -1)
+  )
+
+(use-package message
+  :custom
+  (message-kill-buffer-query t)
   )
 
 (use-package page
@@ -1033,6 +1044,8 @@
   (flymake-margin-indicator-position 'left-margin)
   (flymake-show-diagnostics-at-end-of-line t)
   (flymake-wrap-around t)
+  (flymake-start-on-flymake-mode t)
+  (flymake-start-on-save-buffer t)
   )
 
 (use-package abbrev
@@ -1252,8 +1265,8 @@
   (eglot-confirm-server-edits '((eglot-rename . nil) (t . maybe-summary) (t . diff)))
   ;; async
   (eglot-sync-connect 0) ;; default: 3
-  (eglot-connect-timeou1t 30)
-  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider)', '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
+  (eglot-connect-timeout 30)
+  (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider), '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider), '(:hoverProvider :documentHighlightProvider :documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
   (eglot-events-buffer-config '(:size 2000000 :format full))
   (eglot-extend-to-xref nil)
   (eglot-send-changes-idle-time 0.5)
