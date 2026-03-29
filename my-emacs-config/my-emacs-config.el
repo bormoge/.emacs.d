@@ -124,6 +124,7 @@
                                        (auto-save-mode -1))))
          (special-mode . (lambda ()
                            (setq-local show-trailing-whitespace nil)
+                           (setq-local truncate-lines nil)
                            ))
          )
   :custom
@@ -840,6 +841,8 @@
      ))
   (package-selected-packages
    '(
+     lin
+     puni
      consult-symbol
      helpful
      vscode-dark-plus-theme

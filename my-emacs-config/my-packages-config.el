@@ -371,6 +371,27 @@
   :commands (helpful-callable helpful-variable helpful-key helpful-command helpful-at-point helpful-function)
   )
 
+(use-package puni
+  :ensure t
+  :defer t
+  :bind (:map puni-mode-map
+              ("s-<backspace>" . puni-splice)
+              )
+  :hook ((prog-mode
+          sgml-mode
+          nxml-mode
+          tex-mode
+          eval-expression-minibuffer-setup
+          text-mode
+          org-mode) . puni-mode)
+  )
+
+(use-package lin
+  :ensure t
+  :config
+  (lin-global-mode)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; elfeed
