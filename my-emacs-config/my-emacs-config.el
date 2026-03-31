@@ -1,6 +1,9 @@
 (require 'cl-lib)
 
 (use-package emacs
+  :bind (:map global-map
+              ("s-<0x10081247> s-D" . delete-pair)
+              )
   :custom
   ;; Remove startup screen
   (inhibit-startup-screen t)
@@ -47,6 +50,10 @@
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
   (fast-but-imprecise-scrolling t)
+  ;; When deleting a pair, push mark at the end of the the delimited region
+  (delete-pair-push-mark t)
+  ;; When deleting a pair, do it immediatly
+  (delete-pair-blink-delay 0)
 
   :config
   ;; Disable compact font caches
@@ -570,10 +577,19 @@
   )
 
 (use-package isearch
+  ;; HACK: instead of setting case-fold-search to nil, which also affects regex,
+  ;; I set isearch-case-fold-search to yes or nil when starting or ending
+  ;; isearch-mode.
+  :hook ((isearch-mode . (lambda ()
+                           (setq-local isearch-case-fold-search 'yes)))
+         (isearch-mode-end . (lambda ()
+                               (setq-local isearch-case-fold-search nil))))
   :custom
   (isearch-lax-whitespace t)
   ;; Count the number of instances and show that number on the minibuffer.
   (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) ")
+  (lazy-count-suffix-format " (%s/%s)")
   (isearch-lazy-highlight t)
   (isearch-wrap-pause t)
   )
@@ -789,15 +805,31 @@
 
 (use-package ispell
   :defer t
+  :if (executable-find "aspell")
   :custom
   (ispell-silently-savep t)
+
+  ;; :conf
+  ;; This sets the starting language of aspell.
+  ;; (setenv "ASPELL_CONF" "lang en_US" t)
+  ;; If you want to use a different language you need to first change the
+  ;; environment variable and then restart aspell.
+  ;; (ispell-kill-ispell)
   )
 
 (use-package flyspell
   :defer t
+  :if (executable-find "aspell")
   ;; :custom
   ;; (flyspell-issue-message-flag nil)
   ;; (flyspell-issue-welcome-flag nil)
+
+  ;; :conf
+  ;; This sets the starting language of aspell.
+  ;; (setenv "ASPELL_CONF" "lang en_US" t)
+  ;; If you want to use a different language you need to first change the
+  ;; environment variable and then restart aspell.
+  ;; (ispell-kill-ispell)
   )
 
 (use-package text-mode

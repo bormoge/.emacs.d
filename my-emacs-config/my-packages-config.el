@@ -896,9 +896,9 @@
   (prescient-sort-length-enable t) ;; default: t
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
-  (prescient-frequency-decay 0.907) ;; default: 0.997
+  (prescient-frequency-decay 0.807) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
-  (prescient-save-file (file-truename "~/.emacs.d/prescient/prescient-save.el"))
+  (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
   (setq corfu-sort-function #'prescient-completion-sort)
   (setq vertico-sort-function #'prescient-completion-sort)
@@ -1049,11 +1049,13 @@
 ;; Note to myself: look how to configure it.
 (use-package apheleia
   :ensure t
-  :config
-  ;; (apheleia-global-mode)
   :bind (
          ("s-<0x10081247> s-A" . 'apheleia-format-buffer)
          )
+  :config
+  (add-to-list 'apheleia-mode-alist '(toml-ts-mode . tombi))
+  (add-to-list 'apheleia-formatters '(tombi "tombi" "format"))
+  ;; (apheleia-global-mode)
   )
 
 (use-package disaster
