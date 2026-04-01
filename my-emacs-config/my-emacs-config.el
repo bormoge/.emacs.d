@@ -54,6 +54,7 @@
   (delete-pair-push-mark t)
   ;; When deleting a pair, do it immediatly
   (delete-pair-blink-delay 0)
+  (indicate-buffer-boundaries t)
 
   :config
   ;; Disable compact font caches
@@ -104,7 +105,9 @@
         ("C-x M-k" . bury-buffer)
         ;; Set key for swapping windows
         ("C-x M-o" . window-swap-states)
-   )
+        )
+  :custom
+  (switch-to-buffer-obey-display-actions nil)
   )
 
 ;; Enable syntax highlighting
@@ -193,6 +196,7 @@
   (display-line-numbers-width nil)
   (display-line-numbers-minor-tick 25)
   (display-line-numbers-major-tick 100)
+  (display-line-numbers-width-start t)
   :config
   (global-display-line-numbers-mode +1)
   )
@@ -271,6 +275,9 @@
 ;; Add directory to desktop-path
 (use-package desktop
   :defer t
+  :custom
+  (desktop-restore-eager t)
+  (desktop-auto-save-timeout 30)
   :config
   (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory))
   (setq desktop-dirname (expand-file-name "desktop-sessions/" user-emacs-directory))
@@ -298,6 +305,13 @@
   (display-time-format "%H:%M %a %d-%m-%Y")
   :config
   (display-time-mode t)
+  )
+
+;; Bookmarks
+(use-package bookmark
+  :custom
+  (bookmark-save-flag t)
+  (bookmark-sort-flag t)
   )
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
@@ -338,6 +352,12 @@
   :custom
   ;; More detailed completions
   (completions-detailed t)
+  (completion-auto-help t)
+  (completions-max-height nil)
+  (completion-cycle-threshold nil)
+  (completions-format 'horizontal)
+  (completions-group nil)
+  (completion-auto-select nil)
   :config
   ;; Config for vertico package
   (setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
@@ -398,6 +418,8 @@
   :custom
   (eldoc-idle-delay 0.7) ;; default: 0.5
   (eldoc-echo-area-display-truncation-message nil)
+  (eldoc-echo-area-prefer-doc-buffer t)
+  ;; (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   :config
   (global-eldoc-mode +1)
   )
@@ -434,6 +456,7 @@
 (use-package comp
   :custom
   (native-comp-speed 2)
+  (native-comp-async-report-warnings-errors t)
   :config
   (setq native-comp-jit-compilation t)
   )
@@ -614,6 +637,7 @@
   :custom
   (save-place-file (expand-file-name "saveplace" user-emacs-directory))
   (save-place-limit 600)
+  (save-place-forget-unreadable-files t)
   :config
   (save-place-mode +1)
   )
@@ -715,6 +739,12 @@
   (tls-checktrust t)  ; Ensure SSL/TLS connections undergo trust verification
   )
 
+(use-package nsm
+  :defer t
+  :custom
+  (network-security-level 'high)
+  )
+
 (use-package cus-edit
   :custom
   ;; Exiting a custom buffer kills it
@@ -727,6 +757,7 @@
 (use-package uniquify
   :custom
   (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (uniquify-after-kill-buffer-p t)
   )
 
 (use-package whitespace
@@ -805,11 +836,14 @@
 
 (use-package ispell
   :defer t
-  :if (executable-find "aspell")
+  ;; :if (executable-find "aspell")
   :custom
   (ispell-silently-savep t)
+  (ispell-help-in-bufferp 'electric)
+  ;; Doesn't seem to work on NixOS
+  ;; (ispell-dictionary "en_US")
 
-  ;; :conf
+  ;; :init
   ;; This sets the starting language of aspell.
   ;; (setenv "ASPELL_CONF" "lang en_US" t)
   ;; If you want to use a different language you need to first change the
@@ -819,12 +853,20 @@
 
 (use-package flyspell
   :defer t
-  :if (executable-find "aspell")
+  :bind (:map global-map
+              ("s-<0x10081247> s-F f" . flyspell-mode)
+              ("s-<0x10081247> s-F p" . flyspell-prog-mode)
+              )
+  ;; :if (executable-find "aspell")
+  ;; :hook (
+  ;;        ((text-mode org-mode) . flyspell-mode)
+  ;;        (prog-mode . flyspell-prog-mode)
+  ;;        )
   ;; :custom
   ;; (flyspell-issue-message-flag nil)
   ;; (flyspell-issue-welcome-flag nil)
 
-  ;; :conf
+  ;; :init
   ;; This sets the starting language of aspell.
   ;; (setenv "ASPELL_CONF" "lang en_US" t)
   ;; If you want to use a different language you need to first change the
@@ -873,6 +915,9 @@
      ))
   (package-selected-packages
    '(
+     consult-flyspell
+     clj-refactor
+     page-break-lines
      lin
      puni
      consult-symbol

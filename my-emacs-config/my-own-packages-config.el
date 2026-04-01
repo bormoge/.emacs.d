@@ -25,8 +25,8 @@
   ;; (guava-themes-visible-bell-duration 0.3)
   ;; (guava-themes-visible-bell-idle-delay 0.3)
   :config
-  (setq ring-bell-function #'guava-themes-change-visible-bell
-        visible-bell t)
+  (setopt ring-bell-function #'guava-themes-change-visible-bell)
+  (setopt visible-bell t)
   (load-theme 'guava-themes-rubus t)
   )
 

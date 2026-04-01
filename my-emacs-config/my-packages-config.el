@@ -392,6 +392,12 @@
   (lin-global-mode)
   )
 
+(use-package page-break-lines
+  :ensure t
+  :init
+  (global-page-break-lines-mode)
+  )
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; elfeed
@@ -639,7 +645,6 @@
          ("M-y" . consult-yank-pop)                ;; orig. yank-pop
          ;; M-g bindings in `goto-map'
          ("M-g e c" . consult-compile-error)
-         ("M-g e g" . consult-eglot-symbols)
          ("M-g r" . consult-grep-match)
          ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
          ("M-g g" . consult-goto-line)             ;; orig. goto-line
@@ -651,8 +656,6 @@
          ("M-g k" . consult-global-mark)
          ("M-g i" . consult-imenu)
          ("M-g I" . consult-imenu-multi)
-         ("M-g y y" . consult-yasnippet)
-         ("M-g y v" . consult-yasnippet-visit-snippet-file)
          ;; M-s bindings in `search-map'
          ("M-s d" . consult-find)                  ;; Alternative: consult-fd
          ("M-s M-d" . consult-fd)
@@ -764,8 +767,8 @@
 
 (use-package consult-eglot
   :ensure t
-  :defer t
   :after (consult eglot)
+  :bind ("M-g e g" . consult-eglot-symbols)
   )
 
 (use-package consult-eglot-embark
@@ -777,11 +780,26 @@
 (use-package consult-yasnippet
   :ensure t
   :after (consult yasnippet)
+  :bind (:map global-map
+         ("M-g y y" . consult-yasnippet)
+         ("M-g y v" . consult-yasnippet-visit-snippet-file)
+         )
   )
 
 (use-package consult-symbol
   :ensure t
+  :after (consult)
   :bind ("C-h o" . consult-symbol)
+  )
+
+(use-package consult-flyspell
+  :ensure t
+  :after (consult flyspell)
+  :bind ("M-g s" . consult-flyspell)
+  :config
+  (setq consult-flyspell-select-function nil)
+  (setq consult-flyspell-set-point-after-word t)
+  (setq consult-flyspell-always-check-buffer nil)
   )
 
 ;; Marginalia
@@ -1161,7 +1179,16 @@
   :commands (cider cider-jack-in)
   )
 
-;; Other packages to consider: clj-refactor.el, inf-clojure
+(use-package clj-refactor
+  :ensure t
+  :after (clojure-mode)
+  :init
+  (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+  :config
+  (cljr-add-keybindings-with-prefix "s-w")
+  )
+
+;; Other packages to consider: inf-clojure
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -18,6 +18,8 @@
 
 ;; This needs to be set before use-package is loaded
 (setq use-package-enable-imenu-support t)
+;; Assume `:defer t' by default.
+;; (setq use-package-always-defer t)
 
 ;; Apply vanilla configuration
 (load-file "~/.emacs.d/my-emacs-config/my-emacs-config.el")
