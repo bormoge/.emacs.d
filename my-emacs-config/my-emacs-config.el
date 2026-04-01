@@ -843,9 +843,9 @@
   ;; Doesn't seem to work on NixOS
   ;; (ispell-dictionary "en_US")
 
-  ;; :init
+  :init
   ;; This sets the starting language of aspell.
-  ;; (setenv "ASPELL_CONF" "lang en_US" t)
+  (setenv "ASPELL_CONF" "lang en_US" t)
   ;; If you want to use a different language you need to first change the
   ;; environment variable and then restart aspell.
   ;; (ispell-kill-ispell)
