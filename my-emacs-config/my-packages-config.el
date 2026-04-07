@@ -394,8 +394,11 @@
 
 (use-package page-break-lines
   :ensure t
-  :init
-  (global-page-break-lines-mode)
+  :hook ((
+          ;; tex-mode
+          prog-mode
+          text-mode
+          org-mode) . page-break-lines-mode)
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -914,7 +917,7 @@
   (prescient-sort-length-enable t) ;; default: t
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
-  (prescient-frequency-decay 0.807) ;; default: 0.997
+  (prescient-frequency-decay 0.507) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config

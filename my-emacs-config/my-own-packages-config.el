@@ -21,13 +21,13 @@
 (use-package guava-themes
   :ensure nil
   :load-path "~/.emacs.d/elpa/guava-themes/"
-  ;; :custom
+  :custom
   ;; (guava-themes-visible-bell-duration 0.3)
   ;; (guava-themes-visible-bell-idle-delay 0.3)
+  (ring-bell-function #'guava-themes-change-visible-bell)
+  (visible-bell t)
   :config
-  (setopt ring-bell-function #'guava-themes-change-visible-bell)
-  (setopt visible-bell t)
-  (load-theme 'guava-themes-rubus t)
+  (load-theme 'guava-themes-vaccinium t)
   )
 
 ;; (use-package guava-themes

@@ -123,9 +123,9 @@
               ("H-x s-e" . delete-trailing-whitespace)
               ("H-w" . count-words)
               ("C-S-/". undo-only)
-              ("s-<0x10081247> s-P p" . auto-fill-mode)
-              ("s-<0x10081247> s-P d" . display-fill-column-indicator-mode)
-              ("s-<0x10081247> s-P f" . fill-paragraph)
+              ("s-<0x10081247> s-¡ p" . auto-fill-mode)
+              ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
+              ("s-<0x10081247> s-¡ f" . fill-paragraph)
               )
   ;; Enable auto-save-mode only when the buffer is associated with a file.
   :hook ((after-change-major-mode . (lambda ()
@@ -369,6 +369,21 @@
   (context-menu-mode +1)
   )
 
+(use-package vc
+  :defer t
+  :custom
+  (vc-follow-symlinks 'ask)
+  (vc-git-diff-switches '("--histogram")) ;; default: t
+  (vc-git-print-log-follow nil)
+  (vc-make-backup-files nil)
+  (vc-command-messages nil)
+  :bind (:map vc-dir-mode-map
+              ("r" . vc-dir-refresh))
+  :config
+  (require 'vc-dir)
+  (setq vc-log-short-style '(directory file))
+  )
+
 ;; Display differences between files / buffers
 (use-package diff
   :defer t
@@ -501,41 +516,41 @@
   :defer t
   )
 
-(use-package register
-  :config
-  (unless savehist-mode
-    (defvar register-file
-      (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
-
-    (defun save-register ()
-      (unless (file-exists-p register-file)
-        (make-empty-file register-file))
-      (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
-        (when register-alist
-          (with-temp-file register-file
-            (prin1 pruned (current-buffer))))))
-
-    (defun load-register ()
-      (when (file-exists-p register-file)
-        (with-temp-buffer
-          (insert-file-contents register-file)
-          (condition-case err
-              (setq register-alist (read (current-buffer)))
-            (error
-             (message "Failed to load registers: %s" err)))
-          ;; (setq register-alist (read (current-buffer)))
-          )))
-
-    (defun clear-register ()
-      (interactive)
-      (setq register-alist nil)
-      (with-temp-file register-file (insert ""))
-      )
-
-    (load-register)
-    (add-hook 'kill-emacs-hook #'save-register 'append)
-    )
-  )
+;; (use-package register
+;;   :config
+;;   (unless savehist-mode
+;;     (defvar register-file
+;;       (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
+;;
+;;     (defun save-register ()
+;;       (unless (file-exists-p register-file)
+;;         (make-empty-file register-file))
+;;       (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
+;;         (when register-alist
+;;           (with-temp-file register-file
+;;             (prin1 pruned (current-buffer))))))
+;;
+;;     (defun load-register ()
+;;       (when (file-exists-p register-file)
+;;         (with-temp-buffer
+;;           (insert-file-contents register-file)
+;;           (condition-case err
+;;               (setq register-alist (read (current-buffer)))
+;;             (error
+;;              (message "Failed to load registers: %s" err)))
+;;           ;; (setq register-alist (read (current-buffer)))
+;;           )))
+;;
+;;     (defun clear-register ()
+;;       (interactive)
+;;       (setq register-alist nil)
+;;       (with-temp-file register-file (insert ""))
+;;       )
+;;
+;;     (load-register)
+;;     (add-hook 'kill-emacs-hook #'save-register 'append)
+;;     )
+;;   )
 
 (use-package descr-text
   :custom
@@ -568,21 +583,6 @@
   (show-paren-delay 0.15) ;; default: 0.125
   :config
   (show-paren-mode +1)
-  )
-
-(use-package vc
-  :defer t
-  :custom
-  (vc-follow-symlinks 'ask)
-  (vc-git-diff-switches '("--histogram")) ;; default: t
-  (vc-git-print-log-follow nil)
-  (vc-make-backup-files nil)
-  (vc-command-messages nil)
-  :bind (:map vc-dir-mode-map
-              ("r" . vc-dir-refresh))
-  :config
-  (require 'vc-dir)
-  (setq vc-log-short-style '(directory file))
   )
 
 (use-package completion-preview
@@ -829,7 +829,7 @@
   (help-enable-autoload nil)
   (help-enable-symbol-autoload nil)
   ;; When created, change focus to Help buffer
-  (help-window-select nil)
+  (help-window-select t)
   ;; Reuse Help window in contexts other than another Help buffer
   (help-window-keep-selected t)
   )
@@ -1051,6 +1051,8 @@
      "flake.nix"
      "shell.nix"
      ))
+  :config
+  (define-key key-translation-map (kbd "s-<0x10081247> s-P") (kbd "C-x p"))
   )
 
 ;; Electric packages
@@ -1532,9 +1534,8 @@
 (define-key (current-global-map) (kbd "s-<0x10081247> s-I") 'display-face-property-at-point)
 
 
-;; Add alternative keys for C-x and M-x
+;; Add alternative key for C-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
-(define-key key-translation-map (kbd "s-<0x10081247> s-¡") (kbd "M-x"))
 
 
 (defun delete-lines-without-specific-string (STR)
