@@ -615,6 +615,8 @@
   (lazy-count-suffix-format " (%s/%s)")
   (isearch-lazy-highlight t)
   (isearch-wrap-pause t)
+  (lazy-highlight-initial-delay 0.25)
+  (lazy-highlight-no-delay-length 3)
   )
 
 ;; recentf configuration
@@ -1072,10 +1074,11 @@
 ;; Automatically show available commands
 (use-package which-key
   :ensure t
+  :custom
+  (which-key-idle-delay 5.0)
   :config
-  (setq which-key-idle-delay 5.0)
   (which-key-setup-side-window-right-bottom)
-  ;; `prefix-help-command' becomes  `which-key-C-h-dispatch'
+  ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
   (which-key-mode)
   )
 
@@ -1198,10 +1201,10 @@
   ;;(org-log-note-clock-out nil)
   ;;(org-log-state-notes-insert-after-drawers nil)
   ;;(org-log-into-drawer nil)
-  ;;(setq org-refile-targets nil) ;;'((org-agenda-files . (:maxlevel . 3))))
-  ;;(setq org-refile-use-outline-path nil);; 'file)
-  ;;(setq org-outline-path-complete-in-steps t)
-  ;;(setq org-refile-allow-creating-parent-nodes nil);;'confirm)
+  ;;(org-refile-targets nil) ;;'((org-agenda-files . (:maxlevel . 3))))
+  ;;(org-refile-use-outline-path nil);; 'file)
+  ;;(org-outline-path-complete-in-steps t)
+  ;;(org-refile-allow-creating-parent-nodes nil);;'confirm)
   ;;:config
   ;; (with-eval-after-load 'org
   ;;   (org-babel-do-load-languages
@@ -1236,6 +1239,9 @@
   (org-agenda-span 'month)
   (org-agenda-skip-scheduled-if-done nil)
   (org-agenda-skip-deadline-if-done nil)
+  (org-agenda-show-future-repeats t)
+  (org-agenda-inhibit-startup nil)
+  (org-agenda-use-time-grid t)
   )
 
 ;; Treesitter

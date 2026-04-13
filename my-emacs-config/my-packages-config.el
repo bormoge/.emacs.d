@@ -831,15 +831,17 @@
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
-  (setq prefix-help-command #'embark-prefix-help-command)
 
   ;; If which-key-mode is enabled before embark, by default `which-key--prefix-help-cmd-backup'
   ;; will have the value `describe-prefix-bindings'.
   ;; This code replaces whatever value `which-key--prefix-help-cmd-backup' had with `embark-prefix-help-command'.
   ;; It also replaces `prefix-help-command' with `which-key-C-h-dispatch'.
-  (when which-key-mode
-    (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
-    (setq prefix-help-command #'which-key-C-h-dispatch)
+  (if which-key-mode
+      (progn
+        (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
+        (setq prefix-help-command #'which-key-C-h-dispatch)
+        )
+    (setq prefix-help-command #'embark-prefix-help-command)
     )
 
   ;; Show the Embark target at point via Eldoc
@@ -1000,6 +1002,7 @@
    (lambda ()
      (dolist (pkg
               '(
+                "black"
                 "clangd"
                 "cljfmt"
                 "clojure-lsp"
