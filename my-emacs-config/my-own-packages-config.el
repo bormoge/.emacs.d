@@ -27,7 +27,7 @@
   (ring-bell-function #'guava-themes-change-visible-bell)
   (visible-bell t)
   :config
-  (load-theme 'guava-themes-vaccinium t)
+  (load-theme 'guava-themes-vaccinium t) ;; guava-themes-vaccinium
   )
 
 ;; (use-package guava-themes

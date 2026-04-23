@@ -358,9 +358,6 @@
   (completions-format 'horizontal)
   (completions-group nil)
   (completion-auto-select nil)
-  :config
-  ;; Config for vertico package
-  (setq completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
   )
 
 ;; Enable right click menu
@@ -671,6 +668,7 @@
   (auto-save-visited-interval 30)
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
+  (view-read-only nil)
   :config
   ;; (setq backup-inhibited t)
 
@@ -842,6 +840,9 @@
   :custom
   (ispell-silently-savep t)
   (ispell-help-in-bufferp 'electric)
+  ;; (ispell-program-name "aspell")
+  ;; (ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--dont-run-together"))
+
   ;; Doesn't seem to work on NixOS
   ;; (ispell-dictionary "en_US")
 
@@ -855,25 +856,22 @@
 
 (use-package flyspell
   :defer t
+  ;; :if (executable-find "aspell")
   :bind (:map global-map
               ("s-<0x10081247> s-F f" . flyspell-mode)
               ("s-<0x10081247> s-F p" . flyspell-prog-mode)
+              ;; flyspell-mode-map
+              ;; ("C-;" . nil)
+              ;; ("C-," . nil)
+              ;; ("C-." . nil)
               )
-  ;; :if (executable-find "aspell")
   ;; :hook (
-  ;;        ((text-mode org-mode) . flyspell-mode)
+  ;;        ((text-mode org-mode outline-mode) . flyspell-mode)
   ;;        (prog-mode . flyspell-prog-mode)
   ;;        )
-  ;; :custom
-  ;; (flyspell-issue-message-flag nil)
-  ;; (flyspell-issue-welcome-flag nil)
-
-  ;; :init
-  ;; This sets the starting language of aspell.
-  ;; (setenv "ASPELL_CONF" "lang en_US" t)
-  ;; If you want to use a different language you need to first change the
-  ;; environment variable and then restart aspell.
-  ;; (ispell-kill-ispell)
+  :custom
+  (flyspell-issue-message-flag t)
+  (flyspell-issue-welcome-flag t)
   )
 
 (use-package text-mode
@@ -1073,7 +1071,7 @@
 
 ;; Automatically show available commands
 (use-package which-key
-  :ensure t
+  :ensure nil
   :custom
   (which-key-idle-delay 5.0)
   :config

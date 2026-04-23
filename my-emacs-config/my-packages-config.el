@@ -717,6 +717,7 @@
      consult-source-project-root-hidden
      ))
   :config
+  (setq-default completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
 
   ;; Number of characters needed when using an async consult command (e.g. consult-grep, consult-find)
   (setq consult-async-min-input 3)
