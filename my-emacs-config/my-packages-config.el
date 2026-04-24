@@ -1051,25 +1051,48 @@
   :defer t
   )
 
-;; Integration for uv, the Python package manager
-;; (use-package uv-mode
-;;   :ensure t
-;;   :defer t
-;;   :hook (python-mode . uv-mode-auto-activate-hook)
-;;   :hook (python-ts-mode . uv-mode-auto-activate-hook)
-;;   :if (executable-find "uv")
-;;   )
+;; Python testing and code coverage
+(use-package python-pytest
+  :ensure t
+  :after (python)
+  :bind (:map python-mode-map
+              ("s-<0x10081247> s-T p p" . python-pytest)
+              ("s-<0x10081247> s-T p d" . python-pytest-dispatch)
+              :map python-ts-mode-map
+              ("s-<0x10081247> s-T p p" . python-pytest)
+              ("s-<0x10081247> s-T p d" . python-pytest-dispatch)
 
-;; Package to integrate various python tools. I'll leave this here just in case I end up using it.
-;; (use-package pet
-;;   :ensure t
-;;   :config
-;;   (add-hook 'python-base-mode-hook 'pet-mode -10)
-;;   ;; (add-hook 'python-mode-hook
-;;   ;;         (lambda ()
-;;   ;;           (setq-local python-shell-interpreter (pet-executable-find "python")
-;;   ;;                       python-shell-virtualenv-root (pet-virtualenv-root))))
-;;   )
+              ;; python-pytest
+              ;; python-pytest-file
+              ;; python-pytest-file-dwim
+              ;; python-pytest-files
+              ;; python-pytest-function
+              ;; python-pytest-function-dwim
+              ;; python-pytest-last-failed
+              ;; python-pytest-repeat
+              )
+  )
+
+(use-package python-coverage
+  ;; To use this package you need to generate a coverage xml file
+  :ensure t
+  :after (python)
+  :bind (:map python-mode-map
+              ("s-<0x10081247> s-T c m" . python-coverage-overlay-mode)
+              :map python-ts-mode-map
+              ("s-<0x10081247> s-T c m" . python-coverage-overlay-mode)
+
+              ;; python-coverage-overlay-mode
+              ;; python-coverage-overlay-refresh
+              ;; python-coverage-overlay-remove-all
+              ;; python-coverage-overlay-jump-next
+              ;; python-coverage-overlay-jump-previous
+              ;; python-coverage-overlay-jump-first
+              )
+  :config
+  ;; This package's faces inherit from magit's, but they can be overridden
+  (require 'magit)
+  )
 
 ;; Note to myself: look how to configure it.
 (use-package apheleia

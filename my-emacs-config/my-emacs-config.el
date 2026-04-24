@@ -492,6 +492,11 @@
   ;; (setq dired-deletion-confirmer 'y-or-n-p)
   )
 
+(use-package find-dired
+  :bind (:map global-map
+              ("H-f d" . find-name-dired))
+  )
+
 ;; grep config
 (use-package grep
   ;; Set key for grep
@@ -915,6 +920,8 @@
      ))
   (package-selected-packages
    '(
+     python-coverage
+     python-pytest
      consult-flyspell
      clj-refactor
      page-break-lines
