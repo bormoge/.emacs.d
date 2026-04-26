@@ -683,10 +683,6 @@
          ("M-r" . consult-history)                 ;; orig. previous-matching-history-element
          )
 
-  ;; Enable automatic preview at point in the *Completions* buffer. This is
-  ;; relevant when you use the default completion UI.
-  :hook (completion-list-mode . consult-preview-at-point-mode)
-
   ;; The :init configuration is always executed (Not lazy)
   :init
 
@@ -880,8 +876,6 @@
 
 (use-package embark-consult
   :ensure t
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode)
   )
 
 (use-package avy-embark-collect
@@ -1051,7 +1045,7 @@
   :defer t
   )
 
-;; Python testing and code coverage
+;; Python testing
 (use-package python-pytest
   :ensure t
   :after (python)
@@ -1073,6 +1067,7 @@
               )
   )
 
+;; Python code coverage
 (use-package python-coverage
   ;; To use this package you need to generate a coverage xml file
   :ensure t

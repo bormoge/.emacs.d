@@ -646,6 +646,11 @@
   (save-place-mode +1)
   )
 
+(use-package replace
+  :bind (:map global-map
+              ("M-°" . flush-lines))
+  )
+
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
   :custom
@@ -845,7 +850,7 @@
   :custom
   (ispell-silently-savep t)
   (ispell-help-in-bufferp 'electric)
-  ;; (ispell-program-name "aspell")
+  (ispell-program-name "aspell") ;; alt: hunspell
   ;; (ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--dont-run-together"))
 
   ;; Doesn't seem to work on NixOS
