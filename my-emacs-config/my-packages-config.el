@@ -187,6 +187,12 @@
   :commands (magit-status magit-dispatch)
   )
 
+;; Modes for .gitattributes, .gitconfig, and .gitignore files.
+(use-package git-modes
+  :ensure t
+  :defer t
+  )
+
 ;; YASnippet for shortcuts
 (use-package yasnippet
   :ensure t
@@ -629,6 +635,7 @@
          ("C-c k" . consult-kmacro)
          ("C-c m" . consult-man)
          ("C-c i" . consult-info)
+         ("C-c r" . consult-recent-file)
          ([remap Info-search] . consult-info)
          ;; C-x bindings in `ctl-x-map'
          ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
@@ -637,7 +644,7 @@
          ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
          ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
          ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
-         ("s-<0x10081247> s-K" . consult-bookmark)            ;; orig. bookmark-jump
+         ("s-<0x10081247> s-K" . consult-bookmark)
          ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
          ("M-#" . consult-register-load)
@@ -914,12 +921,12 @@
   (prescient-sort-length-enable t) ;; default: t
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
-  (prescient-frequency-decay 0.507) ;; default: 0.997
+  (prescient-frequency-decay 0.307) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
-  (setq corfu-sort-function #'prescient-completion-sort)
-  (setq vertico-sort-function #'prescient-completion-sort)
+  ;; (setq corfu-sort-function #'prescient-completion-sort)
+  ;; (setq vertico-sort-function #'prescient-completion-sort)
   (setq completion-preview-sort-function #'prescient-completion-sort)
   (prescient-persist-mode 1)
   )
@@ -948,7 +955,7 @@
 (use-package vertico-prescient
   :ensure t
   :demand t
-  :after vertico prescient
+  :after (vertico prescient)
   :custom
   ;; Sorting.
   (vertico-prescient-enable-sorting t) ;; default: t

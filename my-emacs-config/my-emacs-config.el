@@ -55,6 +55,10 @@
   ;; When deleting a pair, do it immediatly
   (delete-pair-blink-delay 0)
   (indicate-buffer-boundaries t)
+  ;; Limit history length
+  (history-length 150)
+  ;; Delete duplicates in history variables
+  (history-delete-duplicates t)
 
   :config
   ;; Disable compact font caches
@@ -309,6 +313,9 @@
 
 ;; Bookmarks
 (use-package bookmark
+  :bind (:map global-map
+              ("M-S-s-<0x10081247> M-s-K" . bookmark-jump-other-window)
+              )
   :custom
   (bookmark-save-flag t)
   (bookmark-sort-flag t)
@@ -328,9 +335,8 @@
   ;;                                  global-mark-ring
   ;;                                  (recentf-list . 50)
   ;;                                  ))
+  ;; (savehist-ignored-variables '())
   :config
-  (setq history-length 150)
-  (setq history-delete-duplicates t)
   (savehist-mode +1)
   )
 
@@ -368,14 +374,15 @@
 
 (use-package vc
   :defer t
+  :bind (:map vc-dir-mode-map
+              ("r" . vc-dir-refresh)
+              )
   :custom
   (vc-follow-symlinks 'ask)
   (vc-git-diff-switches '("--histogram")) ;; default: t
   (vc-git-print-log-follow nil)
   (vc-make-backup-files nil)
   (vc-command-messages nil)
-  :bind (:map vc-dir-mode-map
-              ("r" . vc-dir-refresh))
   :config
   (require 'vc-dir)
   (setq vc-log-short-style '(directory file))
@@ -925,6 +932,7 @@
      ))
   (package-selected-packages
    '(
+     git-modes
      python-coverage
      python-pytest
      consult-flyspell
@@ -1563,6 +1571,18 @@
       (if (not (search-forward STR (line-end-position) t))
           (delete-region (line-beginning-position) (line-end-position)))
       (forward-line 1))))
+
+
+(defun delete-duplicate-lines-in-directory (dir)
+  "Non-recursively remove duplicate lines in all files under DIR."
+  (interactive "DDirectory: ")
+  (let ((files (directory-files dir t "^[^.].*")))
+    (dolist (file files)
+      (when (file-regular-p file)
+        (with-current-buffer (find-file-noselect file)
+          (delete-duplicate-lines (point-min) (point-max))
+          (save-buffer)
+          (kill-buffer))))))
 
 
 ;; Global lexical-binding (Emacs 31)

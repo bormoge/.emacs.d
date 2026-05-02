@@ -1,5 +1,4 @@
 (use-package package-build
-  :ensure nil
   :vc (:url "https://github.com/melpa/package-build"
             :rev :newest
             :branch "master"
@@ -16,7 +15,8 @@
   ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
 
 (use-package package-lint-flymake
-  :ensure t)
+  :ensure t
+  )
 
 (use-package guava-themes
   :ensure nil
