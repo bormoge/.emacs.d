@@ -417,6 +417,15 @@
 
 (use-package elfeed
   :ensure t
+  :hook ((elfeed-search-mode . (lambda ()
+                                 (setq-local show-trailing-whitespace nil)
+                                 (setq-local truncate-lines t)
+                                 ))
+         (elfeed-show-mode . (lambda ()
+                               (setq-local show-trailing-whitespace nil)
+                               (setq-local truncate-lines t)
+                               ))
+         )
   :custom
   (elfeed-feeds rss-links)
   (elfeed-db-directory "~/.elfeed")
