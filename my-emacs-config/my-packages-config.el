@@ -2,7 +2,7 @@
 ;; (byte-recompile-directory package-user-dir nil 'force)
 
 ;; Check if Emacs is inside a (podman) container
-(defun podman-container-p ()
+(defun my/podman-container-p ()
   "Return non-nil if Emacs is inside a (podman) container."
   (let ((exit-code
          (call-process-shell-command
@@ -13,7 +13,7 @@
     (eq exit-code 0)))
 
 ;; Check if the operating system is NixOS.
-(defun nixos-p ()
+(defun my/nixos-p ()
   "Return non-nil if the current system is NixOS."
   (when (file-readable-p "/etc/os-release")
     (with-temp-buffer
@@ -356,7 +356,7 @@
   )
 
 ;; When using NixOS, install nix-mode and nix-ts-mode
-(when (nixos-p)
+(when (my/nixos-p)
   (use-package nix-mode
     :ensure t)
 
@@ -571,7 +571,7 @@
 	("H-t" . corfu-popupinfo-toggle)
 	("S-<down>" . corfu-popupinfo-scroll-up)
 	("S-<up>" . corfu-popupinfo-scroll-down)
-        ("M-m" . corfu-move-to-minibuffer)
+        ("M-m" . my/corfu-move-to-minibuffer)
         ("C-g" . corfu-quit)
 	)
   :custom
@@ -585,14 +585,14 @@
   (corfu-quit-no-match 'separator)
   :config
   ;; See: minad/corfu#transfer-completion-to-the-minibuffer
-  (defun corfu-move-to-minibuffer ()
+  (defun my/corfu-move-to-minibuffer ()
     (interactive)
     (pcase completion-in-region--data
       (`(,beg ,end ,table ,pred ,extras)
        (let ((completion-extra-properties extras)
              completion-cycle-threshold completion-cycling)
          (consult-completion-in-region beg end table pred)))))
-  (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer)
+  (add-to-list 'corfu-continue-commands #'my/corfu-move-to-minibuffer)
 
   (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
 
@@ -893,7 +893,7 @@
                  (window-parameters (mode-line-format . none))))
 
   ;; Change the value of prefix-help-command. Default: describe-prefix-bindings
-  (defun change-between-describe-prefix-and-embark-prefix ()
+  (defun my/change-between-describe-prefix-and-embark-prefix ()
     "Change the value of the variable `prefix-help-command' into either `describe-prefix-bindings' or `embark-prefix-help-command'."
     (interactive)
     (if which-key-mode
@@ -912,7 +912,7 @@
           (setq prefix-help-command #'describe-prefix-bindings)
           (message "Changed `prefix-help-command' into `describe-prefix-bindings'")))))
 
-  (global-set-key (kbd "s-m c") 'change-between-describe-prefix-and-embark-prefix)
+  (global-set-key (kbd "s-m c") 'my/change-between-describe-prefix-and-embark-prefix)
   )
 
 (use-package embark-consult
@@ -1010,17 +1010,17 @@
 
 
 ;; ;; checking for missing cli
-;; (defun missing-cli (cli-list)
+;; (defun my/missing-cli (cli-list)
 ;;   "Check each element of CLI-LIST to verify if they exist as cli."
 ;;   (seq-filter
 ;;    (lambda (cli)
 ;;      (not (executable-find cli)))
 ;;    cli-list))
 ;;
-;; (defun cli-sanity-check (cli-list)
+;; (defun my/cli-sanity-check (cli-list)
 ;;   "Check if each CLI-LIST element exists.
 ;; For each non-existent cli throw a warning."
-;;   (let ((mcli (missing-cli cli-list)))
+;;   (let ((mcli (my/missing-cli cli-list)))
 ;;     (when mcli
 ;;       (display-warning
 ;;        'environment
@@ -1028,7 +1028,7 @@
 ;;                (string-join mcli ", "))
 ;;        :warning))))
 
-;; (cli-sanity-check '("rustup" "uv" "java" "node")) ;"asdf"
+;; (my/cli-sanity-check '("rustup" "uv" "java" "node")) ;"asdf"
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
@@ -1349,9 +1349,9 @@
 ;;   :defer t
 ;;   :config
 ;;   (require 'ansi-color)
-;;   (defun colorize-compilation-buffer ()
+;;   (defun my/colorize-compilation-buffer ()
 ;;     (ansi-color-apply-on-region compilation-filter-start (point-max)))
-;;   (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+;;   (add-hook 'compilation-filter-hook 'my/colorize-compilation-buffer)
 ;;   )
 
 ;; ;; tide package config
@@ -1359,7 +1359,7 @@
 ;;   :ensure t
 ;;   :defer t
 ;;   :config
-;;   (defun setup-tide-mode ()
+;;   (defun my/setup-tide-mode ()
 ;;     (interactive)
 ;;     (tide-setup)
 ;;     (eldoc-mode +1)
@@ -1369,9 +1369,9 @@
 ;;   ;; (add-hook 'before-save-hook 'tide-format-before-save)
 
 ;;   ;; if you use typescript-mode
-;;   (add-hook 'typescript-mode-hook #'setup-tide-mode)
+;;   (add-hook 'typescript-mode-hook #'my/setup-tide-mode)
 ;;   ;; if you use treesitter based typescript-ts-mode (emacs 29+)
-;;   (add-hook 'typescript-ts-mode-hook #'setup-tide-mode)
+;;   (add-hook 'typescript-ts-mode-hook #'my/setup-tide-mode)
 ;;   )
 
 ;; ;;;; tsx-mode config

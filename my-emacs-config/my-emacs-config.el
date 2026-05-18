@@ -123,6 +123,11 @@
   (global-font-lock-mode t)
   )
 
+(use-package font-lock
+  :custom
+  (font-lock-maximum-decoration t)
+  )
+
 ;; Package for miscellaneous features
 (use-package simple
   :bind (:map global-map
@@ -327,22 +332,21 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
   :defer t
-  ;; :hook (savehist-save-hook . (lambda ()
-  ;;                               (setq kill-ring
-  ;;                                     (mapcar #'substring-no-properties
-  ;;                                             (cl-remove-if-not #'stringp kill-ring)))))
+  :hook (savehist-save-hook . (lambda ()
+                                (setq kill-ring
+                                      (mapcar #'substring-no-properties
+                                              (cl-remove-if-not #'stringp kill-ring)))))
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "history"))
-  ;; (savehist-additional-variables '((kill-ring . 20)
-  ;;                                  search-ring
-  ;;                                  regexp-search-ring
-  ;;                                  register-alist
-  ;;                                  mark-ring
-  ;;                                  global-mark-ring
-  ;;                                  (recentf-list . 50)
-  ;;                                  ))
-  ;; (savehist-ignored-variables '())
+  (savehist-additional-variables '((kill-ring . 10)
+                                   (search-ring . 10)
+                                   (regexp-search-ring . 10)
+                                   (mark-ring . 10)
+                                   (global-mark-ring . 10)
+                                   (register-alist . 10)
+                                   ))
+  (savehist-ignored-variables '(recentf-list))
   :config
   (savehist-mode +1)
   )
@@ -532,13 +536,19 @@
   :defer t
   )
 
-;; (use-package register
-;;   :config
+(use-package register
+  :config
+  (defun my/clear-register ()
+    "Remove all elements in `register-alist'"
+    (interactive)
+    (setq register-alist nil)
+    ;; (with-temp-file register-file (insert ""))
+    )
 ;;   (unless savehist-mode
 ;;     (defvar register-file
 ;;       (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
 ;;
-;;     (defun save-register ()
+;;     (defun my/save-register ()
 ;;       (unless (file-exists-p register-file)
 ;;         (make-empty-file register-file))
 ;;       (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
@@ -546,7 +556,7 @@
 ;;           (with-temp-file register-file
 ;;             (prin1 pruned (current-buffer))))))
 ;;
-;;     (defun load-register ()
+;;     (defun my/load-register ()
 ;;       (when (file-exists-p register-file)
 ;;         (with-temp-buffer
 ;;           (insert-file-contents register-file)
@@ -557,16 +567,11 @@
 ;;           ;; (setq register-alist (read (current-buffer)))
 ;;           )))
 ;;
-;;     (defun clear-register ()
-;;       (interactive)
-;;       (setq register-alist nil)
-;;       (with-temp-file register-file (insert ""))
-;;       )
 ;;
-;;     (load-register)
-;;     (add-hook 'kill-emacs-hook #'save-register 'append)
+;;     (my/load-register)
+;;     (add-hook 'kill-emacs-hook #'my/save-register 'append)
 ;;     )
-;;   )
+  )
 
 (use-package jit-lock
   :custom
@@ -708,11 +713,11 @@
   :config
   ;; (setq backup-inhibited t)
 
-  (defun force-backup-of-file ()
+  (defun my/force-backup-of-file ()
     (interactive)
     (setq buffer-backed-up nil))
 
-  (defun enable-or-disable-backups ()
+  (defun my/enable-or-disable-backups ()
     (interactive)
     (if make-backup-files
         (progn
@@ -722,8 +727,8 @@
         (setq make-backup-files t)
         (message "Enabling backups."))))
 
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-B f") 'force-backup-of-file)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'enable-or-disable-backups)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-B f") 'my/force-backup-of-file)
+  (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'my/enable-or-disable-backups)
 
   ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
 
@@ -1357,11 +1362,11 @@
   :defer t
   :preface
   ;; https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
-  (defun mp-eglot-eldoc ()
+  (defun my/mp-eglot-eldoc ()
     (setq eldoc-documentation-strategy
           'eldoc-documentation-compose-eagerly))
   :hook
-  (eglot-managed-mode . mp-eglot-eldoc)
+  (eglot-managed-mode . my/mp-eglot-eldoc)
   ((nix-mode nix-ts-mode) . eglot-ensure)
   ((rust-mode rust-ts-mode) . eglot-ensure)
   ((java-mode java-ts-mode) . eglot-ensure)
@@ -1556,7 +1561,7 @@
 
 
 ;; Tooltips at cursor point on minibuffer
-(defun display-help-echo-at-point ()
+(defun my/display-help-echo-at-point ()
   "Display the 'help-echo' text property at cursor point in the minibuffer."
   (interactive)
   (let ((help-text (get-text-property (point) 'help-echo)))
@@ -1564,11 +1569,11 @@
         (message "%s" help-text)
       (message "No help-echo at point"))))
 
-(define-key (current-global-map) (kbd "s-. p") 'display-help-echo-at-point)
+(define-key (current-global-map) (kbd "s-. p") 'my/display-help-echo-at-point)
 
 
 ;; Display face used at point.
-(defun display-face-property-at-point ()
+(defun my/display-face-property-at-point ()
   "Display the 'face' text property at cursor point on another window."
   (interactive)
   (let ((face-property (get-text-property (point) 'face)))
@@ -1576,14 +1581,14 @@
         (describe-face face-property)
       (message "No 'face' text property at point"))))
 
-(define-key (current-global-map) (kbd "s-<0x10081247> s-I") 'display-face-property-at-point)
+(define-key (current-global-map) (kbd "s-<0x10081247> s-I") 'my/display-face-property-at-point)
 
 
 ;; Add alternative key for C-x
 (define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
 
 
-(defun delete-lines-without-specific-string (STR)
+(defun my/delete-lines-without-specific-string (STR)
   "Delete all lines in the buffer that do not contain the string STR."
   (interactive "sEnter string: ")
   (save-excursion
@@ -1594,7 +1599,7 @@
       (forward-line 1))))
 
 
-(defun delete-duplicate-lines-in-directory (dir)
+(defun my/delete-duplicate-lines-in-directory (dir)
   "Non-recursively remove duplicate lines in all files under DIR."
   (interactive "DDirectory: ")
   (let ((files (directory-files dir t "^[^.].*")))
