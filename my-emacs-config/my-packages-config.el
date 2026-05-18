@@ -156,13 +156,24 @@
   :ensure t
   ;; :init
   ;; (global-diff-hl-mode +1)
-  :hook ((after-init . global-diff-hl-mode)
-         (dired-mode . diff-hl-dired-mode))
+  :hook (
+         (after-init . global-diff-hl-mode)
+         (after-init . diff-hl-flydiff-mode)
+         (after-init . diff-hl-margin-mode)
+         (dired-mode . diff-hl-dired-mode)
+         ;; Integrate diff-hl with magit.
+         (magit-post-refresh . diff-hl-magit-post-refresh)
+         )
   :custom
   (diff-hl-disable-on-remote nil)
-  (diff-hl-update-async nil)
+  (diff-hl-update-async 'thread) ;; default: nil
+  ;; (diff-hl-update-async t) ;; (Emacs-31)
+  (diff-hl-flydiff-delay 0.2)
   (diff-hl-show-staged-changes t)
   (diff-hl-draw-borders t)
+  (diff-hl-global-modes '(not
+			  image-mode
+			  pdf-view-mode))
   ;; Ensure VC is enabled
   ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   )
@@ -175,8 +186,6 @@
   (magit-diff-refine-hunk nil)
   (git-commit-major-mode 'text-mode) ;; 'git-commit-elisp-text-mode
   :config
-  ;; Integrate diff-hl with magit.
-  (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)
   ;; Add tracked files to magit-status.
   (magit-add-section-hook
    'magit-status-sections-hook
@@ -354,13 +363,14 @@
   (use-package nix-ts-mode
     :ensure t))
 
-;; Emacs headerline for projects
+;; breadcrumb: Emacs header line for projects
 (use-package breadcrumb
   :ensure t
   :init
   (breadcrumb-mode)
   )
 
+;; helpful: alternative to help commands (C-h).
 (use-package helpful
   :ensure t
   :defer
@@ -377,6 +387,7 @@
   :commands (helpful-callable helpful-variable helpful-key helpful-command helpful-at-point helpful-function)
   )
 
+;; puni: set of deletion commands.
 (use-package puni
   :ensure t
   :defer t
@@ -392,12 +403,14 @@
           org-mode) . puni-mode)
   )
 
+;; lin: personalized hl-line colors for interactive buffers.
 (use-package lin
   :ensure t
   :config
   (lin-global-mode)
   )
 
+;; page-break-lines: show FORM-FEED characters as long lines.
 (use-package page-break-lines
   :ensure t
   :hook ((
@@ -407,7 +420,18 @@
           org-mode) . page-break-lines-mode)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; buffer-to-pdf: convert buffers to pdf files.
+(use-package buffer-to-pdf
+  :vc (:url "https://github.com/protesilaos/buffer-to-pdf"
+            :rev :newest
+            :branch "main"
+            :vc-backend Git)
+  :defer t
+  :custom
+  (buffer-to-pdf-directory (expand-file-name "buffer-to-pdf/" user-emacs-directory))
+  )
+
+
 
 ;;;; elfeed
 
@@ -428,7 +452,7 @@
          )
   :custom
   (elfeed-feeds rss-links)
-  (elfeed-db-directory "~/.elfeed")
+  (elfeed-db-directory (expand-file-name ".config/elfeed" user-emacs-directory))
   ;; (elfeed-search-filter )
   (elfeed-search-filter "+unread") ;; default: "@6-months-ago +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
@@ -438,7 +462,7 @@
   (define-key (current-global-map) (kbd "s-<0x10081247> s-E u") 'elfeed-update)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Nerd Icons
 
@@ -493,7 +517,7 @@
   (nerd-icons-xref-mode)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 
 ;; Corfu + Cape + Vertico + Consult + Marginalia + Orderless + Embark (minad-oantolin stack AKA the corfuverse)
@@ -834,13 +858,14 @@
 (use-package embark
   :ensure t
   :bind
-  (("s-m ." . embark-act)
-   ("s-m ," . embark-dwim)
-   ("s-m b" . embark-bindings)
-   ("s-m e" . embark-export)
-   ("s-m l" . embark-collect)
-   ("s-m s" . embark-select)
-   ("s-m a" . embark-act-all)
+  (("s-, ," . embark-act)
+   ("s-, s-," . embark-act)
+   ("s-, ." . embark-dwim)
+   ("s-, b" . embark-bindings)
+   ("s-, e" . embark-export)
+   ("s-, l" . embark-collect)
+   ("s-, s" . embark-select)
+   ("s-, a" . embark-act-all)
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
@@ -912,7 +937,7 @@
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
                                    (eglot (styles orderless))
                                    (eglot-capf (styles orderless))))
-  (completion-pcm-leading-wildcard t) ;; Emacs 31: partial-completion behaves like substring
+  (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
   :config
   (setq completion-preview-completion-styles completion-styles)
   )
@@ -930,7 +955,7 @@
   (prescient-sort-length-enable t) ;; default: t
   (prescient-aggressive-file-save nil) ;; default: nil
   (prescient-history-length 500) ;; default: 100
-  (prescient-frequency-decay 0.307) ;; default: 0.997
+  (prescient-frequency-decay 0.997) ;; default: 0.997
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
@@ -982,7 +1007,7 @@
   (vertico-prescient-mode 1)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;; ;; checking for missing cli
 ;; (defun missing-cli (cli-list)
@@ -1132,7 +1157,7 @@
   (setq-default c-basic-offset 4)
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;; json config
 (use-package json-mode
@@ -1140,7 +1165,7 @@
   :defer t
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; toml config
 (use-package toml-mode
@@ -1167,7 +1192,7 @@
   :defer t
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; yaml config
 (use-package yaml
@@ -1180,7 +1205,7 @@
   :defer t
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Clojure config
 
@@ -1231,7 +1256,7 @@
 
 ;; Other packages to consider: inf-clojure
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Elixir / Erlang config
 
@@ -1316,7 +1341,7 @@
 ;;   :defer t
 ;;   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;; ;;;; typescript-mode config
 ;; (use-package typescript-mode
@@ -1359,7 +1384,7 @@
 ;;   :defer t
 ;;   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Rust config
 (use-package rust-mode
@@ -1373,7 +1398,7 @@
 ;; (rust-mode . flymake-mode))
 ;; ;; (rust-ts-mode . flymake-mode))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; LaTeX and pdf configuration
 
@@ -1416,7 +1441,7 @@
   (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; dape configuration
 (use-package dape

@@ -1,6 +1,6 @@
 ;; Increase the amount of data which Emacs reads from the process
 ;; Original value: 4096
-(setq read-process-output-max (* 1024 1024)) ;; 1mb
+(setq read-process-output-max (* 4 1024 1024)) ;; 4mb
 
 ;; Change Emacs garbage collector threshold
 (setopt gc-cons-threshold 100000000 ;; most-positive-fixnum

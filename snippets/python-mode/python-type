@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: python-type
+# key: type
+# uuid: python-type
+# --
+print(type(${1:}))

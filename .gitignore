@@ -1,4 +1,5 @@
 /.cache
+/.config
 /.git
 /auto-save-list
 /debug-adapters
@@ -20,8 +21,8 @@
 /tree-sitter
 /url
 /workspace
+/my-emacs-config/functions/
 
-/my-emacs-config/functions/tetris.el
 .dap-breakpoints
 .lsp-session-v1
 .mc-lists.el

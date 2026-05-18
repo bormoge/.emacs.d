@@ -15,8 +15,6 @@
   (mouse-highlight nil)
   ;; Disable use of system trash
   (delete-by-moving-to-trash nil)
-  ;; Highlight active region in nonselected windows.
-  (highlight-nonselected-windows t)
   ;; Dialog boxes
   (use-file-dialog t)
   (use-dialog-box t)
@@ -49,6 +47,7 @@
   ;; Disable fontification during user input to reduce lag in large buffers.
   (redisplay-skip-fontification-on-input t)
   (fill-column 80)
+  ;; Optimize scrolling
   (fast-but-imprecise-scrolling t)
   ;; When deleting a pair, push mark at the end of the the delimited region
   (delete-pair-push-mark t)
@@ -59,6 +58,10 @@
   (history-length 150)
   ;; Delete duplicates in history variables
   (history-delete-duplicates t)
+  ;; Only show the cursor in the selected window
+  (cursor-in-non-selected-windows nil)
+  ;; Only highlight active region in selected windows.
+  (highlight-nonselected-windows nil)
 
   :config
   ;; Disable compact font caches
@@ -324,6 +327,10 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
   :defer t
+  ;; :hook (savehist-save-hook . (lambda ()
+  ;;                               (setq kill-ring
+  ;;                                     (mapcar #'substring-no-properties
+  ;;                                             (cl-remove-if-not #'stringp kill-ring)))))
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "history"))
@@ -561,6 +568,11 @@
 ;;     )
 ;;   )
 
+(use-package jit-lock
+  :custom
+  (jit-lock-defer-time nil) ;; default: nil
+  )
+
 (use-package descr-text
   :custom
   ;; Control how you want to show info using `what-cursor-position'
@@ -626,6 +638,8 @@
   (isearch-wrap-pause t)
   (lazy-highlight-initial-delay 0.25)
   (lazy-highlight-no-delay-length 3)
+  (isearch-allow-scroll nil)
+  (isearch-allow-motion nil)
   )
 
 ;; recentf configuration
@@ -651,6 +665,9 @@
   (save-place-forget-unreadable-files t)
   :config
   (save-place-mode +1)
+  (advice-add 'save-place-find-file-hook :after
+              (lambda (&rest _)
+                (when buffer-file-name (ignore-errors (recenter)))))
   )
 
 (use-package replace
@@ -660,6 +677,7 @@
 
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
+  ;; :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p)
   :custom
   ;; If nil, disable backups
   (make-backup-files nil)
@@ -686,6 +704,7 @@
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
   (view-read-only nil)
+  (remote-file-name-inhibit-delete-by-moving-to-trash t)
   :config
   ;; (setq backup-inhibited t)
 
@@ -932,6 +951,7 @@
      ))
   (package-selected-packages
    '(
+     buffer-to-pdf
      git-modes
      python-coverage
      python-pytest
@@ -1042,7 +1062,7 @@
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil)))
   :custom
-  (global-hl-line-sticky-flag t)
+  (global-hl-line-sticky-flag nil)
   :config
   ;; Gray, with disabled underline and overline
   ;; (set-face-background 'hl-line "#303030")
@@ -1518,6 +1538,8 @@
 
 ;; Enable commands
 (put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-defun 'disabled nil)
+(put 'narrow-to-page 'disabled nil)
 (put 'widen 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
@@ -1584,12 +1606,12 @@
           (kill-buffer))))))
 
 
-;; Global lexical-binding (Emacs 31)
+;; Global lexical-binding (Emacs-31)
 ;; (set-default-toplevel-value 'lexical-binding t)
 
-;; Enable Semantic Font Lock for Emacs (Emacs 31)
+;; Enable Semantic Font Lock for Emacs (Emacs-31)
 ;; (setq elisp-fontify-semantically t)
 
-;; Review policy (Emacs 31)
+;; Review policy (Emacs-31)
 ;; (setq package-review-policy t
 ;;      package-review-diff-command '("git" "diff" "--no-index" "--color=never" "--diff-filter=d"))
