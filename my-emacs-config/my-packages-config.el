@@ -183,8 +183,16 @@
   :ensure t
   :defer t
   :custom
-  (magit-diff-refine-hunk nil)
+  (magit-diff-refine-hunk 'all)
   (git-commit-major-mode 'text-mode) ;; 'git-commit-elisp-text-mode
+  (magit-refresh-status-buffer t)
+  (magit-display-buffer-function
+   #'magit-display-buffer-traditional)
+  (magit-section-initial-visibility-alist
+   '((unstaged . show)
+     (staged . show)
+     (untracked . show)
+     (stashes . show)))
   :config
   ;; Add tracked files to magit-status.
   (magit-add-section-hook

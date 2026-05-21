@@ -30,9 +30,6 @@
 ;; Apply packages configuration
 (load-file (expand-file-name "my-emacs-config/my-packages-config.el" user-emacs-directory))
 
-;; Define Emacs keys
-(load-file (expand-file-name "my-emacs-config/my-keys-config.el" user-emacs-directory))
-
 ;; Define configuration environment for packages authored by me.
 (load-file (expand-file-name "my-emacs-config/my-own-packages-config.el" user-emacs-directory))
 

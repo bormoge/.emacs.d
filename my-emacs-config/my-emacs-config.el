@@ -1215,6 +1215,8 @@
   (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
   (org-imenu-depth 8)
   (org-startup-truncated t)
+  (org-fontify-todo-headline t)
+  (org-fontify-done-headline t)
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
