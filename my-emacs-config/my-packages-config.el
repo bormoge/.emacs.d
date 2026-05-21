@@ -457,17 +457,18 @@
                                (setq-local show-trailing-whitespace nil)
                                (setq-local truncate-lines t)
                                ))
+         (elfeed-search-update-hook . (elfeed-search-add-separators))
          )
   :custom
   (elfeed-feeds rss-links)
   (elfeed-db-directory (expand-file-name ".config/elfeed" user-emacs-directory))
-  ;; (elfeed-search-filter )
   (elfeed-search-filter "+unread") ;; default: "@6-months-ago +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
-  :config
-  (setf url-queue-timeout 30)
+  (elfeed-search-separator-date-format "%A %d/%m/%Y")
+  :init
   (define-key (current-global-map) (kbd "s-<0x10081247> s-E e") 'elfeed)
   (define-key (current-global-map) (kbd "s-<0x10081247> s-E u") 'elfeed-update)
+  :commands (elfeed)
   )
 
 

@@ -1,3 +1,9 @@
+;; Note to self: DO NOT USE M-s-s (The orca screen reader)
+
+;; To invoke Hyper key: CTRL + x @ h
+
+;; If you wonder what s-<0x10081247> is, it's the copilot key that comes with the new thinkpads.
+
 (require 'cl-lib)
 
 (use-package emacs
@@ -62,16 +68,17 @@
   (cursor-in-non-selected-windows nil)
   ;; Only highlight active region in selected windows.
   (highlight-nonselected-windows nil)
+  ;; Make the cursor noticeable
+  (visible-cursor t)
+  ;; (cursor-type '(bar . 7)) ;; default: t
+  ;; Change default cursor type
+  (cursor-type t)
+  ;; Default image scaling
+  (image-scaling-factor 'auto)
 
   :config
   ;; Disable compact font caches
-  (setq inhibit-compacting-font-caches t)
-  ;; Change default cursor type
-  (setq-default cursor-type t)
-  ;; (setq-default cursor-type '(bar . 7)) ;; default: t
-  ;; Default image scaling
-  (setq-default image-scaling-factor 'auto)
-
+  (setq-default inhibit-compacting-font-caches t)
   ;; Bidirectional editing config
   (setq-default bidi-display-reordering 'left-to-right)
   (setq-default bidi-paragraph-direction 'left-to-right)
@@ -138,12 +145,13 @@
               ("s-<0x10081247> s-¡ p" . auto-fill-mode)
               ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
               ("s-<0x10081247> s-¡ f" . fill-paragraph)
+              ("H-s s c" . shell-command)
               )
   ;; Enable auto-save-mode only when the buffer is associated with a file.
   :hook ((after-change-major-mode . (lambda ()
-                                     (if (buffer-file-name)
-                                         (auto-save-mode +1)
-                                       (auto-save-mode -1))))
+                                      (if (buffer-file-name)
+                                          (auto-save-mode +1)
+                                        (auto-save-mode -1))))
          (special-mode . (lambda ()
                            (setq-local show-trailing-whitespace nil)
                            (setq-local truncate-lines nil)
@@ -306,7 +314,7 @@
 (use-package bytecomp
   :custom
   (byte-compile-warnings
-      '(not docstrings))
+   '(not docstrings))
   )
 
 ;; Display time and date on the minibuffer (neat stuff)
@@ -444,7 +452,7 @@
   (:map global-map
         ;; Define easy key for eldoc documentation
         ("s-. ." . eldoc)
-   )
+        )
   :custom
   (eldoc-idle-delay 0.7) ;; default: 0.5
   (eldoc-echo-area-display-truncation-message nil)
@@ -544,33 +552,33 @@
     (setq register-alist nil)
     ;; (with-temp-file register-file (insert ""))
     )
-;;   (unless savehist-mode
-;;     (defvar register-file
-;;       (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
-;;
-;;     (defun my/save-register ()
-;;       (unless (file-exists-p register-file)
-;;         (make-empty-file register-file))
-;;       (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
-;;         (when register-alist
-;;           (with-temp-file register-file
-;;             (prin1 pruned (current-buffer))))))
-;;
-;;     (defun my/load-register ()
-;;       (when (file-exists-p register-file)
-;;         (with-temp-buffer
-;;           (insert-file-contents register-file)
-;;           (condition-case err
-;;               (setq register-alist (read (current-buffer)))
-;;             (error
-;;              (message "Failed to load registers: %s" err)))
-;;           ;; (setq register-alist (read (current-buffer)))
-;;           )))
-;;
-;;
-;;     (my/load-register)
-;;     (add-hook 'kill-emacs-hook #'my/save-register 'append)
-;;     )
+  ;;   (unless savehist-mode
+  ;;     (defvar register-file
+  ;;       (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
+  ;;
+  ;;     (defun my/save-register ()
+  ;;       (unless (file-exists-p register-file)
+  ;;         (make-empty-file register-file))
+  ;;       (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
+  ;;         (when register-alist
+  ;;           (with-temp-file register-file
+  ;;             (prin1 pruned (current-buffer))))))
+  ;;
+  ;;     (defun my/load-register ()
+  ;;       (when (file-exists-p register-file)
+  ;;         (with-temp-buffer
+  ;;           (insert-file-contents register-file)
+  ;;           (condition-case err
+  ;;               (setq register-alist (read (current-buffer)))
+  ;;             (error
+  ;;              (message "Failed to load registers: %s" err)))
+  ;;           ;; (setq register-alist (read (current-buffer)))
+  ;;           )))
+  ;;
+  ;;
+  ;;     (my/load-register)
+  ;;     (add-hook 'kill-emacs-hook #'my/save-register 'append)
+  ;;     )
   )
 
 (use-package jit-lock
@@ -579,6 +587,9 @@
   )
 
 (use-package descr-text
+  :bind (:map global-map
+              ("C-h M-c" . describe-char)
+              )
   :custom
   ;; Control how you want to show info using `what-cursor-position'
   ;; (describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
@@ -615,7 +626,7 @@
   :bind (:map completion-preview-active-mode-map
               ("s-<up>" . completion-preview-prev-candidate)
               ("s-<down>" . completion-preview-next-candidate)
-         )
+              )
   :custom
   ;; The time before `completion-preview' appears.
   (completion-preview-idle-delay 0.5)
@@ -677,8 +688,14 @@
 
 (use-package replace
   :bind (:map global-map
-              ("M-°" . flush-lines))
-  )
+              ("H-r" . replace-string)
+              ;; Replace string
+              ("M-s M-r s" . query-replace)
+              ;; Replace regexp
+              ("M-s M-r r" . query-replace-regexp)
+              ;; Delete lines containing a specific string
+              ("M-°" . flush-lines)
+              ))
 
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
@@ -1125,6 +1142,68 @@
   (which-key-mode)
   )
 
+(use-package shr
+  :custom
+  (shr-max-image-proportion 0.4)
+  )
+
+(use-package url-queue
+  :custom
+  (url-queue-timeout 30)
+  )
+
+(use-package shell
+  ;; Set keys for shell
+  :bind (:map global-map
+              ("H-s s b" . shell)
+              ))
+
+(use-package eshell
+  ;; Set keys for eshell
+  :bind (:map global-map
+              ("H-s e b" . eshell)
+              ("H-s e c" . eshell-command)
+              ))
+
+(use-package term
+  ;; Set keys for term
+  :bind (:map global-map
+              ("H-s t b" . term)
+              ))
+
+(use-package sort
+  :bind (:map global-map
+              ;; Delete duplicate lines using Hyper + ALT + <backspace>
+              ("H-M-<backspace>" . delete-duplicate-lines)
+              ))
+
+(use-package ibuffer
+  :bind (:map global-map
+              ;; Define key for ibuffer
+              ("C-x M-b" . ibuffer)
+              ))
+
+(use-package tabify
+  :bind (:map global-map
+              ;; Convert tabs to spaces or spaces to tabs
+              ("H-x s-<tab>" . tabify)
+              ("H-x s-<backspace>" . untabify)
+              ("H-x s-<iso-lefttab>" . untabify)
+              ))
+
+(use-package find-func
+  :bind (:map global-map
+              ("C-h M-l" . find-library)
+              ))
+
+(use-package help-fns
+  :bind (:map global-map
+              ("C-h M-k" . describe-keymap)
+              ("C-h M-f" . describe-face)
+              ))
+
+
+
 (use-package flymake
   :hook
   (((
@@ -1289,6 +1368,8 @@
   (org-agenda-use-time-grid t)
   )
 
+
+
 ;; Treesitter
 
 (use-package treesit
@@ -1357,6 +1438,16 @@
   ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
   (setopt treesit-font-lock-level 4)
   )
+
+;; Treesitter modes
+
+(use-package json-ts-mode
+  :defer t
+  :config
+  (require 'json-mode)
+  )
+
+
 
 ;;;; eglot configuration
 (use-package eglot
@@ -1468,7 +1559,7 @@
                   (typescript-ts-mode :language-id "typescript")
                   (typescript-mode :language-id "typescript"))
                  . ("typescript-language-server" "--stdio")))
-                 ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
+  ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
 
   (add-to-list 'eglot-server-programs
                '((python-ts-mode python-mode) .
@@ -1519,7 +1610,7 @@
             (unless (cl-some (lambda (prefix)
                                (string-prefix-p prefix (symbol-name major-mode)))
                              forbidden-prefixes-text-scale-mode)
-	        ;(text-scale-set 0)
+              ;; (text-scale-set 0)
 	      (text-scale-set default-text-scale-mode-amount))
 	    ))
 
@@ -1572,6 +1663,7 @@
       (message "No help-echo at point"))))
 
 (define-key (current-global-map) (kbd "s-. p") 'my/display-help-echo-at-point)
+(define-key (current-global-map) (kbd "s-. s-p") 'my/display-help-echo-at-point)
 
 
 ;; Display face used at point.
