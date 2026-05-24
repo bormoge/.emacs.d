@@ -89,6 +89,8 @@
   ;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
   )
 
+
+
 (use-package frame
   :custom
   ;; Change cursor's appearance
@@ -104,7 +106,7 @@
   ;; (set-frame-font "UbuntuSansMono Nerd Font Mono 13" nil t)
   ;; (set-frame-font "Ioskeley Mono Light 12" nil t)
   ;; (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
-  (set-frame-font "JuliaMono Light 12" nil t)
+  (set-frame-font "JuliaMono Light 18" nil t)
   ;; Maximize Emacs on start
   ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
   ;;(toggle-frame-fullscreen)
@@ -122,6 +124,8 @@
         )
   :custom
   (switch-to-buffer-obey-display-actions nil)
+  (split-height-threshold nil)
+  (split-width-threshold 80)
   )
 
 ;; Enable syntax highlighting
@@ -949,6 +953,8 @@
   :commands (repeat repeat-mode describe-repeat-maps)
   )
 
+
+
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
 (use-package package
   :bind (:map global-map
@@ -1200,7 +1206,45 @@
   :bind (:map global-map
               ("C-h M-k" . describe-keymap)
               ("C-h M-f" . describe-face)
-              ))
+              )
+  ;; :config
+  ;; (add-to-list 'display-buffer-alist
+  ;;            '("\\*Help\\*"
+  ;;              (display-buffer-in-side-window)
+  ;;              (side . right)
+  ;;              (slot . 0)
+  ;;              (window-width . 0.5)))
+  )
+
+;; Abbrev config
+(use-package abbrev
+  :custom
+  (abbrev-file-name (expand-file-name "abbrev_defs" user-emacs-directory))
+  (save-abbrevs 'silently)
+  )
+
+;; Dabbrev config
+(use-package dabbrev
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand)
+         ("C-M-<Ungrab>" . dabbrev-expand))
+  :custom
+  (dabbrev-upcase-means-case-search t)
+  (dabbrev-case-fold-search 'case-fold-search)
+  ;; (dabbrev-ignored-buffer-regexps
+  ;;     '(;; - Buffers starting with a space (internal or temporary buffers)
+  ;;       "\\` "
+  ;;       ;; Tags files such as ETAGS, GTAGS, RTAGS, TAGS, e?tags, and GPATH,
+  ;;       ;; including versions with numeric extensions like <123>
+  ;;       "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?"))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?")
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
+  )
 
 
 
@@ -1255,34 +1299,7 @@
   (flymake-start-on-save-buffer t)
   )
 
-(use-package abbrev
-  :custom
-  (abbrev-file-name (expand-file-name "abbrev_defs" user-emacs-directory))
-  (save-abbrevs 'silently)
-  )
-
-;; Dabbrev config
-(use-package dabbrev
-  :bind (("M-/" . dabbrev-completion)
-         ("C-M-/" . dabbrev-expand)
-         ("C-M-<Ungrab>" . dabbrev-expand))
-  :custom
-  (dabbrev-upcase-means-case-search t)
-  (dabbrev-case-fold-search 'case-fold-search)
-  ;; (dabbrev-ignored-buffer-regexps
-  ;;     '(;; - Buffers starting with a space (internal or temporary buffers)
-  ;;       "\\` "
-  ;;       ;; Tags files such as ETAGS, GTAGS, RTAGS, TAGS, e?tags, and GPATH,
-  ;;       ;; including versions with numeric extensions like <123>
-  ;;       "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?"))
-  :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?")
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
-  )
+
 
 ;; Org configuration
 (use-package org
@@ -1354,7 +1371,8 @@
 
 (use-package org-agenda
   :bind (:map global-map
-              ("s-<0x10081247> s-U" . org-agenda)
+              ("s-<0x10081247> s-U u" . org-agenda)
+              ("s-<0x10081247> s-U l" . org-agenda-list)
               )
   :custom
   (org-agenda-include-diary t)
@@ -1595,43 +1613,43 @@
                  ("yaml-language-server" "--stdio")))
   )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;;; Miscellaneous
 
-;; Increase zoom
-(setq default-text-scale-mode-amount 2)
-
-(setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
-
-(add-hook 'after-change-major-mode-hook
-	  (lambda ()
-	    ;; (if (derived-mode-p 'treemacs-mode)
-            (unless (cl-some (lambda (prefix)
-                               (string-prefix-p prefix (symbol-name major-mode)))
-                             forbidden-prefixes-text-scale-mode)
-              ;; (text-scale-set 0)
-	      (text-scale-set default-text-scale-mode-amount))
-	    ))
-
-;; Reduce text size when there are more than two windows
-(advice-add 'split-window-right :after #'(lambda (&rest _)
-                                           (setq default-text-scale-mode-amount 0)
-                                           (text-scale-set default-text-scale-mode-amount)))
-
-(advice-add 'split-window-below :after #'(lambda (&rest _)
-                                           (setq default-text-scale-mode-amount 0)
-                                           (text-scale-set default-text-scale-mode-amount)))
-
-(advice-add 'delete-window :after #'(lambda (&rest _)
-                                      (when (<= (length (window-list)) 1)
-                                        (setq default-text-scale-mode-amount 2)
-                                        (text-scale-set default-text-scale-mode-amount)
-                                        )))
-
-(advice-add 'delete-other-windows :after #'(lambda (&rest _)
-                                             (setq default-text-scale-mode-amount 2)
-                                             (text-scale-set default-text-scale-mode-amount)))
+;; ;; Increase zoom
+;; (setq default-text-scale-mode-amount 2)
+;;
+;; (setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
+;;
+;; (add-hook 'after-change-major-mode-hook
+;; 	  (lambda ()
+;; 	    ;; (if (derived-mode-p 'treemacs-mode)
+;;             (unless (cl-some (lambda (prefix)
+;;                                (string-prefix-p prefix (symbol-name major-mode)))
+;;                              forbidden-prefixes-text-scale-mode)
+;;               ;; (text-scale-set 0)
+;; 	      (text-scale-set default-text-scale-mode-amount))
+;; 	    ))
+;;
+;; ;; Reduce text size when there are more than two windows
+;; (advice-add 'split-window-right :after #'(lambda (&rest _)
+;;                                            (setq default-text-scale-mode-amount 0)
+;;                                            (text-scale-set default-text-scale-mode-amount)))
+;;
+;; (advice-add 'split-window-below :after #'(lambda (&rest _)
+;;                                            (setq default-text-scale-mode-amount 0)
+;;                                            (text-scale-set default-text-scale-mode-amount)))
+;;
+;; (advice-add 'delete-window :after #'(lambda (&rest _)
+;;                                       (when (<= (length (window-list)) 1)
+;;                                         (setq default-text-scale-mode-amount 2)
+;;                                         (text-scale-set default-text-scale-mode-amount)
+;;                                         )))
+;;
+;; (advice-add 'delete-other-windows :after #'(lambda (&rest _)
+;;                                              (setq default-text-scale-mode-amount 2)
+;;                                              (text-scale-set default-text-scale-mode-amount)))
 
 
 ;; Enable commands

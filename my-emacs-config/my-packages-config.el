@@ -462,9 +462,10 @@
   :custom
   (elfeed-feeds rss-links)
   (elfeed-db-directory (expand-file-name ".config/elfeed" user-emacs-directory))
-  (elfeed-search-filter "+unread") ;; default: "@6-months-ago +unread"
+  (elfeed-search-filter "+unread") ;; default: "@6months +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
-  (elfeed-search-separator-date-format "%A %d/%m/%Y")
+  (elfeed-search-separator-date-format "%A, %d/%m/%Y")
+  (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
   :init
   (define-key (current-global-map) (kbd "s-<0x10081247> s-E e") 'elfeed)
   (define-key (current-global-map) (kbd "s-<0x10081247> s-E u") 'elfeed-update)
