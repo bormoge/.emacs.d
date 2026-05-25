@@ -46,7 +46,7 @@
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
   :ensure t
-  ;; :hook (after-init . doom-modeline-mode)
+  :hook (after-init . doom-modeline-mode)
   :custom ;; Does this package have more options than treemacs?
   (doom-modeline-support-imenu t)
   (doom-modeline-height 27)
@@ -76,12 +76,11 @@
   (doom-modeline-position-column-line-format '("%l:%c"))
   (doom-modeline-minor-modes t)
   (doom-modeline-selection-info nil)
-  ;; (doom-modeline-enable-word-count t)
-  ;; (doom-modeline-continuous-word-count-modes '(text-mode markdown-mode gfm-mode org-mode))
-  (doom-modeline-continuous-word-count-modes nil)
+  (doom-modeline-enable-word-count nil)
+  (doom-modeline-continuous-word-count-modes nil) ;'(text-mode markdown-mode gfm-mode org-mode)
   (doom-modeline-buffer-encoding t)
   (doom-modeline-indent-info nil)
-  ;; (doom-modeline-total-line-number t)
+  (doom-modeline-total-line-number nil)
   (doom-modeline-vcs-icon t)
   (doom-modeline-vcs-max-length 15)
   (doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
@@ -106,12 +105,11 @@
   (doom-modeline-modal-modern-icon t)
   (doom-modeline-always-show-macro-register nil)
   (doom-modeline-mu4e nil)
-  ;; (mu4e-alert-enable-mode-line-display)
   (doom-modeline-gnus t)
   (doom-modeline-gnus-timer 2)
-  ;; (doom-modeline-gnus-excluded-groups '("dummy.group"))
+  (doom-modeline-gnus-excluded-groups nil)
   (doom-modeline-irc t)
-  ;; (doom-modeline-irc-stylize #'doom-modeline-shorten-irc) ;;'identity
+  (doom-modeline-irc-stylize #'doom-modeline-shorten-irc) ;;'identity
   (doom-modeline-battery t)
   (doom-modeline-time t)
   (doom-modeline-display-misc-in-all-mode-lines t)
@@ -131,24 +129,15 @@
   ;; (doom-modeline-env-elixir-executable "iex")
   (doom-modeline-env-rust-executable "rustc")
   (doom-modeline-env-load-string "...")
-  ;; (doom-modeline-always-visible-segments '(mu4e irc))
-  ;; (doom-modeline-before-update-env-hook nil)
-  ;; (doom-modeline-after-update-env-hook nil)
+  (doom-modeline-always-visible-segments nil)
+  (doom-modeline-before-update-env-hook nil)
+  (doom-modeline-after-update-env-hook nil)
 
   :config
   (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)
   (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  ;; alt: (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
   (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
-  ;; (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
-
-  ;; (advice-add 'doom-modeline-update-battery-status
-  ;;             :after #'(lambda (&rest _)
-  ;;                        (setq battery-mode-line-string (substring
-  ;;                                                        (concat
-  ;;                                                         (substring-no-properties (cdr doom-modeline--battery-status)))
-  ;;                                                        0 -1))))
-
-  (doom-modeline-mode +1)
   )
 
 ;; Used to highlight lines changed
@@ -166,8 +155,7 @@
          )
   :custom
   (diff-hl-disable-on-remote nil)
-  (diff-hl-update-async 'thread) ;; default: nil
-  ;; (diff-hl-update-async t) ;; (Emacs-31)
+  (diff-hl-update-async 'thread) ;; default: nil, alt (Emacs-31): t
   (diff-hl-flydiff-delay 0.2)
   (diff-hl-show-staged-changes t)
   (diff-hl-draw-borders t)
@@ -294,9 +282,6 @@
               ("C-c e" . envrc-command-map)
               )
   :hook (after-init . envrc-global-mode)
-  ;; :config
-  ;; (with-eval-after-load 'envrc
-  ;;   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
   )
 
 ;; gnu-elpa-keyring-update
@@ -304,11 +289,6 @@
   :ensure t
   ;; ref: https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
   ;; ref: https://emacs.stackexchange.com/a/53142
-  ;;
-  ;; (setq package-check-signature--old package-check-signature
-  ;;       package-check-signature nil)
-  ;;
-  ;; (setq package-check-signature package-check-signature--old)
   )
 
 ;; Client for `undo'
@@ -334,16 +314,17 @@
   :bind (:map markdown-mode-map
               ("C-c C-e" . markdown-do))
   :init (setq markdown-command "pandoc")
-  ;; :custom
-  ;; (markdown-enable-wiki-links t)
-  ;; (markdown-italic-underscore t)
-  ;; (markdown-asymmetric-header t)
-  ;; (markdown-make-gfm-checkboxes-buttons t)
-  ;; (markdown-gfm-uppercase-checkbox t)
-  ;; (markdown-fontify-code-blocks-natively t)
-  ;; (markdown-gfm-additional-languages "Mermaid")
-  ;; :config
-  ;; (add-to-list 'markdown-code-lang-modes '("mermaid" . mermaid-mode))
+  :custom
+  (markdown-enable-wiki-links nil)
+  (markdown-italic-underscore nil)
+  (markdown-asymmetric-header t)
+  (markdown-make-gfm-checkboxes-buttons t)
+  (markdown-gfm-uppercase-checkbox nil)
+  (markdown-fontify-code-blocks-natively nil)
+  (markdown-gfm-additional-languages "Mermaid")
+  :config
+  (remove-hook 'before-save-hook #'delete-trailing-whitespace)
+  (add-to-list 'markdown-code-lang-modes '("mermaid" . mermaid-mode))
   :if (executable-find "pandoc")
   )
 
@@ -481,8 +462,10 @@
   :ensure t
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
-  ;; (nerd-icons-install-fonts) ;; To install the Symbols Nerd Font
   :config
+  (unless (find-font (font-spec :name "Symbols Nerd Font Mono"))
+    (nerd-icons-install-fonts)) ;; Install the Symbols Nerd Font
+
   ;; (advice-add 'set-frame-font :after
   ;;             (lambda (&rest _) (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
   (add-hook 'after-setting-font-hook (lambda ()
@@ -541,34 +524,6 @@
   (((
      prog-mode
      eglot--managed-mode
-     ;; java-mode
-     ;; java-ts-mode
-     ;; emacs-lisp-mode
-     ;; nix-mode
-     ;; nix-ts-mode
-     ;; rust-mode
-     ;; rust-ts-mode
-     ;; markdown-mode
-     ;; js-mode
-     ;; js-ts-mode
-     ;; html-mode
-     ;; html-ts-mode
-     ;; css-mode
-     ;; css-ts-mode
-     ;; json-mode
-     ;; json-ts-mode
-     ;; python-mode
-     ;; python-ts-mode
-     ;; elixir-mode
-     ;; elixir-ts-mode
-     ;; erlang-mode
-     ;; erlang-ts-mode
-     ;; c-mode
-     ;; c++-mode
-     ;; clojure-mode
-     ;; clojure-ts-mode
-     ;; yaml-mode
-     ;; yaml-ts-mode
      ) . corfu-mode))
   :bind
   (:map corfu-map
@@ -594,7 +549,7 @@
   (corfu-popupinfo-delay '(2.0 . 0.5))
   (corfu-quit-no-match 'separator)
   :config
-  ;; See: minad/corfu#transfer-completion-to-the-minibuffer
+  ;; https://github.com/minad/corfu#transfer-completion-to-the-minibuffer
   (defun my/corfu-move-to-minibuffer ()
     (interactive)
     (pcase completion-in-region--data
@@ -605,18 +560,12 @@
   (add-to-list 'corfu-continue-commands #'my/corfu-move-to-minibuffer)
 
   (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
-
-  ;; (set-face-background 'corfu-current "#2A3456")
   )
 
 ;; Cape
 (use-package cape
   :ensure t
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
-  ;; :bind (("C-c p d" . cape-dabbrev)
-  ;;        ("C-c p h" . cape-history)
-  ;;        ("C-c p f" . cape-file)
-  ;;        etc...)
   :init
   (add-hook 'completion-at-point-functions #'cape-abbrev)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
@@ -625,7 +574,7 @@
   (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   ;; (add-hook 'completion-at-point-functions #'cape-history)
-  ;; etc...
+  ;; etc... (https://github.com/minad/cape#configuration)
   )
 
 ;; Vertico
@@ -651,7 +600,7 @@
   (vertico-mouse-mode +1)
   )
 
-;; List of vertico extensions found in github@minad/vertico.
+;; List of vertico extensions found in https://github.com/minad/vertico.
 
 ;; vertico-buffer
 ;; vertico-directory
@@ -868,14 +817,15 @@
 (use-package embark
   :ensure t
   :bind
-  (("s-, ," . embark-act)
+  (("s-, ,"   . embark-act)
    ("s-, s-," . embark-act)
-   ("s-, ." . embark-dwim)
-   ("s-, b" . embark-bindings)
-   ("s-, e" . embark-export)
-   ("s-, l" . embark-collect)
-   ("s-, s" . embark-select)
-   ("s-, a" . embark-act-all)
+   ("s-, ."   . embark-dwim)
+   ("s-, b"   . embark-bindings)
+   ("s-, e"   . embark-export)
+   ("s-, l"   . embark-collect)
+   ("s-, s"   . embark-select)
+   ("s-, a"   . embark-act-all)
+   ("s-, c"   . my/change-between-describe-prefix-and-embark-prefix)
    )
   :init
   ;; Optionally replace the key help with a completing-read interface
@@ -921,8 +871,6 @@
         (progn
           (setq prefix-help-command #'describe-prefix-bindings)
           (message "Changed `prefix-help-command' into `describe-prefix-bindings'")))))
-
-  (global-set-key (kbd "s-m c") 'my/change-between-describe-prefix-and-embark-prefix)
   )
 
 (use-package embark-consult
@@ -939,16 +887,15 @@
   :ensure t
   ;;:after vertico
   :custom
-  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
-  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
-  ;; (completion-styles '(orderless basic)) ;;partial-completion
-  (completion-styles '(orderless partial-completion basic)) ;;partial-completion
+  (orderless-style-dispatchers '(orderless-affix-dispatch))
+  (completion-styles '(orderless partial-completion basic)) ;; partial-completion / '(orderless basic)
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
                                    (eglot (styles orderless))
                                    (eglot-capf (styles orderless))))
   (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
   :config
+  ;; Set the completion-styles of completion-preview-mode
   (setq completion-preview-completion-styles completion-styles)
   )
 
@@ -969,8 +916,6 @@
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
-  ;; (setq corfu-sort-function #'prescient-completion-sort)
-  ;; (setq vertico-sort-function #'prescient-completion-sort)
   (setq completion-preview-sort-function #'prescient-completion-sort)
   (prescient-persist-mode 1)
   )
@@ -1019,26 +964,26 @@
 
 
 
-;; ;; checking for missing cli
-;; (defun my/missing-cli (cli-list)
-;;   "Check each element of CLI-LIST to verify if they exist as cli."
-;;   (seq-filter
-;;    (lambda (cli)
-;;      (not (executable-find cli)))
-;;    cli-list))
-;;
-;; (defun my/cli-sanity-check (cli-list)
-;;   "Check if each CLI-LIST element exists.
-;; For each non-existent cli throw a warning."
-;;   (let ((mcli (my/missing-cli cli-list)))
-;;     (when mcli
-;;       (display-warning
-;;        'environment
-;;        (format "Missing CLI commands: %s"
-;;                (string-join mcli ", "))
-;;        :warning))))
+;; checking for missing cli
+(defun my/missing-cli (cli-list)
+  "Check each element of CLI-LIST to verify if they exist as cli."
+  (seq-filter
+   (lambda (cli)
+     (not (executable-find cli)))
+   cli-list))
 
-;; (my/cli-sanity-check '("rustup" "uv" "java" "node")) ;"asdf"
+(defun my/cli-sanity-check (cli-list)
+  "Check if each CLI-LIST element exists.
+For each non-existent cli throw a warning."
+  (let ((mcli (my/missing-cli cli-list)))
+    (when mcli
+      (display-warning
+       'environment
+       (format "Missing CLI commands: %s"
+               (string-join mcli ", "))
+       :warning))))
+
+;; (my/cli-sanity-check '("rustup" "uv" "java" "node")) ;; "asdf", "mise"
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
@@ -1149,14 +1094,11 @@
   :config
   (add-to-list 'apheleia-mode-alist '(toml-ts-mode . tombi))
   (add-to-list 'apheleia-formatters '(tombi "tombi" "format"))
-  ;; (apheleia-global-mode)
   )
 
 (use-package disaster
   :ensure t
   :defer t
-  :config
-  ;; (define-key fortran-mode-map (kbd "s-d s") 'disaster)
   )
 
 (use-package cc-mode
@@ -1164,6 +1106,8 @@
   :config
   (define-key c-mode-map (kbd "s-d s") 'disaster)
   (define-key c++-mode-map (kbd "s-d s") 'disaster)
+
+  ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
   (setq-default c-basic-offset 4)
   )
 

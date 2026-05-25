@@ -18,8 +18,6 @@
 
 ;; This needs to be set before use-package is loaded
 (setq use-package-enable-imenu-support t)
-;; Assume `:defer t' by default.
-;; (setq use-package-always-defer t)
 
 ;; Apply vanilla configuration
 (load-file (expand-file-name "my-emacs-config/my-emacs-config.el" user-emacs-directory))
@@ -32,13 +30,6 @@
 
 ;; Define configuration environment for packages authored by me.
 (load-file (expand-file-name "my-emacs-config/my-own-packages-config.el" user-emacs-directory))
-
-;; Comment this if you don't have the file
-;; (load-file (expand-file-name "my-emacs-config/functions/tetris.el" user-emacs-directory))
-
-;; A different way of loading files
-;; (let ((configuration-directory (concat user-emacs-directory "my-emacs-config/")))
-;;   (load (concat configuration-directory "the-entire-line.el")))
 
 ;; Finish checking init speed
 ;;(profiler-report)

@@ -84,9 +84,6 @@
   (setq-default bidi-paragraph-direction 'left-to-right)
   (if (version<= "27.1" emacs-version)
       (setq bidi-inhibit-bpa t))
-
-  ;; Modify the appearance of the region
-  ;; (custom-set-faces '(region ((t :extend t)))) ;; Use ':extend t' or ':extend nil' to modify if region covers entire line.
   )
 
 
@@ -98,20 +95,11 @@
   (window-divider-default-places t)
   :config
   ;; Change font
-  ;; (set-frame-font "Adwaita Mono 12" nil t)
-  ;; (set-frame-font "JetBrainsMono Nerd Font Mono 12" nil t)
-  ;; (set-frame-font "Hack Nerd Font Mono 12" nil t)
-  ;; (set-frame-font "Iosevka Nerd Font Mono 14" nil t)
-  ;; (set-frame-font "FiraCode Nerd Font Mono Light 12" nil t)
-  ;; (set-frame-font "UbuntuSansMono Nerd Font Mono 13" nil t)
-  ;; (set-frame-font "Ioskeley Mono Light 12" nil t)
-  ;; (set-frame-font "Inconsolata Nerd Font Mono 14" nil t)
   (set-frame-font "JuliaMono Light 18" nil t)
   ;; Maximize Emacs on start
-  ;;(add-to-list 'default-frame-alist '(fullscreen . maximized))
-  ;;(toggle-frame-fullscreen)
-  (window-divider-mode +1)
   (toggle-frame-maximized)
+  ;; Add borders to windows
+  (window-divider-mode +1)
   )
 
 (use-package window
@@ -160,6 +148,8 @@
                            (setq-local show-trailing-whitespace nil)
                            (setq-local truncate-lines nil)
                            ))
+         ;; Delete all trailing-whitespaces when saving
+         (before-save . delete-trailing-whitespace)
          )
   :custom
   (line-number-mode t)
@@ -169,7 +159,7 @@
   ;; Show character name in ‘what-cursor-position’
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
-  ;;(save-interprogram-paste-before-kill t)
+  (save-interprogram-paste-before-kill nil)
   (kill-whole-line nil)
   (line-move-visual t)
   (set-mark-command-repeat-pop t)
@@ -182,31 +172,22 @@
   (kill-do-not-save-duplicates t)
   (blink-matching-paren t)
   (next-line-add-newlines nil)
+  (tab-width 8)
   :config
   ;; Enable / disable truncated lines
   (setq-default truncate-lines nil)
   (setq-default word-wrap t) ;; Visual Line mode sets this variable to t
-  ;;(global-visual-line-mode t)
   ;; Use spaces for indentation
-  ;; Alternatively, you can modify the variable `tab-width'
-  ;; (setq-default tab-width 4)
-  (setq-default indent-tabs-mode nil)
+  (indent-tabs-mode -1)
   ;; Show trailing whitespaces
   (setq-default show-trailing-whitespace t)
-  ;; (add-hook 'before-save-hook #'delete-trailing-whitespace)
   ;; Auto-Save-Mode
-  ;; (auto-save-mode +1)
-  ;; (global-display-fill-column-indicator-mode +1)
+  (auto-save-mode -1)
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
   )
 
 (use-package visual-wrap
-  ;; :hook ((org-mode
-  ;;         )
-  ;;        ;; Disable visual-wrap-prefix-mode for some modes
-  ;;        . (lambda ()
-  ;;            (visual-wrap-prefix-mode -1)))
   :custom
   (visual-wrap-extra-indent 0)
   :config
@@ -272,7 +253,7 @@
   :defer t
   :config
   (tool-bar-mode -1)
-  ;;(modifier-bar-mode -1)
+  (modifier-bar-mode -1)
   )
 
 ;; Enable tooltips
@@ -284,7 +265,6 @@
 ;; Enable Vertical Scroll Bar
 (use-package scroll-bar
   :config
-  ;; (scroll-bar-mode 'right)
   (scroll-bar-mode -1)
   )
 
@@ -420,11 +400,11 @@
               ("H-d 2" . diff-buffers))
   :custom
   ;; While (diff-font-lock-syntax 'hunk-also) looks great, it hinders me when I try to check if I added or removed something.
-  ;; (diff-font-lock-syntax 'hunk-also)
   (diff-font-lock-syntax nil) ;; default: t
   (diff-font-lock-prettify t)
-  (diff-switches "-u")
-  ;; (diff-switches '("--color=never"))
+  (diff-switches '("-u")) ;--color=never
+  :config
+  (setq diff-use-changed-face t)
   )
 
 ;; Interactively display differences between files / buffers
@@ -461,7 +441,7 @@
   (eldoc-idle-delay 0.7) ;; default: 0.5
   (eldoc-echo-area-display-truncation-message nil)
   (eldoc-echo-area-prefer-doc-buffer t)
-  ;; (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+  (eldoc-documentation-strategy #'eldoc-documentation-default)
   :config
   (global-eldoc-mode +1)
   )
@@ -518,8 +498,8 @@
   (dired-create-destination-dirs 'ask)
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-auto-revert-buffer nil)
-  ;; :config
-  ;; (setq dired-deletion-confirmer 'y-or-n-p)
+  :config
+  (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
   )
 
 (use-package find-dired
@@ -553,36 +533,7 @@
   (defun my/clear-register ()
     "Remove all elements in `register-alist'"
     (interactive)
-    (setq register-alist nil)
-    ;; (with-temp-file register-file (insert ""))
-    )
-  ;;   (unless savehist-mode
-  ;;     (defvar register-file
-  ;;       (expand-file-name ".cache/register-alist.txt" user-emacs-directory))
-  ;;
-  ;;     (defun my/save-register ()
-  ;;       (unless (file-exists-p register-file)
-  ;;         (make-empty-file register-file))
-  ;;       (let ((pruned (cl-subseq register-alist 0 (min 50 (length register-alist)))))
-  ;;         (when register-alist
-  ;;           (with-temp-file register-file
-  ;;             (prin1 pruned (current-buffer))))))
-  ;;
-  ;;     (defun my/load-register ()
-  ;;       (when (file-exists-p register-file)
-  ;;         (with-temp-buffer
-  ;;           (insert-file-contents register-file)
-  ;;           (condition-case err
-  ;;               (setq register-alist (read (current-buffer)))
-  ;;             (error
-  ;;              (message "Failed to load registers: %s" err)))
-  ;;           ;; (setq register-alist (read (current-buffer)))
-  ;;           )))
-  ;;
-  ;;
-  ;;     (my/load-register)
-  ;;     (add-hook 'kill-emacs-hook #'my/save-register 'append)
-  ;;     )
+    (setq register-alist nil))
   )
 
 (use-package jit-lock
@@ -596,7 +547,6 @@
               )
   :custom
   ;; Control how you want to show info using `what-cursor-position'
-  ;; (describe-char-unidata-list '(name old-name general-category decomposition canonical-combining-class bidi-class decimal-digit-value digit-value numeric-value mirrored iso-10646-comment uppercase lowercase titlecase))
   (describe-char-unidata-list t)
   )
 
@@ -604,11 +554,10 @@
 (use-package calc
   :defer t
   :bind (:map global-map
+              ;; Open full-calc
               ("<Calculator>" . full-calc)
               )
   :init
-  ;; Open full-calc
-  ;; (define-key (current-global-map) (kbd "<Calculator>") 'full-calc)
   :config
   (setq calc-group-digits t)
   :commands (full-calc)
@@ -732,7 +681,7 @@
   (view-read-only nil)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   :config
-  ;; (setq backup-inhibited t)
+  ;; var: backup-inhibited
 
   (defun my/force-backup-of-file ()
     (interactive)
@@ -750,8 +699,6 @@
 
   (define-key (current-global-map) (kbd "s-<0x10081247> s-B f") 'my/force-backup-of-file)
   (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'my/enable-or-disable-backups)
-
-  ;; (add-hook 'before-save-hook 'force-backup-of-buffer)
 
   (auto-save-visited-mode -1)
   )
@@ -781,11 +728,6 @@
 (use-package mwheel
   :custom
   (mouse-wheel-progressive-speed t))
-
-;; (use-package prog-mode
-;;   :hook (prog-mode . prettify-symbols-mode)
-;;   ;; Note: `prettify-symbols-alist' is the list of symbols that are prettified by `prettify-symbols-mode'
-;;   )
 
 ;; Some security config from minimal-emacs.d
 (use-package gnutls
@@ -903,7 +845,7 @@
   (ispell-silently-savep t)
   (ispell-help-in-bufferp 'electric)
   (ispell-program-name "aspell") ;; alt: hunspell
-  ;; (ispell-extra-args '("--sug-mode=ultra" "--lang=en_US" "--dont-run-together"))
+  (ispell-extra-args nil) ;'("--sug-mode=ultra" "--lang=en_US" "--dont-run-together")
 
   ;; Doesn't seem to work on NixOS
   ;; (ispell-dictionary "en_US")
@@ -922,15 +864,7 @@
   :bind (:map global-map
               ("s-<0x10081247> s-F f" . flyspell-mode)
               ("s-<0x10081247> s-F p" . flyspell-prog-mode)
-              ;; flyspell-mode-map
-              ;; ("C-;" . nil)
-              ;; ("C-," . nil)
-              ;; ("C-." . nil)
               )
-  ;; :hook (
-  ;;        ((text-mode org-mode outline-mode) . flyspell-mode)
-  ;;        (prog-mode . flyspell-prog-mode)
-  ;;        )
   :custom
   (flyspell-issue-message-flag t)
   (flyspell-issue-welcome-flag t)
@@ -1077,10 +1011,8 @@
 (use-package hl-line
   :ensure nil
   :hook ((eshell-mode
-          ;;eat-mode
           shell-mode
           term-mode
-	  ;;vterm-mode
           comint-mode
           cfrs-input-mode
           image-mode
@@ -1092,12 +1024,6 @@
   :custom
   (global-hl-line-sticky-flag nil)
   :config
-  ;; Gray, with disabled underline and overline
-  ;; (set-face-background 'hl-line "#303030")
-  ;; (custom-set-faces '(hl-line ((t (:background "#303030" :underline nil :overline nil)))))
-  ;; (set-face-attribute 'hl-line nil :background "#404040" :underline nil :overline nil)
-  ;; (set-face-attribute 'show-paren-match nil
-  ;;                     :background (face-attribute 'hl-line :background))
   (global-hl-line-mode t)
   )
 
@@ -1133,7 +1059,6 @@
 
 (use-package electric
   :config
-  ;; (add-to-list 'electric-indent-chars 32 'append) ;; '(?\n ?\^?)
   (electric-indent-mode 1)
   )
 
@@ -1207,13 +1132,6 @@
               ("C-h M-k" . describe-keymap)
               ("C-h M-f" . describe-face)
               )
-  ;; :config
-  ;; (add-to-list 'display-buffer-alist
-  ;;            '("\\*Help\\*"
-  ;;              (display-buffer-in-side-window)
-  ;;              (side . right)
-  ;;              (slot . 0)
-  ;;              (window-width . 0.5)))
   )
 
 ;; Abbrev config
@@ -1231,13 +1149,13 @@
   :custom
   (dabbrev-upcase-means-case-search t)
   (dabbrev-case-fold-search 'case-fold-search)
+  :config
   ;; (dabbrev-ignored-buffer-regexps
   ;;     '(;; - Buffers starting with a space (internal or temporary buffers)
   ;;       "\\` "
   ;;       ;; Tags files such as ETAGS, GTAGS, RTAGS, TAGS, e?tags, and GPATH,
   ;;       ;; including versions with numeric extensions like <123>
   ;;       "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?"))
-  :config
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\(?:\\(?:[EG]?\\|GR\\)TAGS\\|e?tags\\|GPATH\\)\\(<[0-9]+>\\)?")
   (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
   (add-to-list 'dabbrev-ignored-buffer-modes 'authinfo-mode)
@@ -1253,41 +1171,11 @@
   (((
      prog-mode
      eglot--managed-mode
-     ;; java-mode
-     ;; java-ts-mode
-     ;; emacs-lisp-mode
-     ;; nix-mode
-     ;; nix-ts-mode
-     ;; rust-mode
-     ;; rust-ts-mode
-     ;; markdown-mode
-     ;; js-mode
-     ;; js-ts-mode
-     ;; html-mode
-     ;; html-ts-mode
-     ;; css-mode
-     ;; css-ts-mode
-     ;; json-mode
-     ;; json-ts-mode
-     ;; python-mode
-     ;; python-ts-mode
-     ;; elixir-mode
-     ;; elixir-ts-mode
-     ;; erlang-mode
-     ;; erlang-ts-mode
-     ;; c-mode
-     ;; c++-mode
-     ;; clojure-mode
-     ;; clojure-ts-mode
-     ;; yaml-mode
-     ;; yaml-ts-mode
      ) . flymake-mode))
   :bind (:map flymake-mode-map
               ("H-f l" . flymake-switch-to-log-buffer)
               ("H-f f" . flymake-show-buffer-diagnostics)
               ("H-f p" . flymake-show-project-diagnostics)
-              ;; ("H-f s" . flymake-show-diagnostic)
-              ;; ("H-f g" . flymake-goto-diagnostic)
               )
   :custom
   (flymake-no-changes-timeout 0.5)
@@ -1419,7 +1307,8 @@
           (heex . ("https://github.com/phoenixframework/tree-sitter-heex"))
 	  )
         )
-  ;; To install all the grammars at once use this: (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
+  ;; To install all the grammars at once use this:
+  ;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
   (dolist (lang treesit-language-source-alist)
     (unless (treesit-language-available-p (car lang))
       (treesit-install-language-grammar (car lang))))
@@ -1496,8 +1385,8 @@
               ("s-e q f" . eglot-code-action-quickfix)
               ("s-e s d" . eglot-shutdown)
               ("s-e f t" . eglot-find-typeDefinition)
+              ("s-e f m" . eglot-format)
               ("s-e f b" . eglot-format-buffer)
-              ("s-e f r" . eglot-format)
               ("s-e r n" . eglot-rename)
               ("s-e r w" . eglot-code-action-rewrite)
               ("s-e r c" . eglot-reconnect)
@@ -1510,27 +1399,21 @@
   (eglot-connect-timeout 30)
   (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider), '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider), '(:hoverProvider :documentHighlightProvider :documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
   (eglot-events-buffer-config '(:size 2000000 :format full))
-  (eglot-extend-to-xref nil)
+  (eglot-extend-to-xref t)
   (eglot-send-changes-idle-time 0.5)
   (eglot-report-progress t)
   :config
-  ;; (fset #'jsonrpc--log-event #'ignore)
-  ;; (setq jsonrpc-event-hook nil)
-
   ;; Enable cache busting, depending on if your server returns
   ;; sufficiently many candidates in the first place.
+  ;; https://github.com/minad/corfu/wiki#continuously-update-the-candidates
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-  ;; (advice-add 'eglot-completion-at-point :around #'cape-wrap-nonexclusive)
-
-  ;; (setopt eglot-send-changes-idle-time 0.5
-  ;;         eglot-extend-to-xref nil)
 
   (add-to-list 'eglot-server-programs
                '((rust-ts-mode rust-mode) .
                  ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
 
   ;; You need a Java compiler to use the lsp server JDTLS.
-  ;; Also, you need to concat the absolute path, not relative.
+  ;; You also need to concat the absolute path, not relative.
   ;; (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
 
   ;; You can find the settings for JDTLS here: marketplace dot visualstudio dot com / items ?itemName=redhat.java
@@ -1551,14 +1434,7 @@
                      :completion
                      (:maxResults "100")))))))
 
-  ;;   (add-to-list 'eglot-server-programs
-  ;;              `((java-mode java-ts-mode) .
-  ;;                ("jdtls"
-  ;;                 :initializationOptions
-  ;;                 (:bundles
-  ;;                  ;; This needs to be the absolute path to java-debug-adapter
-  ;;                  [,(expand-file-name "~/.emacs.d/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-0.53.2.jar")]))))
-
+  ;; Alternative code (probably used as project-specific configuration):
   ;; (setq-default eglot-workspace-configuration
   ;;               `(:java
   ;;                 (:format
@@ -1577,7 +1453,6 @@
                   (typescript-ts-mode :language-id "typescript")
                   (typescript-mode :language-id "typescript"))
                  . ("typescript-language-server" "--stdio")))
-  ;; . ("rass" "--" "typescript-language-server" "--stdio" "--" "quick-lint-js" "--lsp-server")))
 
   (add-to-list 'eglot-server-programs
                '((python-ts-mode python-mode) .
@@ -1590,10 +1465,6 @@
   ;; (add-to-list 'eglot-server-programs
   ;;              '((c++-mode c-mode) .
   ;;                ("clangd")))
-
-  ;; (add-hook 'prog-mode-hook
-  ;;           (lambda ()
-  ;;             (add-hook 'before-save-hook 'eglot-format nil t)))
 
   (add-to-list 'eglot-server-programs
                '((nix-mode) .
@@ -1660,10 +1531,7 @@
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-;; narrow-to-region
-;; narrow-to-page
-;; upcase-region
-;; downcase-region
+
 ;; list-threads
 ;; erase-buffer
 ;; scroll-left

@@ -7,11 +7,6 @@
 
 (use-package package-lint
   :ensure t
-  ;; :load-path "~/.emacs.d/elpa/package-lint/"
-  ;; :vc (:url "https://github.com/purcell/package-lint"
-  ;;           :rev :newest
-  ;;           :branch "master"
-  ;;           :vc-backend Git)
   ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
 
 (use-package package-lint-flymake
@@ -22,8 +17,8 @@
   :ensure nil
   :load-path "~/.emacs.d/elpa/guava-themes/"
   :custom
-  ;; (guava-themes-visible-bell-duration 0.3)
-  ;; (guava-themes-visible-bell-idle-delay 0.3)
+  (guava-themes-visible-bell-duration 0.15)
+  (guava-themes-visible-bell-idle-delay 0.0)
   (ring-bell-function #'guava-themes-change-visible-bell)
   (visible-bell t)
   :config
