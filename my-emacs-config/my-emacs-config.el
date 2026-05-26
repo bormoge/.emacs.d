@@ -75,6 +75,12 @@
   (cursor-type t)
   ;; Default image scaling
   (image-scaling-factor 'auto)
+  ;; Don't use the system font
+  (font-use-system-font nil)
+  ;; Resizing configuration
+  (frame-resize-pixelwise t)
+  (window-resize-pixelwise t)
+  (mode-line-compact nil)
 
   :config
   ;; Disable compact font caches
@@ -114,6 +120,16 @@
   (switch-to-buffer-obey-display-actions nil)
   (split-height-threshold nil)
   (split-width-threshold 80)
+  :config
+  (add-to-list 'display-buffer-alist
+             '((or . ((derived-mode . occur-mode)
+                      (derived-mode . grep-mode)
+                      (derived-mode . Buffer-menu-mode)
+                      (derived-mode . log-view-mode)
+                      (derived-mode . help-mode)
+		      ))
+               (display-buffer-reuse-mode-window display-buffer-below-selected)
+               (body-function . select-window)))
   )
 
 ;; Enable syntax highlighting
@@ -159,7 +175,7 @@
   ;; Show character name in ‘what-cursor-position’
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
-  (save-interprogram-paste-before-kill nil)
+  (save-interprogram-paste-before-kill t)
   (kill-whole-line nil)
   (line-move-visual t)
   (set-mark-command-repeat-pop t)
@@ -172,11 +188,13 @@
   (kill-do-not-save-duplicates t)
   (blink-matching-paren t)
   (next-line-add-newlines nil)
-  (tab-width 8)
-  :config
   ;; Enable / disable truncated lines
-  (setq-default truncate-lines nil)
-  (setq-default word-wrap t) ;; Visual Line mode sets this variable to t
+  (truncate-lines nil)
+  (word-wrap t) ;; Visual Line mode sets this variable to t
+  (tab-width 8)
+  ;; Show current directory when prompting for a shell command
+  (shell-command-prompt-show-cwd t)
+  :config
   ;; Use spaces for indentation
   (indent-tabs-mode -1)
   ;; Show trailing whitespaces
@@ -226,6 +244,7 @@
   :config
   (setq tab-bar-tab-name-ellipsis t)
   (tab-bar-mode +1)
+  (tab-bar-history-mode -1)
   )
 
 ;; Tab Lines
@@ -323,7 +342,6 @@
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
-  :defer t
   :hook (savehist-save-hook . (lambda ()
                                 (setq kill-ring
                                       (mapcar #'substring-no-properties
@@ -367,6 +385,9 @@
   (completions-format 'horizontal)
   (completions-group nil)
   (completion-auto-select nil)
+  (minibuffer-visible-completions nil)
+  (completion-eager-update t) ;; Emacs-31
+  (completion-eager-display t) ;; Emacs-31
   )
 
 ;; Enable right click menu
@@ -377,18 +398,24 @@
 
 (use-package vc
   :defer t
-  :bind (:map vc-dir-mode-map
-              ("r" . vc-dir-refresh)
-              )
   :custom
   (vc-follow-symlinks 'ask)
   (vc-git-diff-switches '("--histogram")) ;; default: t
   (vc-git-print-log-follow nil)
   (vc-make-backup-files nil)
   (vc-command-messages nil)
+  (vc-find-revision-no-save nil)
+  ;; Deduce vc on all buffers
+  (vc-deduce-backend-nonvc-modes t) ;; default: '(dired-mode shell-mode eshell-mode compilation-mode)
   :config
-  (require 'vc-dir)
   (setq vc-log-short-style '(directory file))
+  )
+
+(use-package vc-dir
+  :defer t
+  :bind (:map vc-dir-mode-map
+              ("r" . vc-dir-refresh)
+              )
   )
 
 ;; Display differences between files / buffers
@@ -495,9 +522,9 @@
   (dired-free-space 'first)
   (dired-dwim-target t)
   (dired-vc-rename-file t)
-  (dired-create-destination-dirs 'ask)
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-auto-revert-buffer nil)
+  (dired-clean-up-buffers-too t)
   :config
   (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
   )
@@ -507,11 +534,24 @@
               ("H-f d" . find-name-dired))
   )
 
+(use-package wdired
+  :defer t
+  :custom
+  (wdired-create-parent-directories t)
+  )
+
+(use-package dired-aux
+  :defer t
+  :custom
+  (dired-create-destination-dirs 'ask)
+  (dired-create-destination-dirs-on-trailing-dirsep t)
+  )
+
 ;; grep config
 (use-package grep
   ;; Set key for grep
   :bind (:map global-map
-              ("H-g" . grep))
+              ("H-x g" . grep))
   :custom
   ;; This setting is a pre-requirement for nerd-icons-grep, so an
   ;; icon can be displayed near each heading
@@ -599,6 +639,7 @@
                                (setq-local isearch-case-fold-search nil))))
   :custom
   (isearch-lax-whitespace t)
+  (isearch-regexp-lax-whitespace nil)
   ;; Count the number of instances and show that number on the minibuffer.
   (isearch-lazy-count t)
   (lazy-count-prefix-format "(%s/%s) ")
@@ -678,7 +719,7 @@
   (auto-save-visited-interval 30)
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
-  (view-read-only nil)
+  (view-read-only t)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   :config
   ;; var: backup-inhibited
@@ -887,6 +928,25 @@
   :commands (repeat repeat-mode describe-repeat-maps)
   )
 
+(use-package python
+  :defer t
+  :bind ((:map python-mode-map
+              ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+              )
+	 (:map python-ts-mode-map
+	       ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+	       )
+	 )
+  :custom
+  (python-fill-docstring-style 'pep-257)
+  )
+
+(use-package etags-regen
+  :defer t
+  :config
+  (etags-regen-mode -1)
+  )
+
 
 
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
@@ -996,7 +1056,9 @@
      doom-themes
      magit
      diff-hl
-     )))
+     ))
+  (package-menu-use-current-if-no-marks t)
+  )
 
 (use-package xref
   :custom
@@ -1075,6 +1137,8 @@
 
 (use-package shr
   :custom
+  (shr-use-colors t)
+  (shr-use-fonts t)
   (shr-max-image-proportion 0.4)
   )
 
@@ -1600,3 +1664,12 @@
 ;; Review policy (Emacs-31)
 ;; (setq package-review-policy t
 ;;      package-review-diff-command '("git" "diff" "--no-index" "--color=never" "--diff-filter=d"))
+
+;; Like 'global-auto-revert-mode' but limited to VCS-tracked files (Emacs-31)
+;; (vc-auto-revert-mode)
+
+;; Ask to save relevant vc buffers (Emacs-31)
+;; (setopt vc-dir-save-some-buffers-on-revert t)
+
+;; C-x v I' and 'C-x v O' become prefix commands (Emacs-31)
+;; (setopt vc-use-incoming-outgoing-prefixes t)

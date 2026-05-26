@@ -620,6 +620,7 @@
 ;; Consult
 (use-package consult
   :ensure t
+  :demand t
   ;; Replace bindings. Lazily loaded by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
          ("C-c M-x" . consult-mode-command)
@@ -875,6 +876,7 @@
 
 (use-package embark-consult
   :ensure t
+  :after (embark consult)
   )
 
 (use-package avy-embark-collect
@@ -888,7 +890,7 @@
   ;;:after vertico
   :custom
   (orderless-style-dispatchers '(orderless-affix-dispatch))
-  (completion-styles '(orderless partial-completion basic)) ;; partial-completion / '(orderless basic)
+  (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
                                    (eglot (styles orderless))
@@ -1196,6 +1198,9 @@ For each non-existent cli throw a warning."
   (setq cider-eldoc-display-for-symbol-at-point t)
   (setq cider-prompt-for-symbol nil)
   (setq cider-use-xref t)
+
+  (add-to-list 'auto-mode-alist '("\\.boot$" . clojure-mode))
+  (add-to-list 'auto-mode-alist '("\\.cljs.*$" . clojure-mode))
   :commands (cider cider-jack-in)
   )
 
