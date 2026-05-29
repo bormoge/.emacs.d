@@ -207,7 +207,6 @@
   ;; Remap the snippet expansion from TAB to H-TAB
   (define-key yas-minor-mode-map [(tab)] nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "s-<tab>") 'yas-expand)
   (define-key yas-minor-mode-map (kbd "s-<0x10081247> <tab>") 'yas-expand)
   (define-key yas-minor-mode-map (kbd "s-<0x10081247> S-s-<iso-lefttab>") 'yas-expand)
   :custom
@@ -221,7 +220,16 @@
 ;; Package to fold code using tree-sitter technology
 (use-package treesit-fold
   :ensure t
-  :defer t)
+  :demand t
+  :bind (:map treesit-fold-mode-map
+              ("s-<tab>" . treesit-fold-toggle)
+              ("s-<iso-lefttab> <backspace>" . treesit-fold-close-all)
+              ("s-<iso-lefttab> s-<iso-lefttab>" . treesit-fold-open-all)
+              )
+  :config
+  (global-treesit-fold-mode +1)
+  (global-treesit-fold-indicators-mode +1)
+  )
 
 ;; Focus on selected text
 (use-package focus
@@ -236,15 +244,15 @@
 ;; avy
 (use-package avy
   :ensure t
-  :init
   ;; Mapping keys for avy
-  (global-set-key (kbd "C-: c 1") 'avy-goto-char)
-  (global-set-key (kbd "C-: c 2") 'avy-goto-char-2)
-  (global-set-key (kbd "C-: w 1") 'avy-goto-word-0)
-  (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
-  (global-set-key (kbd "C-: w 2") 'avy-goto-word-1)
-  (global-set-key (kbd "C-: e 1") 'avy-embark-collect-choose)
-  (global-set-key (kbd "C-: e 2") 'avy-embark-collect-act)
+  :bind (:map global-map
+              ("s-: c 1" . avy-goto-char)
+              ("s-: c 2" . avy-goto-char-2)
+              ("s-: w 1" . avy-goto-word-0)
+              ("s-: w 2" . avy-goto-word-1)
+              ("s-: e 1" . avy-embark-collect-choose)
+              ("s-: e 2" . avy-embark-collect-act)
+              )
   :custom
   (avy-case-fold-search nil)
   (avy-all-windows nil)
@@ -341,7 +349,7 @@
               ("s-d p" . devdocs-peruse)
               )
   :custom
-  (devdocs-data-dir (expand-file-name ".cache/devdocs" user-emacs-directory))
+  (devdocs-data-dir (expand-file-name "devdocs" user-emacs-directory))
   )
 
 ;; When using NixOS, install nix-mode and nix-ts-mode
@@ -399,14 +407,11 @@
   (lin-global-mode)
   )
 
-;; page-break-lines: show FORM-FEED characters as long lines.
-(use-package page-break-lines
+;; form-feed: show FORM-FEED characters as long lines.
+(use-package form-feed
   :ensure t
-  :hook ((
-          ;; tex-mode
-          prog-mode
-          text-mode
-          org-mode) . page-break-lines-mode)
+  :config
+  (global-form-feed-mode)
   )
 
 ;; buffer-to-pdf: convert buffers to pdf files.
@@ -442,7 +447,7 @@
          )
   :custom
   (elfeed-feeds rss-links)
-  (elfeed-db-directory (expand-file-name ".config/elfeed" user-emacs-directory))
+  (elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (elfeed-search-filter "+unread") ;; default: "@6months +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
   (elfeed-search-separator-date-format "%A, %d/%m/%Y")
@@ -463,8 +468,9 @@
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
   :config
-  (unless (find-font (font-spec :name "Symbols Nerd Font Mono"))
-    (nerd-icons-install-fonts)) ;; Install the Symbols Nerd Font
+  (when (display-graphic-p)
+    (unless (find-font (font-spec :name "Symbols Nerd Font Mono"))
+      (nerd-icons-install-fonts))) ;; Install the Symbols Nerd Font
 
   ;; (advice-add 'set-frame-font :after
   ;;             (lambda (&rest _) (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
@@ -1365,6 +1371,10 @@ For each non-existent cli throw a warning."
 (use-package auctex
   :ensure t
   :defer t
+  :custom
+  (TeX-process-asynchronous t)
+  (TeX-check-TeX t)
+  (TeX-engine 'default)
   :config
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
@@ -1377,6 +1387,7 @@ For each non-existent cli throw a warning."
   ;; (setq TeX-PDF-mode t) ;; use PDFTeX by default
   ;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
   ;; (setq reftex-plug-into-AUCTeX t)
+  ;; (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   )
 
 ;; RefTeX
@@ -1387,16 +1398,18 @@ For each non-existent cli throw a warning."
 ;; pdf-tools
 (use-package pdf-tools
   :ensure t
+  :defer t
   :mode ("\\.pdf\\'" . pdf-view-mode)
+  :custom
+  (pdf-info-epdfinfo-program "~/.emacs.d/.cache/epdfinfo")
   :config
   (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
   ;; For more info about dependencies check ~/.emacs.d/elpa/pdf-tools-1.3.0/server/autobuild
   ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
   ;; Dependencies (NixOS Linux): automake autoconf pkg-config libpng zlib poppler
-  (setq pdf-info-epdfinfo-program "~/.emacs.d/.cache/epdfinfo")
-  ;;(setq-default pdf-view-display-size 'fit-page)
-  ;;(setq pdf-annot-activate-created-annotations t)
-  (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
+
+  ;; (setq-default pdf-view-display-size 'fit-page)
+  ;; (setq pdf-annot-activate-created-annotations t)
   (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
   )
 

@@ -1,4 +1,4 @@
-;; doom-themes
+;; ;; doom-themes
 ;; (use-package doom-themes
 ;;   :ensure t
 ;;   :defer t
@@ -80,7 +80,7 @@
 ;;   (load-theme 'doom-dark+ t)
 ;;   )
 
-;; spacemacs-theme
+;; ;; spacemacs-theme
 ;; (use-package spacemacs-theme
 ;;   :vc (:url "https://github.com/nashamri/spacemacs-theme"
 ;;        :rev :newest
@@ -88,7 +88,7 @@
 ;;   :ensure t
 ;;   :defer t)
 
-;; catppuccin-theme
+;; ;; catppuccin-theme
 ;; (use-package catppuccin-theme
 ;;   :ensure t
 ;;   :defer t
@@ -97,12 +97,12 @@
 ;;   (catppuccin-reload)
 ;;   )
 
-;; kanagawa-themes
+;; ;; kanagawa-themes
 ;; (use-package kanagawa-themes
 ;;   :ensure t
 ;;   :defer t)
 
-;; everforest-theme
+;; ;; everforest-theme
 ;; (use-package everforest
 ;;   :vc (:url "https://github.com/Theory-of-Everything/everforest-emacs"
 ;;        :rev :newest
@@ -138,21 +138,10 @@
 ;;        :branch "main")
 ;;   :ensure t)
 
-;; nordic-night-theme
+;; ;; nordic-night-theme
 ;; (use-package nordic-night-theme
 ;;   :ensure t)
 
-;; temple-os-emacs-theme
-;; (use-package temple-os-emacs-theme
-;;   :vc (:url "https://github.com/Senka07/temple-os-emacs-theme"
-;;        :rev :newest
-;;        :branch "main"
-;;        :vc-backend Git)
-;;   :ensure t
-;;   :defer t
-;;   )
-
-;; (use-package vscode-dark-plus-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'vscode-dark-plus t))
+;; ;; tokyo-night
+;; (use-package tokyo-night
+;;   :ensure t)

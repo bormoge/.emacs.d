@@ -59,6 +59,7 @@
   (delete-pair-push-mark t)
   ;; When deleting a pair, do it immediatly
   (delete-pair-blink-delay 0)
+  ;; Show boundaries around buffer edges
   (indicate-buffer-boundaries t)
   ;; Limit history length
   (history-length 150)
@@ -70,8 +71,7 @@
   (highlight-nonselected-windows nil)
   ;; Make the cursor noticeable
   (visible-cursor t)
-  ;; (cursor-type '(bar . 7)) ;; default: t
-  ;; Change default cursor type
+  ;; Customize cursor
   (cursor-type t)
   ;; Default image scaling
   (image-scaling-factor 'auto)
@@ -101,7 +101,9 @@
   (window-divider-default-places t)
   :config
   ;; Change font
-  (set-frame-font "JuliaMono Light 18" nil t)
+  ;; Note that when Emacs is used inside a terminal (-nw) the font used is the same as the terminal's.
+  (when (display-graphic-p)
+    (set-frame-font "JuliaMono Light 18" nil t))
   ;; Maximize Emacs on start
   (toggle-frame-maximized)
   ;; Add borders to windows
@@ -165,7 +167,7 @@
                            (setq-local truncate-lines nil)
                            ))
          ;; Delete all trailing-whitespaces when saving
-         (before-save . delete-trailing-whitespace)
+         (before-save . my/delete-trailing-whitespace)
          )
   :custom
   (line-number-mode t)
@@ -175,6 +177,7 @@
   ;; Show character name in ‘what-cursor-position’
   (what-cursor-show-names t)
   (copy-region-blink-predicate #'region-indistinguishable-p); default: #'region-indistinguishable-p
+  ;; The clipboard text is saved to the ‘kill-ring’ prior to any kill command
   (save-interprogram-paste-before-kill t)
   (kill-whole-line nil)
   (line-move-visual t)
@@ -194,15 +197,22 @@
   (tab-width 8)
   ;; Show current directory when prompting for a shell command
   (shell-command-prompt-show-cwd t)
+  ;; Show trailing whitespaces
+  (show-trailing-whitespace t)
+  ;; Delete trailing whitespaces
+  (delete-trailing-lines t)
+
   :config
   ;; Use spaces for indentation
   (indent-tabs-mode -1)
-  ;; Show trailing whitespaces
-  (setq-default show-trailing-whitespace t)
   ;; Auto-Save-Mode
   (auto-save-mode -1)
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
+
+  (defun my/delete-trailing-whitespace ()
+    "Call `delete-trailing-whitespace' unless the buffer is read-only."
+    (unless buffer-read-only (delete-trailing-whitespace)))
   )
 
 (use-package visual-wrap
@@ -349,12 +359,12 @@
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "history"))
-  (savehist-additional-variables '((kill-ring . 10)
-                                   (search-ring . 10)
-                                   (regexp-search-ring . 10)
-                                   (mark-ring . 10)
-                                   (global-mark-ring . 10)
+  (savehist-additional-variables '((kill-ring . 1)
+                                   (search-ring . 1)
+                                   (regexp-search-ring . 1)
                                    (register-alist . 10)
+                                   ;; (mark-ring . 1)
+                                   ;; (global-mark-ring . 1)
                                    ))
   (savehist-ignored-variables '(recentf-list))
   :config
@@ -979,7 +989,7 @@
      python-pytest
      consult-flyspell
      clj-refactor
-     page-break-lines
+     form-feed
      lin
      puni
      consult-symbol
@@ -1209,7 +1219,9 @@
 (use-package dabbrev
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand)
-         ("C-M-<Ungrab>" . dabbrev-expand))
+         ("C-M-<Ungrab>" . dabbrev-expand)
+	 ("C-s-<kp-divide>" . dabbrev-completion)
+	 )
   :custom
   (dabbrev-upcase-means-case-search t)
   (dabbrev-case-fold-search 'case-fold-search)
