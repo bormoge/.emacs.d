@@ -341,9 +341,9 @@
   :defer t
   :ensure t
   :bind (:map global-map
-              ("s-d d" . devdocs-lookup)
+              ("s-d l" . devdocs-lookup)
               ("s-d i" . devdocs-install)
-              ("s-d l" . devdocs-delete)
+              ("s-d d" . devdocs-delete)
               ("s-d a" . devdocs-update-all)
               ("s-d s" . devdocs-search)
               ("s-d p" . devdocs-peruse)

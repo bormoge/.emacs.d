@@ -358,7 +358,7 @@
                                               (cl-remove-if-not #'stringp kill-ring)))))
   :custom
   (savehist-save-minibuffer-history t)
-  (savehist-file (concat user-emacs-directory "history"))
+  (savehist-file (concat user-emacs-directory "savehist"))
   (savehist-additional-variables '((kill-ring . 1)
                                    (search-ring . 1)
                                    (regexp-search-ring . 1)
