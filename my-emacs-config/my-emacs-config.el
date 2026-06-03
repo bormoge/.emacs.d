@@ -124,14 +124,14 @@
   (split-width-threshold 80)
   :config
   (add-to-list 'display-buffer-alist
-             '((or . ((derived-mode . occur-mode)
-                      (derived-mode . grep-mode)
-                      (derived-mode . Buffer-menu-mode)
-                      (derived-mode . log-view-mode)
-                      (derived-mode . help-mode)
-		      ))
-               (display-buffer-reuse-mode-window display-buffer-below-selected)
-               (body-function . select-window)))
+               '((or . ((derived-mode . occur-mode)
+			(derived-mode . grep-mode)
+			(derived-mode . Buffer-menu-mode)
+			(derived-mode . log-view-mode)
+			(derived-mode . help-mode)
+			))
+		 (display-buffer-reuse-mode-window display-buffer-below-selected)
+		 (body-function . select-window)))
   )
 
 ;; Enable syntax highlighting
@@ -205,8 +205,6 @@
   :config
   ;; Use spaces for indentation
   (indent-tabs-mode -1)
-  ;; Auto-Save-Mode
-  (auto-save-mode -1)
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
 
@@ -274,7 +272,7 @@
 ;; Enable menu-bar
 (use-package menu-bar
   :config
-  (menu-bar-mode +1)
+  (menu-bar-mode -1)
   )
 
 ;; Disable tool-bar
@@ -552,6 +550,8 @@
 
 (use-package dired-aux
   :defer t
+  :bind (:map dired-mode-map
+              ("s-w" . dired-do-async-shell-command))
   :custom
   (dired-create-destination-dirs 'ask)
   (dired-create-destination-dirs-on-trailing-dirsep t)
@@ -726,7 +726,7 @@
   (confirm-nonexistent-file-or-buffer 'after-completion)
   (safe-local-variable-values
    '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
-  (auto-save-visited-interval 30)
+  (auto-save-visited-interval 480)
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
   (view-read-only t)
@@ -941,8 +941,8 @@
 (use-package python
   :defer t
   :bind ((:map python-mode-map
-              ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
-              )
+               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+               )
 	 (:map python-ts-mode-map
 	       ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
 	       )
@@ -999,7 +999,6 @@
      package-lint
      package-lint-flymake
      guava-themes
-     breadcrumb
      devdocs
      consult-dir
      elfeed
@@ -1180,6 +1179,8 @@
   :bind (:map global-map
               ;; Delete duplicate lines using Hyper + ALT + <backspace>
               ("H-M-<backspace>" . delete-duplicate-lines)
+	      ;; Alphabetically sort lines in region.
+              ("H-x s" . sort-lines)
               ))
 
 (use-package ibuffer

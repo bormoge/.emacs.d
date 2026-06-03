@@ -360,13 +360,6 @@
   (use-package nix-ts-mode
     :ensure t))
 
-;; breadcrumb: Emacs header line for projects
-(use-package breadcrumb
-  :ensure t
-  :init
-  (breadcrumb-mode)
-  )
-
 ;; helpful: alternative to help commands (C-h).
 (use-package helpful
   :ensure t
@@ -410,8 +403,10 @@
 ;; form-feed: show FORM-FEED characters as long lines.
 (use-package form-feed
   :ensure t
-  :config
-  (global-form-feed-mode)
+  :hook ((prog-mode . form-feed-mode)
+	 (text-mode . form-feed-mode)
+	 (org-mode . form-feed-mode)
+	 )
   )
 
 ;; buffer-to-pdf: convert buffers to pdf files.

@@ -26,6 +26,7 @@
   (set-face-attribute 'mode-line nil :font "JuliaMono Light 12")
   (set-face-attribute 'tab-line nil :font "JuliaMono Light 12" :weight 'bold)
   (set-face-attribute 'tab-bar nil :font "JuliaMono Light 12" :weight 'bold)
+  (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
   )
 
 ;; (use-package guava-themes
