@@ -37,6 +37,7 @@
   (scroll-conservatively 100000)
   (scroll-margin 6)
   (scroll-step 1)
+  ;; When scrolling preserve cursor position
   (scroll-preserve-screen-position t)
   ;; Short yes or no answer
   (use-short-answers t)
@@ -103,7 +104,9 @@
   ;; Change font
   ;; Note that when Emacs is used inside a terminal (-nw) the font used is the same as the terminal's.
   (when (display-graphic-p)
-    (set-frame-font "JuliaMono Light 18" nil t))
+    ;; (set-frame-font "JuliaMono Light 18" nil t)
+    (set-frame-font "IoskeleyMonoTerm Nerd Font Light 18" nil t)
+    )
   ;; Maximize Emacs on start
   (toggle-frame-maximized)
   ;; Add borders to windows
@@ -957,6 +960,16 @@
   (etags-regen-mode -1)
   )
 
+(use-package cc-mode
+  :defer t
+  :custom
+  ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
+  (c-basic-offset 4)
+  :config
+  (define-key c-mode-map (kbd "s-d s") 'disaster)
+  (define-key c++-mode-map (kbd "s-d s") 'disaster)
+  )
+
 
 
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
@@ -983,6 +996,7 @@
      ))
   (package-selected-packages
    '(
+     ligature
      buffer-to-pdf
      git-modes
      python-coverage

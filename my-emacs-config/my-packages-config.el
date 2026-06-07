@@ -372,7 +372,7 @@
               ("C-h s-d" . helpful-at-point)
               ("C-h s-F" . helpful-function)
               )
-  :config
+  :init
   (require 'shortdoc)
   :commands (helpful-callable helpful-variable helpful-key helpful-command helpful-at-point helpful-function)
   )
@@ -418,6 +418,18 @@
   :defer t
   :custom
   (buffer-to-pdf-directory (expand-file-name "buffer-to-pdf/" user-emacs-directory))
+  )
+
+;; ligature: enable font ligatures
+(use-package ligature
+  :ensure t
+  :hook ((prog-mode . ligature-mode))
+  :config
+  ;; Enable all Iosevka ligatures in programming modes
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   )
 
 
@@ -996,26 +1008,27 @@ For each non-existent cli throw a warning."
    (lambda ()
      (dolist (pkg
               '(
-                "black"
-                "clangd"
-                "cljfmt"
-                "clojure-lsp"
-                "codelldb"
-                "css-lsp"
-                ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
-                "html-lsp"
-                "java-debug-adapter"
-                "jdtls"
-                "js-debug-adapter"
-                "json-lsp"
-                "prettier"
-                "rassumfrassum"
-                "ruff"
-                "rust-analyzer"
-                "tombi"
-                "ty"
-                "typescript-language-server"
-                "yaml-language-server"
+                ;; "black"
+                ;; "clangd"
+		;; "clang-format"
+                ;; "cljfmt"
+                ;; "clojure-lsp"
+                ;; "codelldb"
+                ;; "css-lsp"
+                ;; ;; "debugpy" ;; couldn't make mason-installed debugpy work, so I ended up installing it through uv.
+                ;; "html-lsp"
+                ;; "java-debug-adapter"
+                ;; "jdtls"
+                ;; "js-debug-adapter"
+                ;; "json-lsp"
+                ;; "prettier"
+                ;; "rassumfrassum"
+                ;; "ruff"
+                ;; "rust-analyzer"
+                ;; "tombi"
+                ;; "ty"
+                ;; "typescript-language-server"
+                ;; "yaml-language-server"
                 ))
        (unless (mason-installed-p pkg)
 	 (ignore-errors (mason-install pkg))))))
@@ -1102,16 +1115,7 @@ For each non-existent cli throw a warning."
 (use-package disaster
   :ensure t
   :defer t
-  )
-
-(use-package cc-mode
-  :defer t
-  :config
-  (define-key c-mode-map (kbd "s-d s") 'disaster)
-  (define-key c++-mode-map (kbd "s-d s") 'disaster)
-
-  ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
-  (setq-default c-basic-offset 4)
+  :commands (disaster)
   )
 
 
