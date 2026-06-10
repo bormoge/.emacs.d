@@ -493,7 +493,7 @@
 
 (use-package nerd-icons-completion
   :ensure t
-  :after marginalia
+  :after (marginalia)
   :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
   :config
   (nerd-icons-completion-mode)
@@ -545,10 +545,6 @@
         ("TAB" . corfu-insert)
         ([tab] . corfu-insert)
 	("H-<tab>" . yas-expand)
-	("H-d" . corfu-popupinfo-mode)
-	("H-t" . corfu-popupinfo-toggle)
-	("S-<down>" . corfu-popupinfo-scroll-up)
-	("S-<up>" . corfu-popupinfo-scroll-down)
         ("M-m" . my/corfu-move-to-minibuffer)
         ("C-g" . corfu-quit)
 	)
@@ -559,7 +555,6 @@
   (corfu-auto-delay 0.5)
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
-  (corfu-popupinfo-delay '(2.0 . 0.5))
   (corfu-quit-no-match 'separator)
   :config
   ;; https://github.com/minad/corfu#transfer-completion-to-the-minibuffer
@@ -573,6 +568,19 @@
   (add-to-list 'corfu-continue-commands #'my/corfu-move-to-minibuffer)
 
   (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
+  )
+
+(use-package corfu-popupinfo
+  :after (corfu)
+  :bind (:map corfu-map
+	      ("H-d" . corfu-popupinfo-mode)
+	      ("H-t" . corfu-popupinfo-toggle)
+	      ("S-<down>" . corfu-popupinfo-scroll-up)
+	      ("S-<up>" . corfu-popupinfo-scroll-down)
+	      )
+  :custom
+  (corfu-popupinfo-delay '(2.0 . 0.5))
+  :commands (corfu-popupinfo-mode corfu-popupinfo-toggle)
   )
 
 ;; Cape

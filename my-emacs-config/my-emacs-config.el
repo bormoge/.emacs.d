@@ -266,6 +266,7 @@
   (tab-line-tab-name-truncated-max 20)
   (tab-line-new-button-show nil)
   (tab-line-close-button-show nil)
+  ;; (tab-line-define-keys) ;; Emacs-31
   :config
   (setq tab-line-tab-name-ellipsis t)
   (add-to-list 'tab-line-tab-face-functions #'tab-line-tab-face-inactive-alternating)
@@ -1292,6 +1293,7 @@
   (org-startup-truncated t)
   (org-fontify-todo-headline t)
   (org-fontify-done-headline t)
+  (org-deadline-warning-days 35)
   ;;(org-return-follows-link nil)
   ;;(org-hide-emphasis-markers nil)
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
