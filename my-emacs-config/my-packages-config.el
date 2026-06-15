@@ -160,8 +160,8 @@
   (diff-hl-show-staged-changes t)
   (diff-hl-draw-borders t)
   (diff-hl-global-modes '(not
-			  image-mode
-			  pdf-view-mode))
+                          image-mode
+                          pdf-view-mode))
   ;; Ensure VC is enabled
   ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   )
@@ -404,9 +404,9 @@
 (use-package form-feed
   :ensure t
   :hook ((prog-mode . form-feed-mode)
-	 (text-mode . form-feed-mode)
-	 (org-mode . form-feed-mode)
-	 )
+         (text-mode . form-feed-mode)
+         (org-mode . form-feed-mode)
+         )
   )
 
 ;; buffer-to-pdf: convert buffers to pdf files.
@@ -442,6 +442,10 @@
 
 (use-package elfeed
   :ensure t
+  :bind (:map global-map
+              ("s-<0x10081247> s-E e" . elfeed)
+              ("s-<0x10081247> s-E u" . elfeed-update)
+              )
   :hook ((elfeed-search-mode . (lambda ()
                                  (setq-local show-trailing-whitespace nil)
                                  (setq-local truncate-lines t)
@@ -450,18 +454,15 @@
                                (setq-local show-trailing-whitespace nil)
                                (setq-local truncate-lines t)
                                ))
-         (elfeed-search-update-hook . (elfeed-search-add-separators))
+         (elfeed-search-update . elfeed-search-add-separators)
          )
   :custom
   (elfeed-feeds rss-links)
   (elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (elfeed-search-filter "+unread") ;; default: "@6months +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
-  (elfeed-search-separator-date-format "%A, %d/%m/%Y")
+  (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y)
   (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
-  :init
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-E e") 'elfeed)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-E u") 'elfeed-update)
   :commands (elfeed)
   )
 
@@ -544,10 +545,10 @@
         ([return] . newline)
         ("TAB" . corfu-insert)
         ([tab] . corfu-insert)
-	("H-<tab>" . yas-expand)
+        ("H-<tab>" . yas-expand)
         ("M-m" . my/corfu-move-to-minibuffer)
         ("C-g" . corfu-quit)
-	)
+        )
   :custom
   (corfu-auto t)
   (corfu-cycle t)
@@ -573,11 +574,11 @@
 (use-package corfu-popupinfo
   :after (corfu)
   :bind (:map corfu-map
-	      ("H-d" . corfu-popupinfo-mode)
-	      ("H-t" . corfu-popupinfo-toggle)
-	      ("S-<down>" . corfu-popupinfo-scroll-up)
-	      ("S-<up>" . corfu-popupinfo-scroll-down)
-	      )
+              ("H-d" . corfu-popupinfo-mode)
+              ("H-t" . corfu-popupinfo-toggle)
+              ("S-<down>" . corfu-popupinfo-scroll-up)
+              ("S-<up>" . corfu-popupinfo-scroll-down)
+              )
   :custom
   (corfu-popupinfo-delay '(2.0 . 0.5))
   :commands (corfu-popupinfo-mode corfu-popupinfo-toggle)
@@ -606,10 +607,10 @@
               ("M-g M-c" . switch-to-completions)
               ("M-<tab>" . vertico-insert)
               ("<backtab>" . vertico-insert)
-	      ("C-M-n" . vertico-next-group)
-	      ("C-M-p" . vertico-previous-group)
-	      ("s-b" . vertico-buffer-mode)
-	      )
+              ("C-M-n" . vertico-next-group)
+              ("C-M-p" . vertico-previous-group)
+              ("s-b" . vertico-buffer-mode)
+              )
   :init
   (vertico-mode)
   :custom
@@ -882,10 +883,10 @@
         (if (equal which-key--prefix-help-cmd-backup 'describe-prefix-bindings)
             (progn
               (setq which-key--prefix-help-cmd-backup #'embark-prefix-help-command)
-	      (message "Changed `which-key--prefix-help-cmd-backup' into `embark-prefix-help-command'"))
+              (message "Changed `which-key--prefix-help-cmd-backup' into `embark-prefix-help-command'"))
           (progn
             (setq which-key--prefix-help-cmd-backup #'describe-prefix-bindings)
-	    (message "Changed `which-key--prefix-help-cmd-backup' into `describe-prefix-bindings'")))
+            (message "Changed `which-key--prefix-help-cmd-backup' into `describe-prefix-bindings'")))
       (if (equal prefix-help-command 'describe-prefix-bindings)
           (progn
             (setq prefix-help-command #'embark-prefix-help-command)
@@ -1018,7 +1019,7 @@ For each non-existent cli throw a warning."
               '(
                 ;; "black"
                 ;; "clangd"
-		;; "clang-format"
+                ;; "clang-format"
                 ;; "cljfmt"
                 ;; "clojure-lsp"
                 ;; "codelldb"
@@ -1039,7 +1040,7 @@ For each non-existent cli throw a warning."
                 ;; "yaml-language-server"
                 ))
        (unless (mason-installed-p pkg)
-	 (ignore-errors (mason-install pkg))))))
+         (ignore-errors (mason-install pkg))))))
   (mason-setup))
 
 ;; Packages to manage PostgreSQL
@@ -1386,9 +1387,9 @@ For each non-existent cli throw a warning."
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
   ;; (setq TeX-view-program-selection '(((output-dvi has-no-display-manager) "dvi2tty")
-  ;; 				     ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
-  ;; 				     (output-pdf "PDF Tools") (output-html "xdg-open"))
-  ;; 	) ;; changed (output-pdf "Evince") to (output-pdf "PDF Tools")
+  ;;                                 ((output-dvi style-pstricks) "dvips and gv") (output-dvi "xdvi")
+  ;;                                 (output-pdf "PDF Tools") (output-html "xdg-open"))
+  ;;    ) ;; changed (output-pdf "Evince") to (output-pdf "PDF Tools")
   ;; (setq TeX-source-correlate-start-server t)
   ;; (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
   ;; (setq TeX-PDF-mode t) ;; use PDFTeX by default

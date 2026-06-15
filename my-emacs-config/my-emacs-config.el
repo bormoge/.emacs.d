@@ -128,13 +128,13 @@
   :config
   (add-to-list 'display-buffer-alist
                '((or . ((derived-mode . occur-mode)
-			(derived-mode . grep-mode)
-			(derived-mode . Buffer-menu-mode)
-			(derived-mode . log-view-mode)
-			(derived-mode . help-mode)
-			))
-		 (display-buffer-reuse-mode-window display-buffer-below-selected)
-		 (body-function . select-window)))
+                        (derived-mode . grep-mode)
+                        (derived-mode . Buffer-menu-mode)
+                        (derived-mode . log-view-mode)
+                        (derived-mode . help-mode)
+                        ))
+                 (display-buffer-reuse-mode-window display-buffer-below-selected)
+                 (body-function . select-window)))
   )
 
 ;; Enable syntax highlighting
@@ -204,16 +204,20 @@
   (show-trailing-whitespace t)
   ;; Delete trailing whitespaces
   (delete-trailing-lines t)
+  ;; Use spaces for indentation
+  (indent-tabs-mode nil)
 
   :config
-  ;; Use spaces for indentation
-  (indent-tabs-mode -1)
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
 
   (defun my/delete-trailing-whitespace ()
     "Call `delete-trailing-whitespace' unless the buffer is read-only."
-    (unless buffer-read-only (delete-trailing-whitespace)))
+    (let ((forbidden-prefixes-delete-trailing-whitespace '("gfm-mode" "markdown")))
+      (unless (or buffer-read-only (cl-some (lambda (prefix)
+                       (string-prefix-p prefix (symbol-name major-mode)))
+                     forbidden-prefixes-delete-trailing-whitespace))
+      (delete-trailing-whitespace))))
   )
 
 (use-package visual-wrap
@@ -822,6 +826,7 @@
 (use-package whitespace
   :bind (:map global-map
               ("H-x s-w" . whitespace-mode)
+              ("H-x s-s" . global-whitespace-mode)
               )
   :custom
   (whitespace-line-column nil) ;; Use `fill-column' as the value of `whitespace-line-column'.
@@ -947,10 +952,10 @@
   :bind ((:map python-mode-map
                ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
                )
-	 (:map python-ts-mode-map
-	       ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
-	       )
-	 )
+         (:map python-ts-mode-map
+               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+               )
+         )
   :custom
   (python-fill-docstring-style 'pep-257)
   )
@@ -1102,7 +1107,7 @@
           comint-mode
           cfrs-input-mode
           image-mode
-	  magit-diff-mode
+          magit-diff-mode
           diff-mode
           )
          ;; Disable hl-line for some modes
@@ -1194,7 +1199,7 @@
   :bind (:map global-map
               ;; Delete duplicate lines using Hyper + ALT + <backspace>
               ("H-M-<backspace>" . delete-duplicate-lines)
-	      ;; Alphabetically sort lines in region.
+              ;; Alphabetically sort lines in region.
               ("H-x s" . sort-lines)
               ))
 
@@ -1236,8 +1241,8 @@
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand)
          ("C-M-<Ungrab>" . dabbrev-expand)
-	 ("C-s-<kp-divide>" . dabbrev-completion)
-	 )
+         ("C-s-<kp-divide>" . dabbrev-completion)
+         )
   :custom
   (dabbrev-upcase-means-case-search t)
   (dabbrev-case-fold-search 'case-fold-search)
@@ -1377,17 +1382,17 @@
   ;; Treesitter grammar repositories.
   (setq treesit-language-source-alist
         '(
-	  (java . ("https://github.com/tree-sitter/tree-sitter-java"))
-	  (clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
-	  (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-	  (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-	  (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-	  (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-	  (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-	  (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-	  (nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
-	  (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
-	  (python . ("https://github.com/tree-sitter/tree-sitter-python" "master"))
+          (java . ("https://github.com/tree-sitter/tree-sitter-java"))
+          (clojure . ("https://github.com/sogaiu/tree-sitter-clojure"))
+          (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+          (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+          (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+          (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+          (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+          (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+          (nix . ("https://github.com/nix-community/tree-sitter-nix" "master"))
+          (rust . ("https://github.com/tree-sitter/tree-sitter-rust" "master"))
+          (python . ("https://github.com/tree-sitter/tree-sitter-python" "master"))
           (yaml . ("https://github.com/ikatyang/tree-sitter-yaml" "master"))
           (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src"))
           (markdown-inline . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src"))
@@ -1398,7 +1403,7 @@
           (elixir . ("https://github.com/elixir-lang/tree-sitter-elixir" "main"))
           (toml . ("https://github.com/tree-sitter-grammars/tree-sitter-toml"))
           (heex . ("https://github.com/phoenixframework/tree-sitter-heex"))
-	  )
+          )
         )
   ;; To install all the grammars at once use this:
   ;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
@@ -1409,24 +1414,24 @@
   ;; Replace normal mode with its equivalent treesitter mode (ts-mode).
   (setq major-mode-remap-alist
         '(
-	  (java-mode . java-ts-mode)
-	  (clojure-mode . clojure-ts-mode)
-	  (css-mode . css-ts-mode)
-	  (html-mode . html-ts-mode)
-	  (js-mode . js-ts-mode)
+          (java-mode . java-ts-mode)
+          (clojure-mode . clojure-ts-mode)
+          (css-mode . css-ts-mode)
+          (html-mode . html-ts-mode)
+          (js-mode . js-ts-mode)
           (javascript-mode . js-ts-mode)
           (js2-mode . js-ts-mode)
-	  (js-json-mode . json-ts-mode)
-	  (json-mode . json-ts-mode)
-	  (typescript-tsx-mode . tsx-ts-mode)
-	  (typescript-mode . typescript-ts-mode)
-	  (nix-mode . nix-ts-mode)
+          (js-json-mode . json-ts-mode)
+          (json-mode . json-ts-mode)
+          (typescript-tsx-mode . tsx-ts-mode)
+          (typescript-mode . typescript-ts-mode)
+          (nix-mode . nix-ts-mode)
           (rust-mode . rust-ts-mode)
           (python-mode . python-ts-mode)
           (toml-mode . toml-ts-mode)
           (elixir-mode . elixir-ts-mode)
           (erlang-mode . erlang-ts-mode)
-	  )
+          )
         )
 
   ;; Initialize major modes on these file extensions
@@ -1587,14 +1592,14 @@
 ;; (setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
 ;;
 ;; (add-hook 'after-change-major-mode-hook
-;; 	  (lambda ()
-;; 	    ;; (if (derived-mode-p 'treemacs-mode)
+;;        (lambda ()
+;;          ;; (if (derived-mode-p 'treemacs-mode)
 ;;             (unless (cl-some (lambda (prefix)
 ;;                                (string-prefix-p prefix (symbol-name major-mode)))
 ;;                              forbidden-prefixes-text-scale-mode)
 ;;               ;; (text-scale-set 0)
-;; 	      (text-scale-set default-text-scale-mode-amount))
-;; 	    ))
+;;            (text-scale-set default-text-scale-mode-amount))
+;;          ))
 ;;
 ;; ;; Reduce text size when there are more than two windows
 ;; (advice-add 'split-window-right :after #'(lambda (&rest _)
@@ -1682,6 +1687,18 @@
           (delete-duplicate-lines (point-min) (point-max))
           (save-buffer)
           (kill-buffer))))))
+
+
+(defun my/copy-current-path-to-kill-ring ()
+  "Copy current file / directory path into the `kill-ring'."
+  (interactive)
+  (let ((path (if buffer-file-name
+                  buffer-file-name
+                default-directory)))
+    (kill-new path)
+    (message path)))
+
+(define-key (current-global-map) (kbd "H-x w") 'my/copy-current-path-to-kill-ring)
 
 
 ;; Global lexical-binding (Emacs-31)
