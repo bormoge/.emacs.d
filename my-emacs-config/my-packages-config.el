@@ -432,6 +432,15 @@
                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   )
 
+(use-package dockerfile-mode
+  :ensure t
+  :defer t
+  :custom
+  (dockerfile-mode-command "podman")
+  :config
+  (put 'dockerfile-image-name 'safe-local-variable #'stringp)
+  )
+
 
 
 ;;;; elfeed
@@ -442,10 +451,12 @@
 
 (use-package elfeed
   :ensure t
-  :bind (:map global-map
+  :bind ((:map global-map
               ("s-<0x10081247> s-E e" . elfeed)
               ("s-<0x10081247> s-E u" . elfeed-update)
-              )
+              :map elfeed-search-mode-map
+              (";" . my/elfeed-search-set-separator-date-format)
+              ))
   :hook ((elfeed-search-mode . (lambda ()
                                  (setq-local show-trailing-whitespace nil)
                                  (setq-local truncate-lines t)
@@ -461,8 +472,25 @@
   (elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (elfeed-search-filter "+unread") ;; default: "@6months +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
-  (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y)
+  (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y) (Week %W, %m/%Y)
   (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
+  :config
+  (defun my/elfeed-search-set-separator-date-format (new-format)
+    "Set `elfeed-search-separator-date-format' to NEW-FORMAT.
+
+  When called interactively, prompt for a NEW-FORMAT string.
+  See `format-time-string' for format documentation."
+    (interactive
+     (list
+      (let ((new-format
+             (read-from-minibuffer
+              "Separator date format: "
+              (or elfeed-search-separator-date-format ""))))
+        new-format)))
+    (with-current-buffer (elfeed-search-buffer)
+      (setf elfeed-search-separator-date-format
+            (or new-format (default-value 'elfeed-search-separator-date-format)))
+      (elfeed-search-update :force)))
   :commands (elfeed)
   )
 

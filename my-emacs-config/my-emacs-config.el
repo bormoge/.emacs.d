@@ -1002,6 +1002,7 @@
      ))
   (package-selected-packages
    '(
+     dockerfile-mode
      ligature
      buffer-to-pdf
      git-modes
@@ -1403,6 +1404,7 @@
           (elixir . ("https://github.com/elixir-lang/tree-sitter-elixir" "main"))
           (toml . ("https://github.com/tree-sitter-grammars/tree-sitter-toml"))
           (heex . ("https://github.com/phoenixframework/tree-sitter-heex"))
+          (dockerfile . ("https://github.com/camdencheek/tree-sitter-dockerfile")) ;; https://github.com/camdencheek/tree-sitter-dockerfile, https://github.com/wharflab/tree-sitter-containerfile
           )
         )
   ;; To install all the grammars at once use this:
@@ -1431,6 +1433,7 @@
           (toml-mode . toml-ts-mode)
           (elixir-mode . elixir-ts-mode)
           (erlang-mode . erlang-ts-mode)
+          (dockerfile-mode . dockerfile-ts-mode)
           )
         )
 
@@ -1450,6 +1453,12 @@
   :defer t
   :config
   (require 'json-mode)
+  )
+
+(use-package dockerfile-ts-mode
+  :defer t
+  :config
+  (require 'dockerfile-mode)
   )
 
 

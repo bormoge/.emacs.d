@@ -22,7 +22,9 @@
   (ring-bell-function #'guava-themes-change-visible-bell)
   (visible-bell t)
   :config
-  (load-theme 'guava-themes-vaccinium t) ;; guava-themes-vaccinium
+  (if (my/podman-container-p)
+      (load-theme 'guava-themes-rubus t) ;; guava-themes-rubus
+    (load-theme 'guava-themes-vaccinium t)) ;; guava-themes-vaccinium
   (set-face-attribute 'mode-line nil :font "JuliaMono Light 12")
   (set-face-attribute 'tab-line nil :font "JuliaMono Light 12" :weight 'bold)
   (set-face-attribute 'tab-bar nil :font "JuliaMono Light 12" :weight 'bold)

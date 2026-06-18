@@ -25,11 +25,11 @@
 ;; Load theme(s)
 (load-file (expand-file-name "my-emacs-config/my-themes-config.el" user-emacs-directory))
 
+;; Apply external packages configuration
+(load-file (expand-file-name "my-emacs-config/my-packages-config.el" user-emacs-directory))
+
 ;; Define configuration environment for packages authored by me.
 (load-file (expand-file-name "my-emacs-config/my-own-packages-config.el" user-emacs-directory))
-
-;; Apply other packages configuration
-(load-file (expand-file-name "my-emacs-config/my-packages-config.el" user-emacs-directory))
 
 ;; Finish checking init speed
 ;;(profiler-report)
