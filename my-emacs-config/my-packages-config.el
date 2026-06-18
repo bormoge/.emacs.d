@@ -246,6 +246,7 @@
   :ensure t
   ;; Mapping keys for avy
   :bind (:map global-map
+              ("s-: t"   . avy-goto-char-timer)
               ("s-: c 1" . avy-goto-char)
               ("s-: c 2" . avy-goto-char-2)
               ("s-: w 1" . avy-goto-word-0)
@@ -257,7 +258,7 @@
   (avy-case-fold-search nil)
   (avy-all-windows nil)
   (avy-all-windows-alt t)
-  :commands (avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
+  :commands (avy-goto-char-timer avy-goto-char avy-goto-char-0 avy-goto-word-1 avy-goto-word-2)
   )
 
 ;; ledger-mode
@@ -1105,7 +1106,6 @@ For each non-existent cli throw a warning."
               ("s-<0x10081247> s-T p p" . python-pytest)
               ("s-<0x10081247> s-T p d" . python-pytest-dispatch)
 
-              ;; python-pytest
               ;; python-pytest-file
               ;; python-pytest-file-dwim
               ;; python-pytest-files
@@ -1126,7 +1126,6 @@ For each non-existent cli throw a warning."
               :map python-ts-mode-map
               ("s-<0x10081247> s-T c m" . python-coverage-overlay-mode)
 
-              ;; python-coverage-overlay-mode
               ;; python-coverage-overlay-refresh
               ;; python-coverage-overlay-remove-all
               ;; python-coverage-overlay-jump-next
@@ -1436,17 +1435,22 @@ For each non-existent cli throw a warning."
   :ensure t
   :defer t
   :mode ("\\.pdf\\'" . pdf-view-mode)
+  :hook (
+         (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
+         )
   :custom
-  (pdf-info-epdfinfo-program "~/.emacs.d/.cache/epdfinfo")
+  (pdf-info-epdfinfo-program (if (my/nixos-p)
+                                  (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-nixos/epdfinfo"))
+                                (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-fedora/epdfinfo"))))
+  (pdf-view-display-size 'fit-page) ;; 'fit-width, 'fit-page
+  (pdf-annot-activate-created-annotations nil)
   :config
   (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
   ;; For more info about dependencies check ~/.emacs.d/elpa/pdf-tools-1.3.0/server/autobuild
   ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
   ;; Dependencies (NixOS Linux): automake autoconf pkg-config libpng zlib poppler
-
-  ;; (setq-default pdf-view-display-size 'fit-page)
-  ;; (setq pdf-annot-activate-created-annotations t)
-  (add-hook 'pdf-view-mode-hook (lambda () (display-line-numbers-mode -1)))
+  (require 'pdf-links)
+  (require 'pdf-annot)
   )
 
 
@@ -1458,9 +1462,9 @@ For each non-existent cli throw a warning."
   :bind (:map global-map
               ("C-x C-a d" . dape)
               )
+  :custom
+  (dape-buffer-window-arrangement 'right)
   :config
-  (setq dape-buffer-window-arrangement 'right)
-
   ;; Put symlinks on debug-adapters directory so dape sees where the debuggers are located.
   (unless (file-exists-p (expand-file-name "~/.emacs.d/debug-adapters/codelldb/"))
     (make-symbolic-link (expand-file-name "~/.emacs.d/mason/packages/codelldb/") (expand-file-name "~/.emacs.d/debug-adapters/codelldb/")))

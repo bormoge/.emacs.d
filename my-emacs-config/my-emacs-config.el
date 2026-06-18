@@ -82,6 +82,10 @@
   (frame-resize-pixelwise t)
   (window-resize-pixelwise t)
   (mode-line-compact nil)
+  ;; Truncate lines in windows narrower than the frame
+  (truncate-partial-width-windows 50)
+  ;; Character used as indicator for ‘display-fill-column-indicator’.
+  (display-fill-column-indicator-character nil)
 
   :config
   ;; Disable compact font caches
@@ -99,6 +103,7 @@
   :custom
   ;; Change cursor's appearance
   (blink-cursor-mode t)
+  (blink-cursor-interval 0.5)
   (window-divider-default-places t)
   :config
   ;; Change font
@@ -279,6 +284,8 @@
 
 ;; Enable menu-bar
 (use-package menu-bar
+  :custom
+  (buffers-menu-max-size 15)
   :config
   (menu-bar-mode -1)
   )
@@ -293,6 +300,8 @@
 
 ;; Enable tooltips
 (use-package tooltip
+  :custom
+  (tooltip-delay 0.7)
   :config
   (tooltip-mode +1)
   )
@@ -354,6 +363,7 @@
   :custom
   (bookmark-save-flag t)
   (bookmark-sort-flag t)
+  (bookmark-default-file (expand-file-name (concat user-emacs-directory "bookmarks")))
   )
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
@@ -408,6 +418,8 @@
 
 ;; Enable right click menu
 (use-package mouse
+  :custom
+  (mouse-yank-at-point nil)
   :config
   (context-menu-mode +1)
   )
@@ -431,6 +443,7 @@
   :defer t
   :bind (:map vc-dir-mode-map
               ("r" . vc-dir-refresh)
+              (";" . vc-git-grep)
               )
   )
 
@@ -575,6 +588,8 @@
   ;; icon can be displayed near each heading
   (grep-use-headings t)
   (grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
+  (grep-highlight-matches 'auto-detect)
+  (grep-scroll-output t)
   )
 
 ;; Rectangle mode config
@@ -678,7 +693,7 @@
   (recentf-max-menu-items 20)
   (recentf-auto-cleanup 'mode) ;; default: 'mode
   (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
-  (recentf-exclude nil)
+  (recentf-exclude `("/tmp/" "/ssh:" "/nix/store/" ,(concat package-user-dir "/.*-autoloads\\.el\\'")))
   :bind
   (:map recentf-mode-map
         ("s-<0x10081247> s-R" . recentf-open))
@@ -821,6 +836,8 @@
   :custom
   (uniquify-buffer-name-style 'post-forward-angle-brackets)
   (uniquify-after-kill-buffer-p t)
+  (uniquify-separator nil)
+  (uniquify-ignore-buffers-re nil) ;; "^\\*"
   )
 
 (use-package whitespace
@@ -976,6 +993,13 @@
   (define-key c++-mode-map (kbd "s-d s") 'disaster)
   )
 
+(use-package misc
+  :bind (:map global-map
+              ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
+              ("M-Z" . zap-up-to-char)
+              )
+  )
+
 
 
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
@@ -987,18 +1011,22 @@
   :custom
   ;; Priority for installation
   (package-archives
-   '(("melpa"        . "https://melpa.org/packages/")
-     ("gnu"          . "https://elpa.gnu.org/packages/")
-     ("nongnu"       . "https://elpa.nongnu.org/nongnu/")
-     ("melpa-stable" . "https://stable.melpa.org/packages/")
-     ("gnu-devel"    . "https://elpa.gnu.org/devel/")
+   '(("melpa"               . "https://melpa.org/packages/")
+     ("gnu"                 . "https://elpa.gnu.org/packages/")
+     ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
+     ("melpa-stable"        . "https://stable.melpa.org/packages/")
+     ("gnu-devel"           . "https://elpa.gnu.org/devel/")
+     ("melpa-mirror"        . "https://www.mirrorservice.org/sites/melpa.org/packages/") ;; Official MELPA Mirror
+     ("melpa-stable-mirror" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/") ;; Official MELPA Stable Mirror
      ))
   (package-archive-priorities
-   '(("melpa"        . 5)
-     ("gnu"          . 4)
-     ("nongnu"       . 3)
-     ("melpa-stable" . 2)
-     ("gnu-devel"    . 1)
+   '(("melpa"               . 7)
+     ("gnu"                 . 6)
+     ("nongnu"              . 5)
+     ("melpa-stable"        . 4)
+     ("gnu-devel"           . 3)
+     ("melpa-mirror"        . 2)
+     ("melpa-stable-mirror" . 1)
      ))
   (package-selected-packages
    '(
@@ -1294,23 +1322,26 @@
   :custom
   (org-startup-indented nil)
   (org-startup-folded 'overview)
-  (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
-  (org-imenu-depth 8)
   (org-startup-truncated t)
   (org-fontify-todo-headline t)
   (org-fontify-done-headline t)
   (org-deadline-warning-days 35)
+  (org-log-done nil)
+  (org-edit-timestamp-down-means-later nil)
+  (org-hide-emphasis-markers nil)
+  (org-fast-tag-selection-single-key nil) ;; 'expert
+  (org-tags-column -77)
+  (org-todo-keywords '((sequence "TODO" "DONE")))
+  (org-todo-repeat-to-state nil)
+  (org-log-into-drawer nil)
   ;;(org-return-follows-link nil)
-  ;;(org-hide-emphasis-markers nil)
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
   ;;(org-hierarchical-todo-statistics t)
   ;;(org-image-actual-width t)
   ;;(org-pretty-entities nil)
-  ;;(org-log-into-drawer nil)
   ;;(org-extend-today-until 0)
   ;;(org-use-effective-time nil)
   ;;(org-element-use-cache t)
-  ;;(org-tags-column -77)
   ;;(org-reverse-note-order nil)
 
   ;;(org-confirm-babel-evaluate t)
@@ -1328,35 +1359,43 @@
   ;;(org-log-states-order-reversed t)
   ;;(org-log-note-clock-out nil)
   ;;(org-log-state-notes-insert-after-drawers nil)
-  ;;(org-log-into-drawer nil)
   ;;(org-refile-targets nil) ;;'((org-agenda-files . (:maxlevel . 3))))
   ;;(org-refile-use-outline-path nil);; 'file)
   ;;(org-outline-path-complete-in-steps t)
   ;;(org-refile-allow-creating-parent-nodes nil);;'confirm)
-  ;;:config
+  ;; :config
   ;; (with-eval-after-load 'org
   ;;   (org-babel-do-load-languages
   ;;    'org-babel-load-languages
-  ;;    '((emacs-lisp . t)
-  ;;      (shell . t)
-  ;;      (scheme . t)
-  ;;      (python . t)
-  ;;      (ruby . t)
-  ;;      (jupyter . t)
-  ;;      (elixir . t)
-  ;;      (erlang . t)
-  ;;      (haskell . t)
-  ;;      (js . t)
-  ;;      (css . t)
-  ;;      (sql . t)
-  ;;      (gnuplot . t)
-  ;;      (plantuml . t)
-  ;;      (java . t)
-  ;;      (c . t)
-  ;;      )))
+  ;;    (seq-filter
+  ;;     (lambda (pair)
+  ;;       (locate-library (concat "ob-" (symbol-name (car pair)))))
+  ;;     '((emacs-lisp . t)
+  ;;       (shell . t)
+  ;;       (scheme . t)
+  ;;       (python . t)
+  ;;       (ruby . t)
+  ;;       (jupyter . t)
+  ;;       (elixir . t)
+  ;;       (erlang . t)
+  ;;       (haskell . t)
+  ;;       (js . t)
+  ;;       (css . t)
+  ;;       (sql . t)
+  ;;       (gnuplot . t)
+  ;;       (plantuml . t)
+  ;;       (octave . t)
+  ;;       (latex . t)
+  ;;       (ledger . t)
+  ;;       (ocaml . t)
+  ;;       (java . t)
+  ;;       (c . t)
+  ;;       (R . t)
+  ;;       (sqlite . t)))))
   )
 
 (use-package org-agenda
+  :defer t
   :bind (:map global-map
               ("s-<0x10081247> s-U u" . org-agenda)
               ("s-<0x10081247> s-U l" . org-agenda-list)
@@ -1371,6 +1410,75 @@
   (org-agenda-show-future-repeats t)
   (org-agenda-inhibit-startup nil)
   (org-agenda-use-time-grid t)
+  (org-agenda-clockreport-parameter-plist '(:link t :maxlevel 2))
+  (org-agenda-compact-blocks nil)
+  (org-agenda-sticky nil)
+  (org-agenda-sorting-strategy
+   '((agenda habit-down time-up urgency-down category-keep)
+     (todo   urgency-down category-keep)
+     (tags   urgency-down category-keep)
+     (search category-keep)))
+  (org-agenda-window-setup 'reorganize-frame)
+  :commands (org-agenda org-agenda-list)
+  )
+
+(use-package ox
+  :defer t
+  :custom
+  (org-export-coding-system nil) ;; 'utf-8
+  (org-export-copy-to-kill-ring nil)
+  )
+
+(use-package ox-html
+  :defer t
+  :custom
+  (org-html-validation-link "<a href=\"https://validator.w3.org/check?uri=referer\">Validate</a>")
+  )
+
+(use-package org-refile
+  :defer t
+  :custom
+  (org-refile-use-cache nil)
+  (org-refile-targets nil)
+  )
+
+(use-package org-compat
+  :defer t
+  :custom
+  (org-imenu-depth 8)
+  )
+
+(use-package org-persist
+  :custom
+  (org-persist-directory (expand-file-name ".cache/org-persist/" user-emacs-directory))
+  )
+
+(use-package org-fold
+  :defer t
+  :custom
+  (org-fold-catch-invisible-edits 'smart) ;; 'show
+  )
+
+(use-package org-faces
+  :defer t
+  :custom
+  (org-todo-keyword-faces nil)
+  )
+
+(use-package org-clock
+  :defer t
+  :custom
+  (org-clock-persist nil)
+  (org-clock-in-resume nil)
+  (org-clock-into-drawer t)
+  (org-clock-out-remove-zero-time-clocks nil)
+  )
+
+(use-package org-archive
+  :defer t
+  :custom
+  (org-archive-mark-done nil)
+  (org-archive-location "%s_archive::") ;; "%s_archive::* Archive"
   )
 
 
@@ -1630,11 +1738,12 @@
 ;;                                              (text-scale-set default-text-scale-mode-amount)))
 
 
-;; Enable commands
+;; Enable narrowing commands
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-defun 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 (put 'widen 'disabled nil)
+;; Enable case-change commands
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
