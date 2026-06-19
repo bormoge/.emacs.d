@@ -1,5 +1,5 @@
-;; Check init speed
-;;(profiler-start 'cpu)
+;; Check init speed.
+;; (profiler-start 'cpu)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -14,23 +14,30 @@
  ;; If there is more than one, they won't work right.
  )
 
-(setq package-user-dir (expand-file-name "elpa" user-emacs-directory))
+;; Set to t to view an statistical report using ‘use-package-report’.
+(setopt use-package-compute-statistics nil) ;; t
 
-;; This needs to be set before use-package is loaded
-(setq use-package-enable-imenu-support t)
+;; Set the directory that contains all the packages installed.
+(setopt package-user-dir (expand-file-name "elpa" user-emacs-directory))
 
-;; Apply vanilla configuration
+;; This needs to be set before use-package is loaded.
+(setopt use-package-enable-imenu-support t)
+
+;; Apply vanilla configuration.
 (load-file (expand-file-name "my-emacs-config/my-emacs-config.el" user-emacs-directory))
 
-;; Load theme(s)
+;; Load theme(s).
 (load-file (expand-file-name "my-emacs-config/my-themes-config.el" user-emacs-directory))
 
-;; Apply external packages configuration
+;; Apply external packages configuration.
 (load-file (expand-file-name "my-emacs-config/my-packages-config.el" user-emacs-directory))
 
 ;; Define configuration environment for packages authored by me.
 (load-file (expand-file-name "my-emacs-config/my-own-packages-config.el" user-emacs-directory))
 
-;; Finish checking init speed
-;;(profiler-report)
-;;(profiler-stop)
+;; Check use-package statistical report.
+;; (use-package-report)
+
+;; Finish checking init speed.
+;; (profiler-report)
+;; (profiler-stop)
