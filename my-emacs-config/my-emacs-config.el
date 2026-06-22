@@ -1030,6 +1030,7 @@
      ))
   (package-selected-packages
    '(
+     rustic
      dockerfile-mode
      ligature
      buffer-to-pdf
@@ -1536,7 +1537,7 @@
           (typescript-tsx-mode . tsx-ts-mode)
           (typescript-mode . typescript-ts-mode)
           (nix-mode . nix-ts-mode)
-          (rust-mode . rust-ts-mode)
+          (rust-ts-mode . rust-mode) ;; This is depending of the value of `rust-mode-treesitter-derive'
           (python-mode . python-ts-mode)
           (toml-mode . toml-ts-mode)
           (elixir-mode . elixir-ts-mode)
@@ -1583,7 +1584,7 @@
   :hook
   (eglot-managed-mode . my/mp-eglot-eldoc)
   ((nix-mode nix-ts-mode) . eglot-ensure)
-  ((rust-mode rust-ts-mode) . eglot-ensure)
+  ((rust-mode rust-ts-mode rustic-mode) . eglot-ensure)
   ((java-mode java-ts-mode) . eglot-ensure)
   ((js-mode js-ts-mode) . eglot-ensure)
   ((python-mode python-ts-mode) . eglot-ensure)
@@ -1624,7 +1625,7 @@
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   (add-to-list 'eglot-server-programs
-               '((rust-ts-mode rust-mode) .
+               '((rust-mode rust-ts-mode rustic-mode) .
                  ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
 
   ;; You need a Java compiler to use the lsp server JDTLS.

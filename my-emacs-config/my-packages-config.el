@@ -1390,13 +1390,24 @@ For each non-existent cli throw a warning."
 (use-package rust-mode
   :ensure t
   :defer t
+  :hook(
+        (rust-mode . flymake-mode)
+        (rust-ts-mode . flymake-mode)
+        )
+  :custom
+  (rust-mode-treesitter-derive t)
+  ;; (rust-format-on-save t) ;; You can also use Apheleia as an alternative for this variable.
   )
-;; :init
-;; (setq rust-mode-treesitter-derive t)
-;; ;; (setq rust-format-on-save t) ;; You can also use Apheleia as an alternative for this variable.
-;; :hook
-;; (rust-mode . flymake-mode))
-;; ;; (rust-ts-mode . flymake-mode))
+
+(use-package rustic
+  :ensure t
+  :after (rust-mode)
+  :custom
+  (rustic-lsp-client 'eglot)
+  (rustic-lsp-server 'rust-analyzer)
+  ;; :config
+  ;; (setq rustic-format-on-save nil) ;; You can also use Apheleia as an alternative for this variable.
+  )
 
 
 
