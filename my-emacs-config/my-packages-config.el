@@ -201,19 +201,20 @@
 ;; YASnippet for shortcuts
 (use-package yasnippet
   :ensure t
+  :bind (:map yas-minor-mode-map
+              ;; ("TAB" . nil)
+              ("s-<0x10081247> <tab>" . yas-expand)
+              ("s-<0x10081247> S-s-<iso-lefttab>" . yas-expand)
+              )
   :init
   ;; YASnippet global mode
   (yas-global-mode 1)
-  ;; Remap the snippet expansion from TAB to H-TAB
-  (define-key yas-minor-mode-map [(tab)] nil)
-  (define-key yas-minor-mode-map (kbd "TAB") nil)
-  (define-key yas-minor-mode-map (kbd "s-<0x10081247> <tab>") 'yas-expand)
-  (define-key yas-minor-mode-map (kbd "s-<0x10081247> S-s-<iso-lefttab>") 'yas-expand)
   :custom
   (yas-verbosity 4)
-  :config
   ;; YASnippet directories
-  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
+  ;; Execute the code and take the results as a list.
+  (yas-snippet-dirs `(,(locate-user-emacs-file "snippets") ,(expand-file-name (locate-user-emacs-file "snippets"))))
+  :config
   (yas-reload-all)
   )
 
@@ -304,9 +305,10 @@
 (use-package vundo
   :ensure t
   :defer t
-  :init
   ;; Map the `undo' function onto C-x M-u
-  (define-key (current-global-map) (kbd "C-x M-u") 'vundo)
+  :bind (:map global-map
+              ("C-x M-u" . vundo)
+              )
   :custom
   (vundo-glyph-alist vundo-unicode-symbols)
   :commands (vundo)
@@ -569,7 +571,9 @@
      eglot--managed-mode
      ) . corfu-mode))
   :bind
-  (:map corfu-map
+  (:map global-map
+        ("s-c" . corfu-mode)
+        :map corfu-map
         ("RET" . newline)
         ([return] . newline)
         ("TAB" . corfu-insert)
@@ -596,8 +600,6 @@
              completion-cycle-threshold completion-cycling)
          (consult-completion-in-region beg end table pred)))))
   (add-to-list 'corfu-continue-commands #'my/corfu-move-to-minibuffer)
-
-  (define-key (current-global-map) (kbd "s-c") 'corfu-mode)
   )
 
 (use-package corfu-popupinfo
@@ -1390,10 +1392,6 @@ For each non-existent cli throw a warning."
 (use-package rust-mode
   :ensure t
   :defer t
-  :hook(
-        (rust-mode . flymake-mode)
-        (rust-ts-mode . flymake-mode)
-        )
   :custom
   (rust-mode-treesitter-derive t)
   ;; (rust-format-on-save t) ;; You can also use Apheleia as an alternative for this variable.

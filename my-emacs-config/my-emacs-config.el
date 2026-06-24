@@ -693,7 +693,7 @@
   (recentf-max-menu-items 20)
   (recentf-auto-cleanup 'mode) ;; default: 'mode
   (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
-  (recentf-exclude `("/tmp/" "/ssh:" "/nix/store/" ,(concat package-user-dir "/.*-autoloads\\.el\\'")))
+  (recentf-exclude `("/tmp/" "/ssh:" "/nix/store/" "/dev/shm/" ,(concat package-user-dir "/.*-autoloads\\.el\\'")))
   :bind
   (:map recentf-mode-map
         ("s-<0x10081247> s-R" . recentf-open))
@@ -771,8 +771,8 @@
         (setq make-backup-files t)
         (message "Enabling backups."))))
 
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-B f") 'my/force-backup-of-file)
-  (define-key (current-global-map) (kbd "s-<0x10081247> s-B b") 'my/enable-or-disable-backups)
+  (bind-key (kbd "s-<0x10081247> s-B f") 'my/force-backup-of-file 'global-map)
+  (bind-key (kbd "s-<0x10081247> s-B b") 'my/enable-or-disable-backups 'global-map)
 
   (auto-save-visited-mode -1)
   )
@@ -989,8 +989,8 @@
   ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
   (c-basic-offset 4)
   :config
-  (define-key c-mode-map (kbd "s-d s") 'disaster)
-  (define-key c++-mode-map (kbd "s-d s") 'disaster)
+  (bind-key (kbd "s-d s") 'disaster 'c-mode-map)
+  (bind-key (kbd "s-d s") 'disaster 'c++-mode-map)
   )
 
 (use-package misc
@@ -1167,7 +1167,7 @@
      "shell.nix"
      ))
   :config
-  (define-key key-translation-map (kbd "s-<0x10081247> s-P") (kbd "C-x p"))
+  (bind-key (kbd "s-<0x10081247> s-P") (kbd "C-x p") 'key-translation-map)
   )
 
 ;; Electric packages
@@ -1765,8 +1765,8 @@
         (message "%s" help-text)
       (message "No help-echo at point"))))
 
-(define-key (current-global-map) (kbd "s-. p") 'my/display-help-echo-at-point)
-(define-key (current-global-map) (kbd "s-. s-p") 'my/display-help-echo-at-point)
+(bind-key (kbd "s-. p") 'my/display-help-echo-at-point 'global-map)
+(bind-key (kbd "s-. s-p") 'my/display-help-echo-at-point 'global-map)
 
 
 ;; Display face used at point.
@@ -1778,11 +1778,11 @@
         (describe-face face-property)
       (message "No 'face' text property at point"))))
 
-(define-key (current-global-map) (kbd "s-<0x10081247> s-I") 'my/display-face-property-at-point)
+(bind-key (kbd "s-<0x10081247> s-I") 'my/display-face-property-at-point 'global-map)
 
 
 ;; Add alternative key for C-x
-(define-key key-translation-map (kbd "s-<0x10081247> s-:") (kbd "C-x"))
+(bind-key (kbd "s-<0x10081247> s-:") (kbd "C-x") 'key-translation-map)
 
 
 (defun my/delete-lines-without-specific-string (STR)
@@ -1808,6 +1808,18 @@
           (kill-buffer))))))
 
 
+(defun my/sort-lines-in-directory (dir)
+  "Non-recursively sort lines in all files under DIR."
+  (interactive "DDirectory: ")
+  (let ((files (directory-files dir t "^[^.].*")))
+    (dolist (file files)
+      (when (file-regular-p file)
+        (with-current-buffer (find-file-noselect file)
+          (sort-lines nil (point-min) (point-max))
+          (save-buffer)
+          (kill-buffer))))))
+
+
 (defun my/copy-current-path-to-kill-ring ()
   "Copy current file / directory path into the `kill-ring'."
   (interactive)
@@ -1817,7 +1829,7 @@
     (kill-new path)
     (message path)))
 
-(define-key (current-global-map) (kbd "H-x w") 'my/copy-current-path-to-kill-ring)
+(bind-key (kbd "H-x w") 'my/copy-current-path-to-kill-ring 'global-map)
 
 
 ;; Global lexical-binding (Emacs-31)
