@@ -166,16 +166,38 @@
   ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   )
 
-;; Package used to manage git
+
+
+;; magit: Package used as a git front end.
 (use-package magit
   :ensure t
   :defer t
+  :config
+  (setopt transient-default-level 4) ;; default: 4
+  :commands (magit-status magit-dispatch)
+  )
+
+(use-package magit-mode
+  :defer t
+  :after magit
   :custom
-  (magit-diff-refine-hunk 'all)
-  (git-commit-major-mode 'text-mode) ;; 'git-commit-elisp-text-mode
   (magit-refresh-status-buffer t)
   (magit-display-buffer-function
    #'magit-display-buffer-traditional)
+  )
+
+(use-package magit-diff
+  :defer t
+  :after magit
+  :custom
+  (magit-diff-refine-hunk 'all)
+  (magit-format-file-function #'magit-format-file-nerd-icons) ;; default: #'magit-format-file-default
+  )
+
+(use-package magit-section
+  :defer t
+  :after magit
+  :custom
   (magit-section-initial-visibility-alist
    '((unstaged . show)
      (staged . show)
@@ -188,8 +210,13 @@
    'magit-insert-tracked-files
    nil
    'append)
-  (setq transient-default-level 4) ;; default: 4
-  :commands (magit-status magit-dispatch)
+  )
+
+(use-package git-commit
+  :defer t
+  :after magit
+  :custom
+  (git-commit-major-mode #'text-mode) ;; 'git-commit-elisp-text-mode
   )
 
 ;; Modes for .gitattributes, .gitconfig, and .gitignore files.
@@ -197,6 +224,8 @@
   :ensure t
   :defer t
   )
+
+
 
 ;; YASnippet for shortcuts
 (use-package yasnippet
@@ -396,13 +425,6 @@
           org-mode) . puni-mode)
   )
 
-;; lin: personalized hl-line colors for interactive buffers.
-(use-package lin
-  :ensure t
-  :config
-  (lin-global-mode)
-  )
-
 ;; form-feed: show FORM-FEED characters as long lines.
 (use-package form-feed
   :ensure t
@@ -410,17 +432,6 @@
          (text-mode . form-feed-mode)
          (org-mode . form-feed-mode)
          )
-  )
-
-;; buffer-to-pdf: convert buffers to pdf files.
-(use-package buffer-to-pdf
-  :vc (:url "https://github.com/protesilaos/buffer-to-pdf"
-            :rev :newest
-            :branch "main"
-            :vc-backend Git)
-  :defer t
-  :custom
-  (buffer-to-pdf-directory (expand-file-name "buffer-to-pdf/" user-emacs-directory))
   )
 
 ;; ligature: enable font ligatures

@@ -211,6 +211,8 @@
   (delete-trailing-lines t)
   ;; Use spaces for indentation
   (indent-tabs-mode nil)
+  ;; Share goto-line history between all buffers.
+  (goto-line-history-local nil)
 
   :config
   ;; Enable Transient Mark Mode
@@ -284,6 +286,7 @@
 
 ;; Enable menu-bar
 (use-package menu-bar
+  :defer t
   :custom
   (buffers-menu-max-size 15)
   :config
@@ -308,6 +311,7 @@
 
 ;; Enable Vertical Scroll Bar
 (use-package scroll-bar
+  :defer t
   :config
   (scroll-bar-mode -1)
   )
@@ -397,6 +401,7 @@
   (auto-revert-avoid-polling nil)
   (auto-revert-stop-on-user-input nil)
   (global-auto-revert-non-file-buffers t)
+  (auto-revert-check-vc-info nil)
   :config
   (global-auto-revert-mode +1)
   )
@@ -683,6 +688,8 @@
   (lazy-highlight-no-delay-length 3)
   (isearch-allow-scroll nil)
   (isearch-allow-motion nil)
+  (search-invisible 'open)
+  (isearch-hide-immediately t)
   )
 
 ;; recentf configuration
@@ -1009,6 +1016,11 @@
               ("s-<0x10081247> s-L" . list-packages)
               )
   :custom
+  (use-package-enable-imenu-support t)
+  ;; Set the directory that contains all the packages installed.
+  (package-user-dir (expand-file-name "elpa" user-emacs-directory))
+  ;; When set to t, assume :defer t when using `use-package' macro.
+  (use-package-always-defer nil)
   ;; Priority for installation
   (package-archives
    '(("melpa"               . "https://melpa.org/packages/")
@@ -1033,14 +1045,12 @@
      rustic
      dockerfile-mode
      ligature
-     buffer-to-pdf
      git-modes
      python-coverage
      python-pytest
      consult-flyspell
      clj-refactor
      form-feed
-     lin
      puni
      consult-symbol
      helpful

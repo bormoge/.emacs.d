@@ -17,12 +17,6 @@
 ;; Set to t to view an statistical report using ‘use-package-report’.
 (setopt use-package-compute-statistics nil) ;; t
 
-;; Set the directory that contains all the packages installed.
-(setopt package-user-dir (expand-file-name "elpa" user-emacs-directory))
-
-;; This needs to be set before use-package is loaded.
-(setopt use-package-enable-imenu-support t)
-
 ;; Apply vanilla configuration.
 (load-file (expand-file-name "my-emacs-config/my-emacs-config.el" user-emacs-directory))
 
