@@ -776,6 +776,7 @@
      consult-source-project-recent-file-hidden
      consult-source-project-root-hidden
      ))
+  (consult-fontify-preserve t)
   :config
   (setq-default completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
 
@@ -951,18 +952,8 @@
 ;; Orderless
 (use-package orderless
   :ensure t
-  ;;:after vertico
   :custom
   (orderless-style-dispatchers '(orderless-affix-dispatch))
-  (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)) ;;basic
-                                   (eglot (styles orderless))
-                                   (eglot-capf (styles orderless))))
-  (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
-  :config
-  ;; Set the completion-styles of completion-preview-mode
-  (setq completion-preview-completion-styles completion-styles)
   )
 
 ;; Prescient (used as the sorting algorithm of this stack)

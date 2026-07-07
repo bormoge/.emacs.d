@@ -408,17 +408,26 @@
 
 (use-package minibuffer
   :custom
+  (minibuffer-visible-completions nil)
   ;; More detailed completions
   (completions-detailed t)
   (completion-auto-help t)
   (completions-max-height nil)
   (completion-cycle-threshold nil)
   (completions-format 'horizontal)
+  (completions-sort 'alphabetical)
   (completions-group nil)
   (completion-auto-select nil)
-  (minibuffer-visible-completions nil)
+  (completions-max-height nil) ;; 12
+  (completion-show-help t)
+  (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)) ;;basic
+                                   (eglot (styles orderless))
+                                   (eglot-capf (styles orderless))))
   (completion-eager-update t) ;; Emacs-31
   (completion-eager-display t) ;; Emacs-31
+  (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
   )
 
 ;; Enable right click menu
@@ -532,6 +541,7 @@
   (compilation-ask-about-save t)
   (compilation-always-kill t)
   (compilation-max-output-line-length nil)
+  (compilation-buffer-name-function #'compilation--default-buffer-name)
   :commands (compile)
   )
 
@@ -665,6 +675,9 @@
   (completion-preview-minimum-symbol-length 2)
   :init
   (global-completion-preview-mode)
+  :config
+  ;; Set the completion-styles of completion-preview-mode
+  (setq completion-preview-completion-styles completion-styles)
   )
 
 (use-package isearch
@@ -1000,6 +1013,11 @@
   (bind-key (kbd "s-d s") 'disaster 'c++-mode-map)
   )
 
+(use-package custom
+  :custom
+  (custom-safe-themes t)
+  )
+
 (use-package misc
   :bind (:map global-map
               ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
@@ -1176,6 +1194,7 @@
      "flake.nix"
      "shell.nix"
      ))
+  (project-compilation-buffer-name-function nil)
   :config
   (bind-key (kbd "s-<0x10081247> s-P") (kbd "C-x p") 'key-translation-map)
   )
@@ -1247,7 +1266,10 @@
   :bind (:map global-map
               ;; Define key for ibuffer
               ("C-x M-b" . ibuffer)
-              ))
+              )
+  :custom
+  (ibuffer-default-sorting-mode 'recency)
+  )
 
 (use-package tabify
   :bind (:map global-map
@@ -1860,3 +1882,8 @@
 
 ;; C-x v I' and 'C-x v O' become prefix commands (Emacs-31)
 ;; (setopt vc-use-incoming-outgoing-prefixes t)
+
+;; More options to check in Emacs-31
+;; (minibuffer-nonselected-mode 1)
+;; (minibuffer-depth-indicate-mode 1)
+;; (minibuffer-electric-default-mode 1)
