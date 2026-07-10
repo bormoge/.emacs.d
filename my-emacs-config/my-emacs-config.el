@@ -1060,6 +1060,7 @@
      ))
   (package-selected-packages
    '(
+     tab-line-nerd-icons
      yasnippet-capf
      rustic
      dockerfile-mode

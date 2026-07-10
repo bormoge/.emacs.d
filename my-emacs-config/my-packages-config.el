@@ -579,6 +579,12 @@
   (nerd-icons-xref-mode)
   )
 
+(use-package tab-line-nerd-icons
+  :ensure t
+  :init
+  (tab-line-nerd-icons-global-mode)
+  )
+
 
 
 
