@@ -1060,6 +1060,7 @@
      ))
   (package-selected-packages
    '(
+     yasnippet-capf
      rustic
      dockerfile-mode
      ligature

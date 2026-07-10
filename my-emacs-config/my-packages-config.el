@@ -247,6 +247,19 @@
   (yas-reload-all)
   )
 
+(use-package yasnippet-capf
+  :ensure t
+  :after cape
+  :init
+  (defun my/yasnippet-emacs-lisp-mode-capf ()
+    (setq-local completion-at-point-functions
+                (list (cape-capf-super #'yasnippet-capf #'elisp-completion-at-point #'cape-elisp-block #'cape-elisp-symbol))))
+  :hook
+  (emacs-lisp-mode . my/yasnippet-emacs-lisp-mode-capf)
+  )
+
+
+
 ;; Package to fold code using tree-sitter technology
 (use-package treesit-fold
   :ensure t
@@ -629,15 +642,15 @@
 ;; Cape
 (use-package cape
   :ensure t
+  :demand t
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
   :init
   (add-hook 'completion-at-point-functions #'cape-abbrev)
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-keyword)
   (add-hook 'completion-at-point-functions #'cape-dict)
-  (add-hook 'completion-at-point-functions #'cape-elisp-symbol)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  ;; (add-hook 'completion-at-point-functions #'cape-history)
+  (add-hook 'completion-at-point-functions #'cape-history)
   ;; etc... (https://github.com/minad/cape#configuration)
   )
 
