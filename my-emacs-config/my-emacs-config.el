@@ -1041,19 +1041,19 @@
   (use-package-always-defer nil)
   ;; Priority for installation
   (package-archives
-   '(("melpa"               . "https://melpa.org/packages/")
+   '(("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
      ("gnu"                 . "https://elpa.gnu.org/packages/")
      ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
-     ("melpa-stable"        . "https://stable.melpa.org/packages/")
+     ("melpa-releases"      . "https://releases.melpa.org/packages/")
      ("gnu-devel"           . "https://elpa.gnu.org/devel/")
-     ("melpa-mirror"        . "https://www.mirrorservice.org/sites/melpa.org/packages/") ;; Official MELPA Mirror
-     ("melpa-stable-mirror" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/") ;; Official MELPA Stable Mirror
+     ;; ("melpa-mirror"        . "https://www.mirrorservice.org/sites/melpa.org/packages/") ;; Official MELPA Mirror
+     ;; ("melpa-stable-mirror" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/") ;; Official MELPA Stable Mirror
      ))
   (package-archive-priorities
-   '(("melpa"               . 7)
+   '(("melpa-snapshots"     . 7)
      ("gnu"                 . 6)
      ("nongnu"              . 5)
-     ("melpa-stable"        . 4)
+     ("melpa-releases"      . 4)
      ("gnu-devel"           . 3)
      ("melpa-mirror"        . 2)
      ("melpa-stable-mirror" . 1)
@@ -1147,6 +1147,7 @@
      diff-hl
      ))
   (package-menu-use-current-if-no-marks t)
+  (package-check-signature 'allow-unsigned)
   )
 
 (use-package xref
