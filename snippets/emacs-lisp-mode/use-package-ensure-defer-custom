@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: use-package
+# key: usepedc
+# uuid: usepedc
+# --
+(use-package $1
+  :ensure t
+  :defer t
+  :custom
+  $2
+  )
