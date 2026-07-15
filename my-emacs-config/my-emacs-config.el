@@ -1060,6 +1060,7 @@
      ))
   (package-selected-packages
    '(
+     affe
      tab-line-nerd-icons
      yasnippet-capf
      rustic
@@ -1890,3 +1891,5 @@
 ;; (minibuffer-nonselected-mode 1)
 ;; (minibuffer-depth-indicate-mode 1)
 ;; (minibuffer-electric-default-mode 1)
+;; (treesit-auto-install-grammar 'ask)
+;; (treesit-enabled-modes t)

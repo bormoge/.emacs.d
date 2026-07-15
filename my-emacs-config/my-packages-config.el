@@ -459,13 +459,34 @@
                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   )
 
+;; dockerfile-mode: major mode for Dockerfile files
 (use-package dockerfile-mode
   :ensure t
   :defer t
   :custom
+  ;; You can change the binary to use with
   (dockerfile-mode-command "podman")
   :config
+  ;; You can specify the image name in the file itself by adding a line like this at the top of your Dockerfile.
+  ;; ## -*- dockerfile-image-name: "your-image-name-here" -*-
+  ;; If you don't, you'll be prompted for an image name each time you build. You may want to add the following to your emacs config:
   (put 'dockerfile-image-name 'safe-local-variable #'stringp)
+  )
+
+;; affe: asynchronous fuzzy finder
+(use-package affe
+  :ensure t
+  :defer t
+  :bind ((:map global-map
+               ("s-s f" . affe-find)
+               ("s-s g" . affe-grep)
+               ))
+  :custom
+  (affe-regexp-compiler #'my/affe-orderless-regexp-compiler)
+  :config
+  (defun my/affe-orderless-regexp-compiler (input _type _ignorecase)
+    (setq input (cdr (orderless-compile input)))
+    (cons input (apply-partially #'orderless--highlight input t)))
   )
 
 
