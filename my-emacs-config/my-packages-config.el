@@ -522,6 +522,7 @@
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
   (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y) (Week %W, %m/%Y)
   (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
+  (elfeed-search-max-entries most-positive-fixnum) ;; default: 500
   :config
   (defun my/elfeed-search-set-separator-date-format (new-format)
     "Set `elfeed-search-separator-date-format' to NEW-FORMAT.

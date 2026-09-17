@@ -61,7 +61,7 @@
   ;; When deleting a pair, do it immediatly
   (delete-pair-blink-delay 0)
   ;; Show boundaries around buffer edges
-  (indicate-buffer-boundaries t)
+  (indicate-buffer-boundaries t) ;; '((bottom . left) (t . nil))
   ;; Limit history length
   (history-length 150)
   ;; Delete duplicates in history variables
@@ -645,7 +645,6 @@
               ;; Open full-calc
               ("<Calculator>" . full-calc)
               )
-  :init
   :config
   (setq calc-group-digits t)
   :commands (full-calc)
@@ -755,6 +754,7 @@
   (auto-save-no-message nil)
   ;; Backup directory
   (backup-directory-alist `(("." . "~/.emacs_backup_files")))
+  ;;(backup-directory-alist `(("." . ,(expand-file-name (concat user-emacs-directory ".emacs_backup_files")))))
   ;; Backup by copying instead of renaming original file
   (backup-by-copying t)
   ;; More than one backup
@@ -767,6 +767,10 @@
   (require-final-newline t)
   (find-file-visit-truename t)
   (confirm-nonexistent-file-or-buffer 'after-completion)
+  (enable-local-variables t) ;; :safe
+  (enable-dir-local-variables t)
+  (enable-remote-dir-locals nil)
+  (enable-local-eval 'maybe)
   (safe-local-variable-values
    '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
   (auto-save-visited-interval 480)
@@ -877,8 +881,10 @@
 
 (use-package auth-source
   :custom
+  (auth-source-do-cache t)
   ;; Use GPG to encrypt the authinfo file. For more information check `(auth)Help for users' on the Emacs auth-source manual.
   (auth-sources (list "~/.authinfo.gpg"))
+  (auth-source-cache-expiry 3600)
   )
 
 (use-package imenu
@@ -1023,6 +1029,100 @@
               ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
               ("M-Z" . zap-up-to-char)
               )
+  )
+
+;; Shout-out to jamescherti's article "Preventing Emacs from Freezing on Files with Very Long Lines".
+;; jamescherti dot com / prevent-emacs-freeze-so-long-files-very-long-lines
+(use-package so-long
+  :defer t
+  :custom
+  ;; Setting so-long-action to so-long-minor-mode retains the original major mode
+  (so-long-action 'so-long-minor-mode)
+
+  ;; so-long activates when a file contains a line exceeding the character count below
+  (so-long-threshold 6000)
+
+  :config
+  ;; Keep syntax highlighting
+  (setopt so-long-minor-modes (delq 'font-lock-mode so-long-minor-modes))
+
+  ;; Limit font-lock to the minimum decoration level to save CPU cycles
+  (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
+
+  ;; Apply so-long to configuration, plain text files, and diff files
+  (add-to-list 'so-long-target-modes 'text-mode)
+  (add-to-list 'so-long-target-modes 'conf-mode)
+  (add-to-list 'so-long-target-modes 'org-mode)
+
+  ;; Prevent so-long from attempting to restore the cursor position
+  (add-to-list 'so-long-variable-overrides '(save-place-alist . nil))
+
+  ;; Ensure the buffer remains writable when so-long triggers, overriding the
+  ;; default behavior that locks the buffer as read-only.
+  (setf (alist-get 'buffer-read-only so-long-variable-overrides nil t) nil)
+
+  ;; Retain line numbers
+  (setopt so-long-minor-modes (delq 'display-line-numbers-mode so-long-minor-modes))
+
+  ;; When so-long triggers, active modes in this list are disabled for the current buffer.
+  (dolist (mode '(;; Structural Editing and Parenthesis Matching
+                  rainbow-delimiters-mode
+                  ;;paredit-mode
+                  ;;enhanced-evil-paredit-mode
+                  ;;smartparens-mode
+                  ;;smartparens-strict-mode
+
+                  ;; Regex and Custom Highlighting
+                  auto-composition-mode
+                  ;; easy-escape-minor-mode
+                  ;; highlight-defined-mode
+                  ;; highlight-indent-guides-mode
+
+                  ;; Outline Scanning / Text folding
+                  outline-minor-mode
+                  treesit-fold-mode
+                  treesit-fold-indicators-mode
+                  ;; ts-fold-mode
+                  ;; ts-fold-indicators-mode
+
+                  ;; State & History Persistence / I/O
+                  auto-revert-mode
+                  ;; undo-fu-session-mode
+                  ;; undo-tree-mode
+                  ;; better-jumper-local-mode
+
+                  ;; Formatters & Whitespace Managers
+                  ;; aggressive-indent-mode
+                  ;; stripspace-local-mode
+                  ;; ws-butler-mode
+
+                  ;; Linters & Language Servers
+                  eglot--managed-mode
+                  eldoc-mode
+                  flymake-mode
+                  ;; flycheck-mode
+
+                  ;; Spell Checkers
+                  ispell-minor-mode
+                  flyspell-mode
+                  flyspell-prog-mode
+                  ;; jinx-mode
+                  ;; spell-fu-mode
+
+                  ;; UI Overlays & Margins
+                  diff-hl-mode
+                  form-feed-mode
+                  display-fill-column-indicator-mode
+                  ;; indent-bars-mode
+                  ;; highlight-numbers-mode
+                  ;; git-gutter-mode
+                  ;; line-reminder-mode
+                  ;; page-break-lines-mode
+                  ;; hl-fill-column-mode
+                  ))
+    (add-to-list 'so-long-minor-modes mode))
+
+  (global-so-long-mode 1)
   )
 
 
@@ -1196,6 +1296,7 @@
      ".envrc"
      ".editorconfig"
      "flake.nix"
+     "flake.lock"
      "shell.nix"
      ))
   (project-compilation-buffer-name-function nil)
@@ -1224,7 +1325,7 @@
   :config
   (which-key-setup-side-window-right-bottom)
   ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
-  (which-key-mode)
+  (which-key-mode 1)
   )
 
 (use-package shr
@@ -1371,6 +1472,7 @@
   (org-todo-keywords '((sequence "TODO" "DONE")))
   (org-todo-repeat-to-state nil)
   (org-log-into-drawer nil)
+  (org-startup-with-inline-images nil)
   ;;(org-return-follows-link nil)
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
   ;;(org-hierarchical-todo-statistics t)
@@ -1650,7 +1752,7 @@
   (eglot-sync-connect 0) ;; default: 3
   (eglot-connect-timeout 30)
   (eglot-ignored-server-capabilities nil) ;; examples: '(:inlayHintProvider), '(:documentHighlightProvider), '(:documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider), '(:hoverProvider :documentHighlightProvider :documentFormattingProvider :documentRangeFormattingProvider :documentOnTypeFormattingProvider :colorProvider :foldingRangeProvider)
-  (eglot-events-buffer-config '(:size 2000000 :format full))
+  (eglot-events-buffer-config '(:size 2000000 :format full)) ;; alt: '(:size 0 :format short)
   (eglot-extend-to-xref t)
   (eglot-send-changes-idle-time 0.5)
   (eglot-report-progress t)
