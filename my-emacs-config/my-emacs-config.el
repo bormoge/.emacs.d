@@ -93,6 +93,7 @@
   ;; Bidirectional editing config
   (setq-default bidi-display-reordering 'left-to-right)
   (setq-default bidi-paragraph-direction 'left-to-right)
+  (setq-default completion-ignore-case nil)
   (if (version<= "27.1" emacs-version)
       (setq bidi-inhibit-bpa t))
   )
@@ -222,9 +223,9 @@
     "Call `delete-trailing-whitespace' unless the buffer is read-only."
     (let ((forbidden-prefixes-delete-trailing-whitespace '("gfm-mode" "markdown")))
       (unless (or buffer-read-only (cl-some (lambda (prefix)
-                       (string-prefix-p prefix (symbol-name major-mode)))
-                     forbidden-prefixes-delete-trailing-whitespace))
-      (delete-trailing-whitespace))))
+                                              (string-prefix-p prefix (symbol-name major-mode)))
+                                            forbidden-prefixes-delete-trailing-whitespace))
+        (delete-trailing-whitespace))))
   )
 
 (use-package visual-wrap
@@ -238,10 +239,12 @@
 (use-package display-line-numbers
   :custom
   (display-line-numbers t)
+  (display-line-numbers-type t)
   (display-line-numbers-width nil)
   (display-line-numbers-minor-tick 25)
   (display-line-numbers-major-tick 100)
   (display-line-numbers-width-start t)
+  (display-line-numbers-grow-only nil)
   :config
   (global-display-line-numbers-mode +1)
   )
@@ -372,6 +375,7 @@
 
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
+  :defer nil
   :hook (savehist-save-hook . (lambda ()
                                 (setq kill-ring
                                       (mapcar #'substring-no-properties
@@ -556,8 +560,12 @@
 
 ;; Dired config
 (use-package dired
-  :defer t
   :ensure nil
+  :defer t
+  :bind (:map dired-mode-map
+              ("M-<" . dired-beginning-of-buffer) ;; Replace `beginning-of-buffer'.
+              ("M->" . dired-end-of-buffer) ;; Replace `end-of-buffer'.
+              )
   :custom
   (dired-listing-switches "-ahl --group-directories-first")
   (dired-kill-when-opening-new-dired-buffer t)
@@ -571,6 +579,16 @@
   (dired-clean-up-buffers-too t)
   :config
   (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
+
+  (defun dired-end-of-buffer ()
+    (interactive)
+    (goto-char (point-max))
+    (dired-next-line -1))
+
+  (defun dired-beginning-of-buffer ()
+    (interactive)
+    (goto-char (point-min))
+    (dired-next-line 3))
   )
 
 (use-package find-dired
@@ -743,9 +761,19 @@
               ("M-°" . flush-lines)
               ))
 
+(defun my/read-file-contents (filename)
+  "Return the contents of FILENAME as a string."
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (buffer-string)))
+
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
   ;; :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p)
+  :bind (:map global-map
+              ("s-<0x10081247> s-B f" . my/force-backup-of-file)
+              ("s-<0x10081247> s-B b" . my/enable-or-disable-backups)
+              )
   :custom
   ;; If nil, disable backups
   (make-backup-files nil)
@@ -778,6 +806,10 @@
   (confirm-kill-processes t)
   (view-read-only t)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
+  (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory))))
+  ;; (trusted-content (list (intern "~/.emacs.d/")))
+  ;; (trusted-content `(,(expand-file-name "~/.emacs.d/") ,(expand-file-name (concat user-emacs-directory "my-emacs-config/"))))
+  ;; (trusted-content :all)
   :config
   ;; var: backup-inhibited
 
@@ -794,9 +826,6 @@
       (progn
         (setq make-backup-files t)
         (message "Enabling backups."))))
-
-  (bind-key (kbd "s-<0x10081247> s-B f") 'my/force-backup-of-file 'global-map)
-  (bind-key (kbd "s-<0x10081247> s-B b") 'my/enable-or-disable-backups 'global-map)
 
   (auto-save-visited-mode -1)
   )
@@ -1028,7 +1057,11 @@
   :bind (:map global-map
               ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
               ("M-Z" . zap-up-to-char)
+              ("s-y" . duplicate-dwim)
               )
+  :custom
+  (duplicate-line-final-position 1)
+  (duplicate-region-final-position 1)
   )
 
 ;; Shout-out to jamescherti's article "Preventing Emacs from Freezing on Files with Very Long Lines".
@@ -1122,7 +1155,7 @@
                   ))
     (add-to-list 'so-long-minor-modes mode))
 
-  (global-so-long-mode 1)
+  (global-so-long-mode +1)
   )
 
 
@@ -1431,6 +1464,7 @@
 
 
 (use-package flymake
+  :defer t
   :hook
   (((
      prog-mode
@@ -1457,6 +1491,9 @@
 (use-package org
   :ensure nil
   :defer t
+  :bind (:map org-mode-map
+              ("s-o l" . org-toggle-link-display)
+              )
   :custom
   (org-startup-indented nil)
   (org-startup-folded 'overview)

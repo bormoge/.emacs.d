@@ -493,18 +493,18 @@
 
 ;;;; elfeed
 
-(with-temp-buffer
-  (insert-file-contents (expand-file-name "rss.txt" user-emacs-directory))
-  (eval-buffer))
-
 (use-package elfeed
   :ensure t
   :bind ((:map global-map
-              ("s-<0x10081247> s-E e" . elfeed)
-              ("s-<0x10081247> s-E u" . elfeed-update)
-              :map elfeed-search-mode-map
-              (";" . my/elfeed-search-set-separator-date-format)
-              ))
+               ("s-<0x10081247> s-E e" . elfeed)
+               :map elfeed-search-mode-map
+               ("s-<0x10081247> s-E u" . elfeed-update)
+               (";" . my/elfeed-search-set-separator-date-format)
+               :map elfeed-show-mode-map
+               ("m" . nil) ;; Unbind `elfeed-show-compose-mail'.
+               ("TAB" . shr-next-link)
+               ("s-<tab>" . elfeed-show-next-link)
+               ))
   :hook ((elfeed-search-mode . (lambda ()
                                  (setq-local show-trailing-whitespace nil)
                                  (setq-local truncate-lines t)
@@ -516,13 +516,14 @@
          (elfeed-search-update . elfeed-search-add-separators)
          )
   :custom
-  (elfeed-feeds rss-links)
+  (elfeed-feeds (read (my/read-file-contents (expand-file-name "rss.txt" user-emacs-directory))))
   (elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (elfeed-search-filter "+unread") ;; default: "@6months +unread"
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
   (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y) (Week %W, %m/%Y)
   (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
   (elfeed-search-max-entries most-positive-fixnum) ;; default: 500
+  (elfeed-show-unique-buffers nil)
   :config
   (defun my/elfeed-search-set-separator-date-format (new-format)
     "Set `elfeed-search-separator-date-format' to NEW-FORMAT.
@@ -540,6 +541,7 @@
       (setf elfeed-search-separator-date-format
             (or new-format (default-value 'elfeed-search-separator-date-format)))
       (elfeed-search-update :force)))
+  (keymap-set elfeed-show-mode-map "Q" "u q")
   :commands (elfeed)
   )
 
@@ -851,25 +853,25 @@
   )
 
 (use-package consult-dir
-    :ensure t
-    ;; :after (consult)
-    :custom
-    (consult-dir-sources
-     '(consult-dir--source-default
-       consult-dir--source-project
-       consult-dir--source-recentf
-       consult-dir--source-tramp-local
-       consult-dir--source-bookmark
-       ))
-    (consult-dir-sort-candidates nil)
-    :bind ((:map vertico-map ;; minibuffer-local-completion-map
-                 ("C-x M-d" . consult-dir)
-                 ("C-x M-j" . consult-dir-jump-file)
-                 :map global-map
-                 ("C-x M-d" . consult-dir)
-                 ))
-    :commands (consult-dir consult-dir-jump-file)
-    )
+  :ensure t
+  ;; :after (consult)
+  :custom
+  (consult-dir-sources
+   '(consult-dir--source-default
+     consult-dir--source-project
+     consult-dir--source-recentf
+     consult-dir--source-tramp-local
+     consult-dir--source-bookmark
+     ))
+  (consult-dir-sort-candidates nil)
+  :bind ((:map vertico-map ;; minibuffer-local-completion-map
+               ("C-x M-d" . consult-dir)
+               ("C-x M-j" . consult-dir-jump-file)
+               :map global-map
+               ("C-x M-d" . consult-dir)
+               ))
+  :commands (consult-dir consult-dir-jump-file)
+  )
 
 (use-package consult-eglot
   :ensure t
@@ -887,9 +889,9 @@
   :ensure t
   :after (consult yasnippet)
   :bind (:map global-map
-         ("M-g y y" . consult-yasnippet)
-         ("M-g y v" . consult-yasnippet-visit-snippet-file)
-         )
+              ("M-g y y" . consult-yasnippet)
+              ("M-g y v" . consult-yasnippet-visit-snippet-file)
+              )
   )
 
 (use-package consult-symbol
@@ -1492,8 +1494,8 @@ For each non-existent cli throw a warning."
          )
   :custom
   (pdf-info-epdfinfo-program (if (my/nixos-p)
-                                  (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-nixos/epdfinfo"))
-                                (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-fedora/epdfinfo"))))
+                                 (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-nixos/epdfinfo"))
+                               (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-fedora/epdfinfo"))))
   (pdf-view-display-size 'fit-page) ;; 'fit-width, 'fit-page
   (pdf-annot-activate-created-annotations nil)
   :config
