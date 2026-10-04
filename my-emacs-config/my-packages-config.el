@@ -260,20 +260,6 @@
 
 
 
-;; Package to fold code using tree-sitter technology
-(use-package treesit-fold
-  :ensure t
-  :demand t
-  :bind (:map treesit-fold-mode-map
-              ("s-<tab>" . treesit-fold-toggle)
-              ("s-<iso-lefttab> <backspace>" . treesit-fold-close-all)
-              ("s-<iso-lefttab> s-<iso-lefttab>" . treesit-fold-open-all)
-              )
-  :config
-  (global-treesit-fold-mode +1)
-  (global-treesit-fold-indicators-mode +1)
-  )
-
 ;; Focus on selected text
 (use-package focus
   :ensure t

@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: use-package
+# name: use-package-ensure-defer-custom
 # key: usepedc
 # uuid: usepedc
 # --

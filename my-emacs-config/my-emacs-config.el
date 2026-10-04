@@ -806,10 +806,7 @@
   (confirm-kill-processes t)
   (view-read-only t)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
-  (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory))))
-  ;; (trusted-content (list (intern "~/.emacs.d/")))
-  ;; (trusted-content `(,(expand-file-name "~/.emacs.d/") ,(expand-file-name (concat user-emacs-directory "my-emacs-config/"))))
-  ;; (trusted-content :all)
+  (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory)))) ;; :all
   :config
   ;; var: backup-inhibited
 
@@ -1113,8 +1110,8 @@
 
                   ;; Outline Scanning / Text folding
                   outline-minor-mode
-                  treesit-fold-mode
-                  treesit-fold-indicators-mode
+                  ;; treesit-fold-mode
+                  ;; treesit-fold-indicators-mode
                   ;; ts-fold-mode
                   ;; ts-fold-indicators-mode
 
@@ -1156,6 +1153,42 @@
     (add-to-list 'so-long-minor-modes mode))
 
   (global-so-long-mode +1)
+  )
+
+(use-package hideshow
+  :defer t
+  :hook
+  ((
+    prog-mode
+    eglot--managed-mode
+    ;; text-mode
+    ;; org-mode
+    ) . hs-minor-mode)
+  :bind (:map hs-minor-mode-map
+              ("C-c @ C-h" . nil)
+              ("C-c @ C-e" . nil)
+              ("C-c @ C-d" . nil)
+              ("C-c @ C-t" . nil)
+              ("C-c @ C-a" . nil)
+              ("C-c @ C-c" . nil)
+              ("C-c @ C-l" . nil)
+              ("C-c @ C-s" . nil)
+              ("C-c @ h" . hs-hide-block)
+              ("C-c @ e" . hs-toggle-hiding)
+              ("C-c @ d" . hs-hide-block)
+              ("C-c @ t" . hs-hide-all)
+              ("C-c @ a" . hs-show-all)
+              ("C-c @ c" . hs-toggle-hiding)
+              ("C-c @ l" . hs-hide-level)
+              ("C-c @ s" . hs-show-block)
+              ("s-<tab>" . hs-toggle-hiding)
+              ;; ("s-<iso-lefttab> <backspace>" . hs-hide-all)
+              ;; ("s-<iso-lefttab> s-<iso-lefttab>" . hs-show-all)
+              )
+  :custom
+  ;; Emacs-31
+  (hs-display-lines-hidden t)
+  (hs-show-indicators t)
   )
 
 
@@ -1272,7 +1305,6 @@
      orderless
      corfu
      focus
-     treesit-fold
      pgmacs
      pg
      yasnippet
