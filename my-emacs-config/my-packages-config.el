@@ -250,12 +250,6 @@
 (use-package yasnippet-capf
   :ensure t
   :after cape
-  :init
-  (defun my/yasnippet-emacs-lisp-mode-capf ()
-    (setq-local completion-at-point-functions
-                (list (cape-capf-super #'yasnippet-capf #'elisp-completion-at-point #'cape-elisp-block #'cape-elisp-symbol))))
-  :hook
-  (emacs-lisp-mode . my/yasnippet-emacs-lisp-mode-capf)
   )
 
 
@@ -659,15 +653,24 @@
 (use-package cape
   :ensure t
   :demand t
+  :hook
+  (completion-at-point-functions . cape-history)
+  (completion-at-point-functions . cape-dict)
+  (completion-at-point-functions . cape-keyword)
+  (completion-at-point-functions . cape-file)
+  (completion-at-point-functions . cape-dabbrev)
+  (completion-at-point-functions . cape-abbrev)
+  ;; etc... (https://github.com/minad/cape#configuration)
+
+  (emacs-lisp-mode . my/emacs-lisp-mode-capf)
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
   :init
-  (add-hook 'completion-at-point-functions #'cape-abbrev)
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-keyword)
-  (add-hook 'completion-at-point-functions #'cape-dict)
-  (add-hook 'completion-at-point-functions #'cape-history)
-  ;; etc... (https://github.com/minad/cape#configuration)
+
+  (defun my/emacs-lisp-mode-capf ()
+    (setq-local completion-at-point-functions
+                ;; cape-capf-super combines the capfs.
+                ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
+                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf #'elisp-completion-at-point #'cape-elisp-block #'cape-elisp-symbol)))))
   )
 
 ;; Vertico
@@ -1002,7 +1005,6 @@
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
-  (setq completion-preview-sort-function #'prescient-completion-sort)
   (prescient-persist-mode 1)
   )
 

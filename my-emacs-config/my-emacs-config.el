@@ -690,11 +690,22 @@
   (completion-preview-idle-delay 0.5)
   ;; The minimum amount of letters needed for `completion-preview' to appear.
   (completion-preview-minimum-symbol-length 2)
+  (completion-preview-exact-match-only nil)
+  (completion-preview-commands '(self-insert-command
+                                 insert-char
+                                 delete-backward-char
+                                 backward-delete-char-untabify
+                                 analyze-text-conversion
+                                 completion-preview-complete
+                                 ;; completion-preview-insert-word
+                                 ))
   :init
   (global-completion-preview-mode)
   :config
   ;; Set the completion-styles of completion-preview-mode
   (setq completion-preview-completion-styles completion-styles)
+  ;; Same sort function I use on corfu and vertico.
+  (setq completion-preview-sort-function #'prescient-completion-sort) ;; identity
   )
 
 (use-package isearch
