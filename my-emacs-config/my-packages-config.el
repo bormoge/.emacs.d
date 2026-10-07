@@ -601,6 +601,8 @@
   :defer t
   :hook
   (((
+     org-mode
+     text-mode
      prog-mode
      eglot--managed-mode
      ) . corfu-mode))
@@ -655,22 +657,41 @@
   :demand t
   :hook
   (completion-at-point-functions . cape-history)
-  (completion-at-point-functions . cape-dict)
   (completion-at-point-functions . cape-keyword)
   (completion-at-point-functions . cape-file)
   (completion-at-point-functions . cape-dabbrev)
   (completion-at-point-functions . cape-abbrev)
-  ;; etc... (https://github.com/minad/cape#configuration)
+  ;; etc...
+  ;; https://github.com/minad/cape#available-capfs
+  ;; https://github.com/minad/cape#configuration
 
   (emacs-lisp-mode . my/emacs-lisp-mode-capf)
+  ((org-mode text-mode) . my/org-txt-mode-capf)
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
   :init
-
   (defun my/emacs-lisp-mode-capf ()
     (setq-local completion-at-point-functions
                 ;; cape-capf-super combines the capfs.
                 ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
-                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf #'elisp-completion-at-point #'cape-elisp-block #'cape-elisp-symbol)))))
+                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf
+                                                       #'elisp-completion-at-point
+                                                       #'cape-elisp-block
+                                                       #'cape-elisp-symbol))
+                      #'cape-file
+                      )))
+  (defun my/org-txt-mode-capf ()
+    (setq-local completion-at-point-functions
+                ;; cape-capf-super combines the capfs.
+                ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
+                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf
+                                                       #'pcomplete-completions-at-point
+                                                       #'cape-keyword
+                                                       #'cape-abbrev
+                                                       #'cape-dabbrev
+                                                       #'cape-history
+                                                       ))
+                      #'cape-file
+                      )))
   )
 
 ;; Vertico
@@ -792,6 +813,12 @@
   ;; Configure other variables and modes in the :config section,
   ;; after lazily loading the package.
   :custom
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  (consult-preview-key 'any)
+  ;; (setq consult-preview-key "s-.")
+  ;; (setq consult-preview-key "M-.")
+  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
   (consult-buffer-sources
    '(consult-source-buffer
      consult-source-hidden-buffer
@@ -809,18 +836,12 @@
      consult-source-project-root-hidden
      ))
   (consult-fontify-preserve t)
-  :config
-  (setq-default completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
-
   ;; Number of characters needed when using an async consult command (e.g. consult-grep, consult-find)
-  (setq consult-async-min-input 3)
-
-  ;; Optionally configure preview. The default value
-  ;; is 'any, such that any key triggers the preview.
-  (setq consult-preview-key 'any)
-  ;; (setq consult-preview-key "s-.")
-  ;; (setq consult-preview-key "M-.")
-  ;; (setq consult-preview-key '("S-<down>" "S-<up>"))
+  (consult-async-min-input 2) ;; default: 3
+  (consult-async-input-debounce 0.05) ;; default: 0.2
+  (consult-async-input-throttle 0.1) ;; default: 0.5
+  (consult-async-refresh-delay 0.05) ;; default: 0.2
+  :config
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
   (consult-customize

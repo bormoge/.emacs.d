@@ -25,11 +25,11 @@
   (if (my/podman-container-p)
       (load-theme 'guava-themes-rubus t) ;; guava-themes-rubus
     (load-theme 'guava-themes-vaccinium t)) ;; guava-themes-vaccinium
-  (set-face-attribute 'mode-line nil :font "JuliaMono Light 12")
-  (set-face-attribute 'tab-line nil :font "JuliaMono Light 12" :weight 'bold)
-  (set-face-attribute 'tab-line-tab-modified nil :font "JuliaMono Light 12" :weight 'bold)
-  (set-face-attribute 'tab-line-tab-special nil :font "JuliaMono Light 12" :weight 'bold)
-  (set-face-attribute 'tab-bar nil :font "JuliaMono Light 14" :weight 'bold)
+  (set-face-attribute 'mode-line nil :font "IoskeleyMonoTerm Nerd Font Light 14")
+  (set-face-attribute 'tab-line nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
+  (set-face-attribute 'tab-line-tab-modified nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
+  (set-face-attribute 'tab-line-tab-special nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
+  (set-face-attribute 'tab-bar nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
   (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
   )
 

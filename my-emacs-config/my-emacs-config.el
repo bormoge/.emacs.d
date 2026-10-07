@@ -86,16 +86,27 @@
   (truncate-partial-width-windows 50)
   ;; Character used as indicator for ‘display-fill-column-indicator’.
   (display-fill-column-indicator-character nil)
+  ;; Set how long to wait for GTK events.
+  (pgtk-wait-for-event-timeout 0.1)
+  (pgtk-use-im-context nil)
+  ;; Active regions automatically set the primary selection
+  (select-active-regions t)
 
   :config
   ;; Disable compact font caches
   (setq-default inhibit-compacting-font-caches t)
+
   ;; Bidirectional editing config
   (setq-default bidi-display-reordering 'left-to-right)
   (setq-default bidi-paragraph-direction 'left-to-right)
-  (setq-default completion-ignore-case nil)
-  (if (version<= "27.1" emacs-version)
-      (setq bidi-inhibit-bpa t))
+  (when (version<= "27.1" emacs-version)
+    (setq bidi-inhibit-bpa t))
+
+  (setq pgtk-use-im-context-on-new-connection t)
+  (when (boundp 'pgtk-wait-for-event-timeout)
+    (setq pgtk-wait-for-event-timeout 0.001))
+
+  (setq completion-ignore-case nil)
   )
 
 
@@ -151,7 +162,7 @@
 
 (use-package font-lock
   :custom
-  (font-lock-maximum-decoration t)
+  (font-lock-maximum-decoration t) ;; e.g. '((t . 2)), '((c-mode . t) (c++-mode . 2) (t . 1))
   )
 
 ;; Package for miscellaneous features
@@ -166,17 +177,10 @@
               ("s-<0x10081247> s-¡ f" . fill-paragraph)
               ("H-s s c" . shell-command)
               )
-  ;; Enable auto-save-mode only when the buffer is associated with a file.
-  :hook ((after-change-major-mode . (lambda ()
-                                      (if (buffer-file-name)
-                                          (auto-save-mode +1)
-                                        (auto-save-mode -1))))
-         (special-mode . (lambda ()
+  :hook ((special-mode . (lambda ()
                            (setq-local show-trailing-whitespace nil)
                            (setq-local truncate-lines nil)
                            ))
-         ;; Delete all trailing-whitespaces when saving
-         (before-save . my/delete-trailing-whitespace)
          )
   :custom
   (line-number-mode t)
@@ -218,14 +222,16 @@
   :config
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
+  )
 
-  (defun my/delete-trailing-whitespace ()
-    "Call `delete-trailing-whitespace' unless the buffer is read-only."
-    (let ((forbidden-prefixes-delete-trailing-whitespace '("gfm-mode" "markdown")))
-      (unless (or buffer-read-only (cl-some (lambda (prefix)
-                                              (string-prefix-p prefix (symbol-name major-mode)))
-                                            forbidden-prefixes-delete-trailing-whitespace))
-        (delete-trailing-whitespace))))
+(use-package subr
+  :defer t
+  ;; Enable auto-save-mode only when the buffer is associated with a file.
+  :hook ((after-change-major-mode . (lambda ()
+                                      (if (buffer-file-name)
+                                          (auto-save-mode +1)
+                                        (auto-save-mode -1))))
+         )
   )
 
 (use-package visual-wrap
@@ -308,6 +314,7 @@
 (use-package tooltip
   :custom
   (tooltip-delay 0.7)
+  (tooltip-short-delay 0.1)
   :config
   (tooltip-mode +1)
   )
@@ -432,6 +439,7 @@
   (completion-eager-update t) ;; Emacs-31
   (completion-eager-display t) ;; Emacs-31
   (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
+  (completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
   )
 
 ;; Enable right click menu
@@ -565,9 +573,13 @@
   :bind (:map dired-mode-map
               ("M-<" . dired-beginning-of-buffer) ;; Replace `beginning-of-buffer'.
               ("M->" . dired-end-of-buffer) ;; Replace `end-of-buffer'.
+              ("s-<0x10081247> s-!" . my/dired-sort-by-name)
+              ("s-<0x10081247> s-\"" . my/dired-sort-by-size)
+              ("s-<0x10081247> s-#" . my/dired-sort-by-date)
+              ("s-<0x10081247> s-$" . my/dired-sort-by-extension)
               )
   :custom
-  (dired-listing-switches "-ahl --group-directories-first")
+  (dired-listing-switches "-alh --group-directories-first")
   (dired-kill-when-opening-new-dired-buffer t)
   (dired-recursive-deletes 'always)
   (dired-recursive-copies 'always)
@@ -589,6 +601,34 @@
     (interactive)
     (goto-char (point-min))
     (dired-next-line 3))
+
+  (defun my/dired-sort-by-name (arg)
+    "Sort Dired buffer alphabetically by name."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alh --group-directories-first")
+      (dired-sort-other "-alhr --group-directories-first")))
+
+  (defun my/dired-sort-by-size (arg)
+    "Sort Dired buffer by file size."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alhS --group-directories-first")
+      (dired-sort-other "-alhSr --group-directories-first")))
+
+  (defun my/dired-sort-by-date (arg)
+    "Sort Dired buffer by last modification date."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alht --group-directories-first")
+      (dired-sort-other "-alhtr --group-directories-first")))
+
+  (defun my/dired-sort-by-extension (arg)
+    "Sort Dired buffer by file extension."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alhX --group-directories-first")
+      (dired-sort-other "-alhXr --group-directories-first")))
   )
 
 (use-package find-dired
@@ -780,7 +820,11 @@
 
 ;; Backup config. Instead of automatically generating backup files, choose when and where to generate them.
 (use-package files
-  ;; :hook (after-save-hook . executable-make-buffer-file-executable-if-script-p)
+  :hook (;; Delete all trailing-whitespaces when saving
+         (before-save . my/delete-trailing-whitespace)
+         ;; Make file executable according to umask if not already executable.
+         ;; (after-save-hook . executable-make-buffer-file-executable-if-script-p)
+         )
   :bind (:map global-map
               ("s-<0x10081247> s-B f" . my/force-backup-of-file)
               ("s-<0x10081247> s-B b" . my/enable-or-disable-backups)
@@ -819,6 +863,14 @@
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory)))) ;; :all
   :config
+  (defun my/delete-trailing-whitespace ()
+    "Call `delete-trailing-whitespace' unless the buffer is read-only."
+    (let ((forbidden-prefixes-delete-trailing-whitespace '("gfm-mode" "markdown")))
+      (unless (or buffer-read-only (cl-some (lambda (prefix)
+                                              (string-prefix-p prefix (symbol-name major-mode)))
+                                            forbidden-prefixes-delete-trailing-whitespace))
+        (delete-trailing-whitespace))))
+
   ;; var: backup-inhibited
 
   (defun my/force-backup-of-file ()
@@ -1202,6 +1254,20 @@
   (hs-show-indicators t)
   )
 
+(use-package emacs-lock
+  :defer t
+  :bind
+  (:map global-map
+        ("C-x s-q" . emacs-lock-mode)
+        )
+  )
+
+(use-package icomplete
+  :defer t
+  :custom
+  (icomplete-compute-delay 0.15)
+  )
+
 
 
 ;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
@@ -1218,22 +1284,24 @@
   (use-package-always-defer nil)
   ;; Priority for installation
   (package-archives
-   '(("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
+   '(
+     ("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
      ("gnu"                 . "https://elpa.gnu.org/packages/")
      ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
      ("melpa-releases"      . "https://releases.melpa.org/packages/")
      ("gnu-devel"           . "https://elpa.gnu.org/devel/")
-     ;; ("melpa-mirror"        . "https://www.mirrorservice.org/sites/melpa.org/packages/") ;; Official MELPA Mirror
-     ;; ("melpa-stable-mirror" . "https://www.mirrorservice.org/sites/stable.melpa.org/packages/") ;; Official MELPA Stable Mirror
+     ("melpa"               . "https://melpa.org/packages/")
+     ("melpa-stable"        . "https://stable.melpa.org/packages/")
      ))
   (package-archive-priorities
-   '(("melpa-snapshots"     . 7)
+   '(
+     ("melpa-snapshots"     . 7)
      ("gnu"                 . 6)
      ("nongnu"              . 5)
      ("melpa-releases"      . 4)
      ("gnu-devel"           . 3)
-     ("melpa-mirror"        . 2)
-     ("melpa-stable-mirror" . 1)
+     ("melpa"               . 2)
+     ("melpa-stable"        . 1)
      ))
   (package-selected-packages
    '(
