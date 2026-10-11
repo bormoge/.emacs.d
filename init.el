@@ -14,9 +14,6 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; Set to t to view an statistical report using ‘use-package-report’.
-(setopt use-package-compute-statistics nil) ;; t
-
 ;; Apply vanilla configuration.
 (load-file (expand-file-name "my-emacs-config/my-emacs-config.el" user-emacs-directory))
 

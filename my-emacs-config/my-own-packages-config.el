@@ -15,6 +15,7 @@
 
 (use-package guava-themes
   :ensure nil
+  :demand t
   :load-path "~/.emacs.d/elpa/guava-themes/"
   :custom
   (guava-themes-visible-bell-duration 0.15)

@@ -166,6 +166,20 @@
   ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   )
 
+(use-package projectile
+  :ensure t
+  :defer t
+  :bind
+  (:map projectile-mode-map
+   ("C-s-<0x10081247> C-s-p" . projectile-command-map)
+   ("C-s-<0x10081247> C-s-p C-f" . projectile-consult-find-file)
+   )
+  :custom
+  (projectile-enable-caching nil)
+  :init
+  (projectile-mode +1)
+  )
+
 
 
 ;; magit: Package used as a git front end.
@@ -480,6 +494,7 @@
                :map elfeed-search-mode-map
                ("s-<0x10081247> s-E u" . elfeed-update)
                (";" . my/elfeed-search-set-separator-date-format)
+               ("t" . nil)
                :map elfeed-show-mode-map
                ("m" . nil) ;; Unbind `elfeed-show-compose-mail'.
                ("TAB" . shr-next-link)
@@ -521,7 +536,18 @@
       (setf elfeed-search-separator-date-format
             (or new-format (default-value 'elfeed-search-separator-date-format)))
       (elfeed-search-update :force)))
+
   (keymap-set elfeed-show-mode-map "Q" "u q")
+
+  ;; (dolist (face '(elfeed-search-tag-face
+  ;;                 elfeed-search-date-face
+  ;;                 elfeed-search-feed-face
+  ;;                 elfeed-search-title-face
+  ;;                 elfeed-search-unread-title-face
+  ;;                 ))
+  ;;   (set-face-attribute face nil :font "IoskeleyMonoTerm Nerd Font Light 16"))
+  ;; (set-face-attribute 'elfeed-search-separator-face nil :underline t :extend 'unspecified :inherit '(bold elfeed-search-date-face))
+
   :commands (elfeed)
   )
 
@@ -1046,8 +1072,8 @@
   ;; `corfu-prescient-completion-category-overrides' and
   ;; `prescient--completion-recommended-overrides'.  Those options apply only
   ;; when `corfu-prescient-enable-filtering' is non-nil.
-  :config
-  (corfu-prescient-mode 1)
+  :init
+  (corfu-prescient-mode +1)
   )
 
 (use-package vertico-prescient
@@ -1067,8 +1093,8 @@
   ;; `vertico-prescient-completion-category-overrides', and
   ;; `prescient--completion-recommended-overrides'.  Those options apply only
   ;; when when `vertico-prescient-enable-filtering' is non-nil.
-  :config
-  (vertico-prescient-mode 1)
+  :init
+  (vertico-prescient-mode +1)
   )
 
 
@@ -1496,7 +1522,7 @@ For each non-existent cli throw a warning."
 ;; pdf-tools
 (use-package pdf-tools
   :ensure t
-  :defer t
+  :demand t
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (
          (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
@@ -1508,10 +1534,12 @@ For each non-existent cli throw a warning."
   (pdf-view-display-size 'fit-page) ;; 'fit-width, 'fit-page
   (pdf-annot-activate-created-annotations nil)
   :config
-  (pdf-tools-install) ;; To uninstall use the function `pdf-tools-uninstall'
+  ;; To uninstall use the function `pdf-tools-uninstall'
   ;; For more info about dependencies check ~/.emacs.d/elpa/pdf-tools-1.3.0/server/autobuild
   ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
   ;; Dependencies (NixOS Linux): automake autoconf pkg-config libpng zlib poppler
+  (pdf-tools-install)
+
   (require 'pdf-links)
   (require 'pdf-annot)
   )

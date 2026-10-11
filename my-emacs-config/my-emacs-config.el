@@ -6,6 +6,141 @@
 
 (require 'cl-lib)
 
+
+
+(use-package package
+  :bind (:map global-map
+              ("H-q l" . list-packages)
+              ("s-<0x10081247> s-L" . list-packages)
+              )
+  :custom
+  ;; Enable imenu support for use-package.
+  (use-package-enable-imenu-support t)
+  ;; Set to t to view an statistical report using ‘use-package-report’.
+  (use-package-compute-statistics nil) ;; t
+  ;; When set to t, assume :defer t when using `use-package' macro.
+  (use-package-always-defer nil)
+  ;; Set the directory that contains all the packages installed.
+  (package-user-dir (expand-file-name "elpa" user-emacs-directory))
+  ;; Set up package repositories
+  (package-archives
+   '(
+     ("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
+     ("gnu"                 . "https://elpa.gnu.org/packages/")
+     ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
+     ("melpa-releases"      . "https://releases.melpa.org/packages/")
+     ("gnu-devel"           . "https://elpa.gnu.org/devel/")
+     ;; ("melpa"               . "https://melpa.org/packages/")
+     ;; ("melpa-stable"        . "https://stable.melpa.org/packages/")
+     ))
+  ;; Set the priorities of package repositories.
+  (package-archive-priorities
+   '(
+     ("melpa-snapshots"     . 7)
+     ("gnu"                 . 6)
+     ("nongnu"              . 5)
+     ("melpa-releases"      . 4)
+     ("gnu-devel"           . 3)
+     ;; ("melpa"               . 2)
+     ;; ("melpa-stable"        . 1)
+     ))
+  ;; List of packages explicitly installed.
+  ;; Any package not in this list will be uninstalled by `package-autoremove'.
+  (package-selected-packages
+   '(
+     apheleia
+     auctex
+     avy
+     avy-embark-collect
+     cape
+     cider
+     clj-refactor
+     clojure-mode
+     clojure-ts-mode
+     consult
+     consult-dir
+     consult-eglot
+     consult-eglot-embark
+     consult-flyspell
+     consult-symbol
+     consult-yasnippet
+     corfu
+     corfu-prescient
+     dape
+     dashboard
+     devdocs
+     diff-hl
+     disaster
+     dockerfile-mode
+     doom-modeline
+     doom-themes
+     doric-themes
+     ef-themes
+     elfeed
+     embark
+     embark-consult
+     envrc
+     flymake-hledger
+     focus
+     form-feed
+     git-modes
+     gnu-elpa-keyring-update
+     guava-themes
+     helpful
+     hledger-mode
+     json-mode
+     ledger-mode
+     ligature
+     magit
+     marginalia
+     markdown-mode
+     mason
+     morning-star-theme
+     nerd-icons
+     nerd-icons-completion
+     nerd-icons-corfu
+     nerd-icons-dired
+     nerd-icons-grep
+     nerd-icons-ibuffer
+     nerd-icons-xref
+     nix-mode
+     nix-ts-mode
+     orderless
+     package-build
+     package-lint
+     package-lint-flymake
+     pdf-tools
+     pg
+     pgmacs
+     prescient
+     projectile
+     puni
+     python-coverage
+     python-pytest
+     rust-mode
+     rustic
+     spacemacs-theme
+     tab-line-nerd-icons
+     toml
+     toml-mode
+     tomlparse
+     vertico
+     vertico-prescient
+     vscode-dark-plus-theme
+     vundo
+     yaml
+     yaml-mode
+     yasnippet
+     yasnippet-capf
+     zenburn-emacs
+     affe
+     ))
+  (package-menu-use-current-if-no-marks t)
+  (package-check-signature 'allow-unsigned)
+  )
+
+
+
 (use-package emacs
   :bind (:map global-map
               ("s-<0x10081247> s-D" . delete-pair)
@@ -168,14 +303,16 @@
 ;; Package for miscellaneous features
 (use-package simple
   :bind (:map global-map
-              ("H-x s-q" . indent-tabs-mode)
-              ("H-x s-e" . delete-trailing-whitespace)
-              ("H-w" . count-words)
-              ("C-S-/". undo-only)
+              ("C-x k"                . kill-current-buffer)
+              ("C-x s-k"              . kill-buffer)
+              ("H-x s-q"              . indent-tabs-mode)
+              ("H-x s-e"              . delete-trailing-whitespace)
+              ("H-w"                  . count-words)
+              ("C-S-/"                . undo-only)
               ("s-<0x10081247> s-¡ p" . auto-fill-mode)
               ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
               ("s-<0x10081247> s-¡ f" . fill-paragraph)
-              ("H-s s c" . shell-command)
+              ("H-s s c"              . shell-command)
               )
   :hook ((special-mode . (lambda ()
                            (setq-local show-trailing-whitespace nil)
@@ -426,7 +563,7 @@
   (completions-max-height nil)
   (completion-cycle-threshold nil)
   (completions-format 'horizontal)
-  (completions-sort 'alphabetical)
+  (completions-sort #'prescient-completion-sort) ;;default: alphabetical
   (completions-group nil)
   (completion-auto-select nil)
   (completions-max-height nil) ;; 12
@@ -828,6 +965,7 @@
   :bind (:map global-map
               ("s-<0x10081247> s-B f" . my/force-backup-of-file)
               ("s-<0x10081247> s-B b" . my/enable-or-disable-backups)
+              ("C-x M-c" . restart-emacs)
               )
   :custom
   ;; If nil, disable backups
@@ -1266,133 +1404,6 @@
   :defer t
   :custom
   (icomplete-compute-delay 0.15)
-  )
-
-
-
-;; This configuration sets up a few `package' repositories and their priorities, from largest to smallest integer.
-(use-package package
-  :bind (:map global-map
-              ("H-q l" . list-packages)
-              ("s-<0x10081247> s-L" . list-packages)
-              )
-  :custom
-  (use-package-enable-imenu-support t)
-  ;; Set the directory that contains all the packages installed.
-  (package-user-dir (expand-file-name "elpa" user-emacs-directory))
-  ;; When set to t, assume :defer t when using `use-package' macro.
-  (use-package-always-defer nil)
-  ;; Priority for installation
-  (package-archives
-   '(
-     ("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
-     ("gnu"                 . "https://elpa.gnu.org/packages/")
-     ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
-     ("melpa-releases"      . "https://releases.melpa.org/packages/")
-     ("gnu-devel"           . "https://elpa.gnu.org/devel/")
-     ("melpa"               . "https://melpa.org/packages/")
-     ("melpa-stable"        . "https://stable.melpa.org/packages/")
-     ))
-  (package-archive-priorities
-   '(
-     ("melpa-snapshots"     . 7)
-     ("gnu"                 . 6)
-     ("nongnu"              . 5)
-     ("melpa-releases"      . 4)
-     ("gnu-devel"           . 3)
-     ("melpa"               . 2)
-     ("melpa-stable"        . 1)
-     ))
-  (package-selected-packages
-   '(
-     affe
-     tab-line-nerd-icons
-     yasnippet-capf
-     rustic
-     dockerfile-mode
-     ligature
-     git-modes
-     python-coverage
-     python-pytest
-     consult-flyspell
-     clj-refactor
-     form-feed
-     puni
-     consult-symbol
-     helpful
-     vscode-dark-plus-theme
-     package-build
-     package-lint
-     package-lint-flymake
-     guava-themes
-     devdocs
-     consult-dir
-     elfeed
-     disaster
-     apheleia
-     json-mode
-     tomlparse
-     toml-mode
-     toml
-     yaml
-     yaml-mode
-     consult-eglot-embark
-     consult-eglot
-     consult-yasnippet
-     markdown-mode
-     dape
-     rust-mode
-     dashboard
-     mason
-     nix-ts-mode
-     nix-mode
-     nerd-icons-xref
-     nerd-icons-grep
-     doom-modeline
-     ef-themes
-     doric-themes
-     morning-star-theme
-     zenburn-emacs
-     spacemacs-theme
-     nerd-icons-ibuffer
-     nerd-icons-corfu
-     nerd-icons-completion
-     nerd-icons-dired
-     cider
-     clojure-ts-mode
-     clojure-mode
-     nerd-icons
-     vertico-prescient
-     corfu-prescient
-     prescient
-     embark-consult
-     avy-embark-collect
-     embark
-     marginalia
-     vertico
-     avy
-     vundo
-     auctex
-     pdf-tools
-     consult
-     cape
-     gnu-elpa-keyring-update
-     envrc
-     flymake-hledger
-     hledger-mode
-     ledger-mode
-     orderless
-     corfu
-     focus
-     pgmacs
-     pg
-     yasnippet
-     doom-themes
-     magit
-     diff-hl
-     ))
-  (package-menu-use-current-if-no-marks t)
-  (package-check-signature 'allow-unsigned)
   )
 
 (use-package xref

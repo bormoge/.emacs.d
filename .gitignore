@@ -27,12 +27,14 @@
 .dap-breakpoints
 .lsp-session-v1
 .mc-lists.el
+.projectile-cache.eld
 bookmarks
 flnkf-file.txt
 ede-projects.el
 forge-database.sqlite
 network-security.data
 projectile-bookmarks.eld
+projectile-frecency.eld
 projects
 history
 recentf
