@@ -1,3 +1,5 @@
+;;; my-emacs-config.el --- Vanilla Emacs configuration -*- lexical-binding: t; -*-
+
 ;; Note to self: DO NOT USE M-s-s (The orca screen reader)
 
 ;; To invoke Hyper key: CTRL + x @ h
@@ -8,11 +10,7 @@
 
 
 
-(use-package package
-  :bind (:map global-map
-              ("H-q l" . list-packages)
-              ("s-<0x10081247> s-L" . list-packages)
-              )
+(use-package use-package-core
   :custom
   ;; Enable imenu support for use-package.
   (use-package-enable-imenu-support t)
@@ -20,6 +18,16 @@
   (use-package-compute-statistics nil) ;; t
   ;; When set to t, assume :defer t when using `use-package' macro.
   (use-package-always-defer nil)
+  ;; When set to t, report about loading and configuration details.
+  (use-package-verbose nil)
+  )
+
+(use-package package
+  :bind (:map global-map
+              ("H-q l" . list-packages)
+              ("s-<0x10081247> s-L" . list-packages)
+              )
+  :custom
   ;; Set the directory that contains all the packages installed.
   (package-user-dir (expand-file-name "elpa" user-emacs-directory))
   ;; Set up package repositories
@@ -145,6 +153,7 @@
   :bind (:map global-map
               ("s-<0x10081247> s-D" . delete-pair)
               )
+  :hook (minibuffer-setup . my/minibuffer-set-variables)
   :custom
   ;; Remove startup screen
   (inhibit-startup-screen t)
@@ -242,6 +251,12 @@
     (setq pgtk-wait-for-event-timeout 0.001))
 
   (setq completion-ignore-case nil)
+
+  (defun my/minibuffer-set-variables ()
+    (setq-local show-trailing-whitespace nil)
+    (setq-local truncate-lines t)
+    (setq-local word-wrap nil)
+    )
   )
 
 
@@ -314,11 +329,7 @@
               ("s-<0x10081247> s-¡ f" . fill-paragraph)
               ("H-s s c"              . shell-command)
               )
-  :hook ((special-mode . (lambda ()
-                           (setq-local show-trailing-whitespace nil)
-                           (setq-local truncate-lines nil)
-                           ))
-         )
+  :hook (special-mode . my/special-mode-set-variables)
   :custom
   (line-number-mode t)
   (column-number-mode t)
@@ -359,16 +370,24 @@
   :config
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
+
+  (defun my/special-mode-set-variables ()
+    (setq-local show-trailing-whitespace nil)
+    (setq-local truncate-lines nil)
+    (setq-local word-wrap t)
+    )
   )
 
 (use-package subr
   :defer t
   ;; Enable auto-save-mode only when the buffer is associated with a file.
-  :hook ((after-change-major-mode . (lambda ()
-                                      (if (buffer-file-name)
-                                          (auto-save-mode +1)
-                                        (auto-save-mode -1))))
-         )
+  :hook (after-change-major-mode . my/auto-save-mode-check-if-buffer-is-file)
+  :init
+  (defun my/auto-save-mode-check-if-buffer-is-file ()
+    (if (buffer-file-name)
+        (auto-save-mode +1)
+      (auto-save-mode -1))
+    )
   )
 
 (use-package visual-wrap
@@ -506,6 +525,8 @@
   (display-time-mode t)
   )
 
+
+
 ;; Bookmarks
 (use-package bookmark
   :bind (:map global-map
@@ -520,24 +541,54 @@
 ;; Save minibuffer history. By default it will be on ~/.emacs.d/history
 (use-package savehist
   :defer nil
-  :hook (savehist-save-hook . (lambda ()
-                                (setq kill-ring
-                                      (mapcar #'substring-no-properties
-                                              (cl-remove-if-not #'stringp kill-ring)))))
+  :hook (savehist-save . my/savehist-save-with-no-properties)
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "savehist"))
-  (savehist-additional-variables '((kill-ring . 1)
-                                   (search-ring . 1)
-                                   (regexp-search-ring . 1)
-                                   (register-alist . 10)
-                                   ;; (mark-ring . 1)
-                                   ;; (global-mark-ring . 1)
+  (savehist-additional-variables '((regexp-search-ring . 149)
+                                   (register-alist . 29)
+                                   (kill-ring . 29)
+                                   (search-ring . 149)
+                                   ;; (mark-ring . 0)
+                                   ;; (global-mark-ring . 0)
                                    ))
   (savehist-ignored-variables '(recentf-list))
   :config
+  (defun my/savehist-save-with-no-properties ()
+    (dolist (var '(kill-ring
+                   search-ring
+                   query-replace-history
+                   regexp-search-ring
+                   file-name-history
+                   bookmark-history
+                   ))
+      (set var
+           (delete-dups
+            (mapcar #'substring-no-properties
+                    (cl-remove-if-not #'stringp (symbol-value var)))))))
+
   (savehist-mode +1)
+
+  ;; Override a `savehist-minibuffer-history-variables' element
+  ;; with a `savehist-additional-variables' element.
+  (delq 'search-ring savehist-minibuffer-history-variables)
+  (delq 'regexp-search-ring savehist-minibuffer-history-variables)
   )
+
+;; Save cursor position.
+(use-package saveplace
+  :custom
+  (save-place-file (expand-file-name "saveplace" user-emacs-directory))
+  (save-place-limit 600)
+  (save-place-forget-unreadable-files t)
+  :config
+  (save-place-mode +1)
+  (advice-add 'save-place-find-file-hook :after
+              (lambda (&rest _)
+                (when buffer-file-name (ignore-errors (recenter)))))
+  )
+
+
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
 (use-package autorevert
@@ -587,13 +638,13 @@
   (context-menu-mode +1)
   )
 
+
+
 (use-package vc
   :defer t
   :custom
-  (vc-follow-symlinks 'ask)
   (vc-git-diff-switches '("--histogram")) ;; default: t
   (vc-git-print-log-follow nil)
-  (vc-make-backup-files nil)
   (vc-command-messages nil)
   (vc-find-revision-no-save nil)
   ;; Deduce vc on all buffers
@@ -608,6 +659,14 @@
               ("r" . vc-dir-refresh)
               (";" . vc-git-grep)
               )
+  )
+
+(use-package vc-hooks
+  :defer t
+  :custom
+  (vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
+  (vc-follow-symlinks 'ask)
+  (vc-make-backup-files nil)
   )
 
 ;; Display differences between files / buffers
@@ -641,6 +700,8 @@
   (ediff-split-window-function 'split-window-horizontally) ;; default: 'split-window-vertically
   (ediff-window-setup-function 'ediff-setup-windows-plain) ;; default: 'ediff-setup-windows-default
   )
+
+
 
 ;; EditorConfig (https://editorconfig.org/)
 ;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
@@ -702,6 +763,8 @@
   :config
   (setq native-comp-jit-compilation t)
   )
+
+
 
 ;; Dired config
 (use-package dired
@@ -787,6 +850,8 @@
   (dired-create-destination-dirs 'ask)
   (dired-create-destination-dirs-on-trailing-dirsep t)
   )
+
+
 
 ;; grep config
 (use-package grep
@@ -924,18 +989,6 @@
         ("s-<0x10081247> s-R" . recentf-open))
   :config
   (recentf-mode +1)
-  )
-
-(use-package saveplace
-  :custom
-  (save-place-file (expand-file-name "saveplace" user-emacs-directory))
-  (save-place-limit 600)
-  (save-place-forget-unreadable-files t)
-  :config
-  (save-place-mode +1)
-  (advice-add 'save-place-find-file-hook :after
-              (lambda (&rest _)
-                (when buffer-file-name (ignore-errors (recenter)))))
   )
 
 (use-package replace
@@ -1129,6 +1182,8 @@
 (use-package ansi-color
   :custom
   (ansi-color-for-comint-mode t)
+  ;; :config
+  ;; (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
   )
 
 (use-package newcomment
@@ -1274,8 +1329,8 @@
   (so-long-threshold 6000)
 
   :config
-  ;; Keep syntax highlighting
-  (setopt so-long-minor-modes (delq 'font-lock-mode so-long-minor-modes))
+  ;; Keep syntax highlighting and line numbers even when `so-long' is active.
+  (setopt so-long-minor-modes (seq-difference so-long-minor-modes '(font-lock-mode display-line-numbers-mode)))
 
   ;; Limit font-lock to the minimum decoration level to save CPU cycles
   (add-to-list 'so-long-variable-overrides '(font-lock-maximum-decoration . 1))
@@ -1291,9 +1346,6 @@
   ;; Ensure the buffer remains writable when so-long triggers, overriding the
   ;; default behavior that locks the buffer as read-only.
   (setf (alist-get 'buffer-read-only so-long-variable-overrides nil t) nil)
-
-  ;; Retain line numbers
-  (setopt so-long-minor-modes (delq 'display-line-numbers-mode so-long-minor-modes))
 
   ;; When so-long triggers, active modes in this list are disabled for the current buffer.
   (dolist (mode '(;; Structural Editing and Parenthesis Matching
@@ -1551,6 +1603,14 @@
               )
   )
 
+(use-package transient
+  :defer t
+  :custom
+  (transient-default-level 4) ;; default: 4
+  )
+
+
+
 ;; Abbrev config
 (use-package abbrev
   :custom
@@ -1785,6 +1845,10 @@
 
 (use-package treesit
   :ensure nil
+  :custom
+  ;; 16.13.2 Parser-based Font Lock
+  ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
+  (treesit-font-lock-level 4)
   :config
   ;; Treesitter grammar repositories.
   (setq treesit-language-source-alist
@@ -1834,23 +1898,18 @@
           (typescript-tsx-mode . tsx-ts-mode)
           (typescript-mode . typescript-ts-mode)
           (nix-mode . nix-ts-mode)
-          (rust-ts-mode . rust-mode) ;; This is depending of the value of `rust-mode-treesitter-derive'
+          ;; (rust-ts-mode . rust-mode) ;; Add this line depending of the value of `rust-mode-treesitter-derive'
           (python-mode . python-ts-mode)
           (toml-mode . toml-ts-mode)
           (elixir-mode . elixir-ts-mode)
           (erlang-mode . erlang-ts-mode)
           (dockerfile-mode . dockerfile-ts-mode)
-          )
-        )
+          ))
 
   ;; Initialize major modes on these file extensions
   (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))
   (add-to-list 'auto-mode-alist '("\\.html\\'" . html-ts-mode))
-
-  ;; 16.13.2 Parser-based Font Lock
-  ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
-  (setopt treesit-font-lock-level 4)
   )
 
 ;; Treesitter modes
@@ -2001,41 +2060,6 @@
 
 ;;;; Miscellaneous
 
-;; ;; Increase zoom
-;; (setq default-text-scale-mode-amount 2)
-;;
-;; (setq forbidden-prefixes-text-scale-mode '("dape" "dashboard-mode"))
-;;
-;; (add-hook 'after-change-major-mode-hook
-;;        (lambda ()
-;;          ;; (if (derived-mode-p 'treemacs-mode)
-;;             (unless (cl-some (lambda (prefix)
-;;                                (string-prefix-p prefix (symbol-name major-mode)))
-;;                              forbidden-prefixes-text-scale-mode)
-;;               ;; (text-scale-set 0)
-;;            (text-scale-set default-text-scale-mode-amount))
-;;          ))
-;;
-;; ;; Reduce text size when there are more than two windows
-;; (advice-add 'split-window-right :after #'(lambda (&rest _)
-;;                                            (setq default-text-scale-mode-amount 0)
-;;                                            (text-scale-set default-text-scale-mode-amount)))
-;;
-;; (advice-add 'split-window-below :after #'(lambda (&rest _)
-;;                                            (setq default-text-scale-mode-amount 0)
-;;                                            (text-scale-set default-text-scale-mode-amount)))
-;;
-;; (advice-add 'delete-window :after #'(lambda (&rest _)
-;;                                       (when (<= (length (window-list)) 1)
-;;                                         (setq default-text-scale-mode-amount 2)
-;;                                         (text-scale-set default-text-scale-mode-amount)
-;;                                         )))
-;;
-;; (advice-add 'delete-other-windows :after #'(lambda (&rest _)
-;;                                              (setq default-text-scale-mode-amount 2)
-;;                                              (text-scale-set default-text-scale-mode-amount)))
-
-
 ;; Enable narrowing commands
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-defun 'disabled nil)
@@ -2128,6 +2152,9 @@
 
 (bind-key (kbd "H-x w") 'my/copy-current-path-to-kill-ring 'global-map)
 
+
+
+;;;; (Possible) Future Emacs config
 
 ;; Global lexical-binding (Emacs-31)
 ;; (set-default-toplevel-value 'lexical-binding t)
@@ -2154,3 +2181,8 @@
 ;; (minibuffer-electric-default-mode 1)
 ;; (treesit-auto-install-grammar 'ask)
 ;; (treesit-enabled-modes t)
+
+
+;; End:
+
+;;; my-emacs-config.el ends here

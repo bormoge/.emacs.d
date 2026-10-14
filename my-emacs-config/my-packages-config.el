@@ -1,3 +1,8 @@
+;;; my-packages-config.el --- Configuration for Emacs packages -*- lexical-binding: t; -*-
+
+(require 'seq)
+
+
 ;; Recompile packages if necessary
 ;; (byte-recompile-directory package-user-dir nil 'force)
 
@@ -20,6 +25,8 @@
       (insert-file-contents "/etc/os-release")
       (or (re-search-forward "^ID=nixos$" nil t)
           (re-search-forward "^NAME=NixOS$" nil t)))))
+
+
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
@@ -162,8 +169,6 @@
   (diff-hl-global-modes '(not
                           image-mode
                           pdf-view-mode))
-  ;; Ensure VC is enabled
-  ;;(vc-handled-backends '(RCS CVS SVN SCCS SRC Bzr Git Hg))
   )
 
 (use-package projectile
@@ -186,8 +191,6 @@
 (use-package magit
   :ensure t
   :defer t
-  :config
-  (setopt transient-default-level 4) ;; default: 4
   :commands (magit-status magit-dispatch)
   )
 
@@ -196,8 +199,7 @@
   :after magit
   :custom
   (magit-refresh-status-buffer t)
-  (magit-display-buffer-function
-   #'magit-display-buffer-traditional)
+  (magit-display-buffer-function #'magit-display-buffer-traditional)
   )
 
 (use-package magit-diff
@@ -1236,6 +1238,21 @@ For each non-existent cli throw a warning."
   :commands (disaster)
   )
 
+(use-package package-build
+  :vc (:url "https://github.com/melpa/package-build"
+            :rev :newest
+            :branch "master"
+            :vc-backend Git)
+  ) ;; Functions to remember: package-build-archive, package-build-current-recipe, package-build-create-recipe
+
+(use-package package-lint
+  :ensure t
+  ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
+
+(use-package package-lint-flymake
+  :ensure t
+  )
+
 
 
 ;; json config
@@ -1601,3 +1618,7 @@ For each non-existent cli throw a warning."
   ;;                                                     (directory-file-name (dape-cwd))))))))
 
   )
+
+;; End:
+
+;;; my-packages-config.el ends here

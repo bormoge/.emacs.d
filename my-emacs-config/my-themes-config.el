@@ -1,3 +1,5 @@
+;;; my-themes-config.el --- Configuration for Emacs themes -*- lexical-binding: t; -*-
+
 ;; ;; doom-themes
 ;; (use-package doom-themes
 ;;   :ensure t
@@ -145,3 +147,7 @@
 ;; ;; tokyo-night
 ;; (use-package tokyo-night
 ;;   :ensure t)
+
+;; End:
+
+;;; my-themes-config.el ends here

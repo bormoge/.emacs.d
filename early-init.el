@@ -1,3 +1,5 @@
+;;; early-init.el --- Early init -*- lexical-binding: t; -*-
+
 ;; Increase the amount of data which Emacs reads from the process
 ;; Original value: 4096
 (setq read-process-output-max (* 4 1024 1024)) ;; 4mb
@@ -10,8 +12,6 @@
 ;; "plists provide better performance in deserialization and also put less presure than hash-tables."
 (setenv "LSP_USE_PLISTS" "true")
 
-;; Necessary to avoid white flashing at startup
-;; If you want to return to default Emacs theme, delete this.
-;; (setq default-frame-alist '((background-color . "#000000")
-;; 			    (ns-appearance . dark)
-;; 			    (ns-transparent-titlebar . t)))
+;; End:
+
+;;; early-init.el ends here

@@ -1,17 +1,4 @@
-(use-package package-build
-  :vc (:url "https://github.com/melpa/package-build"
-            :rev :newest
-            :branch "master"
-            :vc-backend Git)
-  ) ;; Functions to remember: package-build-archive, package-build-current-recipe, package-build-create-recipe
-
-(use-package package-lint
-  :ensure t
-  ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
-
-(use-package package-lint-flymake
-  :ensure t
-  )
+;;; my-packages-config.el --- Configuration for Emacs packages I've authored -*- lexical-binding: t; -*-
 
 (use-package guava-themes
   :ensure nil
@@ -31,7 +18,6 @@
   (set-face-attribute 'tab-line-tab-modified nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
   (set-face-attribute 'tab-line-tab-special nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
   (set-face-attribute 'tab-bar nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
-  (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
   )
 
 ;; (use-package guava-themes
@@ -54,3 +40,7 @@
 ;; (setq ring-bell-function #'guava-themes-change-visible-bell)
 ;; (setq visible-bell t)
 ;; (load-theme 'guava-themes-psidium t)
+
+;; End:
+
+;;; my-own-packages-config.el ends here

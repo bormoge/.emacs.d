@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: use-package-custom
+# key: usepc
+# uuid: usepc
+# --
+(use-package $1
+  :custom
+  $2
+  )

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: use-package-defer-custom
+# key: usepdc
+# uuid: usepdc
+# --
+(use-package $1
+  :defer t
+  :custom
+  $2
+  )

@@ -1,3 +1,5 @@
+;;; init.el --- Init -*- lexical-binding: t; -*-
+
 ;; Check init speed.
 ;; (profiler-start 'cpu)
 
@@ -32,3 +34,7 @@
 ;; Finish checking init speed.
 ;; (profiler-report)
 ;; (profiler-stop)
+
+;; End:
+
+;;; init.el ends here
