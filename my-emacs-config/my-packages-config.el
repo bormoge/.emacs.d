@@ -502,14 +502,8 @@
                ("TAB" . shr-next-link)
                ("s-<tab>" . elfeed-show-next-link)
                ))
-  :hook ((elfeed-search-mode . (lambda ()
-                                 (setq-local show-trailing-whitespace nil)
-                                 (setq-local truncate-lines t)
-                                 ))
-         (elfeed-show-mode . (lambda ()
-                               (setq-local show-trailing-whitespace nil)
-                               (setq-local truncate-lines t)
-                               ))
+  :hook ((elfeed-search-mode . my/set-variables-for-specific-modes)
+         (elfeed-show-mode . my/set-variables-for-specific-modes)
          (elfeed-search-update . elfeed-search-add-separators)
          )
   :custom
@@ -630,7 +624,6 @@
   :hook
   (((
      org-mode
-     text-mode
      prog-mode
      eglot--managed-mode
      ) . corfu-mode))
@@ -694,37 +687,39 @@
   ;; https://github.com/minad/cape#configuration
 
   (emacs-lisp-mode . my/emacs-lisp-mode-capf)
-  ((org-mode text-mode) . my/org-txt-mode-capf)
+  (org-mode . my/org-mode-capf)
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
   :init
   (defun my/emacs-lisp-mode-capf ()
     (setq-local completion-at-point-functions
                 ;; cape-capf-super combines the capfs.
                 ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
-                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf
+                (list #'cape-file
+                      (cape-capf-sort (cape-capf-super #'yasnippet-capf
                                                        #'elisp-completion-at-point
                                                        #'cape-elisp-block
-                                                       #'cape-elisp-symbol))
-                      #'cape-file
+                                                       #'cape-elisp-symbol
+                                                       ))
                       )))
-  (defun my/org-txt-mode-capf ()
+  (defun my/org-mode-capf ()
     (setq-local completion-at-point-functions
                 ;; cape-capf-super combines the capfs.
                 ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
-                (list (cape-capf-sort (cape-capf-super #'yasnippet-capf
+                (list #'cape-file
+                      (cape-capf-sort (cape-capf-super #'yasnippet-capf
                                                        #'pcomplete-completions-at-point
                                                        #'cape-keyword
                                                        #'cape-abbrev
                                                        #'cape-dabbrev
                                                        #'cape-history
                                                        ))
-                      #'cape-file
                       )))
   )
 
 ;; Vertico
 (use-package vertico
   :ensure t
+  :defer nil
   :bind (:map vertico-map
               ("<tab>" . minibuffer-complete)
               ("M-g M-c" . switch-to-completions)
@@ -1033,6 +1028,7 @@
 ;; Orderless
 (use-package orderless
   :ensure t
+  :defer nil
   :custom
   (orderless-style-dispatchers '(orderless-affix-dispatch))
   )

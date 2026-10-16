@@ -126,6 +126,14 @@
 ;;        :branch "master")
 ;;   :ensure t)
 
+;; ;; nordic-night-theme
+;; (use-package nordic-night-theme
+;;   :ensure t)
+
+;; ;; tokyo-night
+;; (use-package tokyo-night
+;;   :ensure t)
+
 ;; ;; doric-themes
 ;; (use-package doric-themes
 ;;   :vc (:url "https://github.com/protesilaos/doric-themes"
@@ -140,12 +148,11 @@
 ;;        :branch "main")
 ;;   :ensure t)
 
-;; ;; nordic-night-theme
-;; (use-package nordic-night-theme
-;;   :ensure t)
-
-;; ;; tokyo-night
-;; (use-package tokyo-night
+;; ;; modus-themes
+;; (use-package modus-themes
+;;   :vc (:url "https://github.com/protesilaos/ef-themes"
+;;        :rev :newest
+;;        :branch "main")
 ;;   :ensure t)
 
 ;; End:

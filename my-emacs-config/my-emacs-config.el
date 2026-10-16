@@ -153,8 +153,10 @@
   :bind (:map global-map
               ("s-<0x10081247> s-D" . delete-pair)
               )
-  :hook (minibuffer-setup . my/minibuffer-set-variables)
+  :hook (minibuffer-setup . my/set-variables-for-specific-modes)
   :custom
+  ;; If non-nil, enter debugger if an error is signaled
+  (debug-on-error nil)
   ;; Remove startup screen
   (inhibit-startup-screen t)
   (inhibit-startup-echo-area-message nil) ;;user-login-name
@@ -174,7 +176,8 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)) ;; Original value: (read-only t face minibuffer-prompt)
   ;; If already indented, try to complete the text.
-  (tab-always-indent 'complete)
+  (tab-always-indent t) ;; alt: 'complete
+  (tab-first-completion nil)
   ;; Blink the screen
   (visible-bell t)
   ;; Scroll settings
@@ -235,6 +238,8 @@
   (pgtk-use-im-context nil)
   ;; Active regions automatically set the primary selection
   (select-active-regions t)
+  ;; Maximum height for resizing mini-windows (the minibuffer and the echo area)
+  (max-mini-window-height 0.38)
 
   :config
   ;; Disable compact font caches
@@ -251,12 +256,6 @@
     (setq pgtk-wait-for-event-timeout 0.001))
 
   (setq completion-ignore-case nil)
-
-  (defun my/minibuffer-set-variables ()
-    (setq-local show-trailing-whitespace nil)
-    (setq-local truncate-lines t)
-    (setq-local word-wrap nil)
-    )
   )
 
 
@@ -329,7 +328,7 @@
               ("s-<0x10081247> s-¡ f" . fill-paragraph)
               ("H-s s c"              . shell-command)
               )
-  :hook (special-mode . my/special-mode-set-variables)
+  :hook (completion-list-mode . my/set-variables-for-specific-modes)
   :custom
   (line-number-mode t)
   (column-number-mode t)
@@ -370,12 +369,6 @@
   :config
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
-
-  (defun my/special-mode-set-variables ()
-    (setq-local show-trailing-whitespace nil)
-    (setq-local truncate-lines nil)
-    (setq-local word-wrap t)
-    )
   )
 
 (use-package subr
@@ -468,6 +461,7 @@
 
 ;; Enable tooltips
 (use-package tooltip
+  :defer nil
   :custom
   (tooltip-delay 0.7)
   (tooltip-short-delay 0.1)
@@ -1213,6 +1207,7 @@
   )
 
 (use-package help
+  :hook (help-mode . my/set-variables-for-specific-modes)
   :custom
   (help-enable-completion-autoload nil)
   (help-enable-autoload nil)
@@ -2079,7 +2074,7 @@
 
 ;; Tooltips at cursor point on minibuffer
 (defun my/display-help-echo-at-point ()
-  "Display the 'help-echo' text property at cursor point in the minibuffer."
+  "Display the `help-echo' text property at cursor point in the minibuffer."
   (interactive)
   (let ((help-text (get-text-property (point) 'help-echo)))
     (if help-text
@@ -2092,7 +2087,7 @@
 
 ;; Display face used at point.
 (defun my/display-face-property-at-point ()
-  "Display the 'face' text property at cursor point on another window."
+  "Display the `face' text property at cursor point on another window."
   (interactive)
   (let ((face-property (get-text-property (point) 'face)))
     (if face-property
@@ -2152,6 +2147,34 @@
 
 (bind-key (kbd "H-x w") 'my/copy-current-path-to-kill-ring 'global-map)
 
+
+(defun my/set-variables-for-specific-modes ()
+  "Set some variables for specific modes."
+  (setq-local show-trailing-whitespace nil)
+  (setq-local word-wrap t)
+
+  (let* ((do-truncate '(minibuffer-mode
+                        completion-list-mode
+                        elfeed-show-mode
+                        elfeed-search-mode
+                        ))
+         (dont-truncate '(help-mode
+                          ))
+         )
+    (if (derived-mode-p do-truncate)
+        (progn
+          (setq-local truncate-lines t)
+          ;; (message "Buffer: %s | Mode: %s"
+          ;;          (buffer-name)
+          ;;          major-mode)
+          )
+      (if (derived-mode-p dont-truncate)
+          (progn
+            (setq-local truncate-lines nil)
+            )
+        )))
+  )
+
 
 
 ;;;; (Possible) Future Emacs config
@@ -2182,6 +2205,8 @@
 ;; (treesit-auto-install-grammar 'ask)
 ;; (treesit-enabled-modes t)
 
+;; Hide minor mode lighters
+;; mode-line-collapse-minor-modes
 
 ;; End:
 
