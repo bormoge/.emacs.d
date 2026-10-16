@@ -2,26 +2,22 @@
 My Emacs config. Includes a cheat sheet.
 
 ## Installation (Linux)
-1. Download the repository. You can use **git clone** for that.
+Open the terminal and execute the following command:
 ```
-mkdir ~/emacs_config
-cd ~/emacs_config
+cd ~
+```
+This should move you to your user's Home directory.
+
+Download the repository. You can use **git clone** for that.
+```
 git clone https://github.com/bormoge/.emacs.d
 ```
-2. Open the directory **.emacs.d** through the terminal using the **cd** command.
-```
-cd ./.emacs.d
-```
-3. Once inside **.emacs.d**, use the **make** command to copy the directory to Home (~/.emacs.d).
+After opening Emacs, it should automatically load the configuration.
 
-A warning, before you go any further: if you have an ~/.emacs.d directory it will get replaced with the contents of this repository.
+If the configuration fails to load you can try creating a **.emacs** file in your Home directory.
+The next command will create a **.emacs** file with the necessary code to load the configuration:
 ```
-make
-```
-4. (Optional) Remove the emacs_config directory.
-```
-cd ~/
-rm -rf ~/emacs_config
+echo '(load-file (expand-file-name "init.el" user-emacs-directory))' > .emacs
 ```
 
 ## Upgrading packages
