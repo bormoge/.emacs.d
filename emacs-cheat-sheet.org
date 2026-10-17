@@ -712,6 +712,9 @@
 |--------------------------------------+-------------------------------|
 | Access dict.org                      | dictionary                    |
 |--------------------------------------+-------------------------------|
+| Look up a key binding in the         | keymap-global-lookup          |
+| current global keymap                |                               |
+|--------------------------------------+-------------------------------|
 
 ** Miscellaneous Emacs Variables
 

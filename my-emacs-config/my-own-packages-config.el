@@ -1,7 +1,6 @@
 ;;; my-packages-config.el --- Configuration for Emacs packages I've authored -*- lexical-binding: t; -*-
 
 (use-package guava-themes
-  :ensure nil
   :demand t
   :load-path "~/.emacs.d/elpa/guava-themes/"
   :custom
@@ -25,7 +24,6 @@
 ;;             :rev :newest
 ;;             :branch "main"
 ;;             :vc-backend Git)
-;;   :ensure t
 ;;   :config
 ;;   (setq ring-bell-function #'guava-themes-change-visible-bell)
 ;;   (setq visible-bell t)
@@ -39,6 +37,15 @@
 
 ;; (setq ring-bell-function #'guava-themes-change-visible-bell)
 ;; (setq visible-bell t)
+;; (load-theme 'guava-themes-psidium t)
+
+;; (unless (package-installed-p 'guava-themes)
+;;   (package-install 'guava-themes))
+;;
+;; (require 'guava-themes)
+;;
+;; (setopt ring-bell-function #'guava-themes-change-visible-bell)
+;; (setopt visible-bell t)
 ;; (load-theme 'guava-themes-psidium t)
 
 ;; End:

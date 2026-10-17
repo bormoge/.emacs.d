@@ -18,6 +18,8 @@
   (use-package-compute-statistics nil) ;; t
   ;; When set to t, assume :defer t when using `use-package' macro.
   (use-package-always-defer nil)
+  ;; When set to t, assume :demand t when using `use-package' macro.
+  (use-package-always-demand nil)
   ;; When set to t, report about loading and configuration details.
   (use-package-verbose nil)
   )
@@ -143,8 +145,18 @@
      zenburn-emacs
      affe
      ))
+
+  ;; By default, operate on the current package at point
   (package-menu-use-current-if-no-marks t)
+
+  ;; Allow unsigned packages
   (package-check-signature 'allow-unsigned)
+
+  ;; Change column sizes
+  (package-name-column-width 30)
+  (package-version-column-width 28)
+  (package-archive-column-width 16)
+  (package-status-column-width 11)
   )
 
 
@@ -203,7 +215,7 @@
   (fill-column 80)
   ;; Optimize scrolling
   (fast-but-imprecise-scrolling t)
-  ;; When deleting a pair, push mark at the end of the the delimited region
+  ;; When deleting a pair, push mark at the end of the the delimited region (Emacs-31)
   (delete-pair-push-mark t)
   ;; When deleting a pair, do it immediatly
   (delete-pair-blink-delay 0)
@@ -240,6 +252,8 @@
   (select-active-regions t)
   ;; Maximum height for resizing mini-windows (the minibuffer and the echo area)
   (max-mini-window-height 0.38)
+  ;; Restore window configurations on exit from minibuffer.
+  (read-minibuffer-restore-windows t)
 
   :config
   ;; Disable compact font caches
@@ -613,6 +627,7 @@
   (completion-auto-select nil)
   (completions-max-height nil) ;; 12
   (completion-show-help t)
+  ;; See also `completion-styles-alist'.
   (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
   (completion-category-defaults nil)
   (completion-category-overrides '((file (styles partial-completion)) ;;basic
@@ -762,7 +777,6 @@
 
 ;; Dired config
 (use-package dired
-  :ensure nil
   :defer t
   :bind (:map dired-mode-map
               ("M-<" . dired-beginning-of-buffer) ;; Replace `beginning-of-buffer'.
@@ -942,6 +956,7 @@
   (setq completion-preview-completion-styles completion-styles)
   ;; Same sort function I use on corfu and vertico.
   (setq completion-preview-sort-function #'prescient-completion-sort) ;; identity
+  ;; Note: change `completion-preview-sort-function' to a custom variable (Emacs-31)
   )
 
 (use-package isearch
@@ -1230,6 +1245,8 @@
   ;; Doesn't seem to work on NixOS
   ;; (ispell-dictionary "en_US")
 
+  ;; If t, supress Ispell messages
+  (ispell-quietly nil)
   :init
   ;; This sets the starting language of aspell.
   (setenv "ASPELL_CONF" "lang en_US" t)
@@ -1278,6 +1295,7 @@
          )
   :custom
   (python-fill-docstring-style 'pep-257)
+  (python-indent-offset 4)
   )
 
 (use-package etags-regen
@@ -1447,10 +1465,22 @@
         )
   )
 
+(use-package ido
+  :defer t
+  :custom
+  (ido-enable-flex-matching nil)
+  (ido-everywhere nil)
+  (ido-use-filename-at-point t)
+  (ido-create-new-buffer 'always)
+  (ido-file-extensions-order nil)
+  (ido-ignore-extensions t)
+  )
+
 (use-package icomplete
   :defer t
   :custom
   (icomplete-compute-delay 0.15)
+  (icomplete-in-buffer nil)
   )
 
 (use-package xref
@@ -1464,7 +1494,6 @@
 
 ;; Highlight cursor line
 (use-package hl-line
-  :ensure nil
   :hook ((eshell-mode
           shell-mode
           term-mode
@@ -1521,7 +1550,6 @@
 
 ;; Automatically show available commands
 (use-package which-key
-  :ensure nil
   :custom
   (which-key-idle-delay 5.0)
   :config
@@ -1666,7 +1694,6 @@
 
 ;; Org configuration
 (use-package org
-  :ensure nil
   :defer t
   :bind (:map org-mode-map
               ("s-o l" . org-toggle-link-display)
@@ -1839,7 +1866,6 @@
 ;; Treesitter
 
 (use-package treesit
-  :ensure nil
   :custom
   ;; 16.13.2 Parser-based Font Lock
   ;; Adds everything else that can be fontified: operators, delimiters, brackets, other punctuation, function names in function calls, property look ups, variables, etc.
@@ -1925,7 +1951,6 @@
 
 ;;;; eglot configuration
 (use-package eglot
-  :ensure nil
   :defer t
   :preface
   ;; https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
@@ -2178,6 +2203,7 @@
 
 
 ;;;; (Possible) Future Emacs config
+;;;; https://raw.githubusercontent.com/emacs-mirror/emacs/refs/heads/emacs-31/etc/NEWS
 
 ;; Global lexical-binding (Emacs-31)
 ;; (set-default-toplevel-value 'lexical-binding t)
@@ -2190,7 +2216,7 @@
 ;;      package-review-diff-command '("git" "diff" "--no-index" "--color=never" "--diff-filter=d"))
 
 ;; Like 'global-auto-revert-mode' but limited to VCS-tracked files (Emacs-31)
-;; (vc-auto-revert-mode)
+;; (vc-auto-revert-mode +1)
 
 ;; Ask to save relevant vc buffers (Emacs-31)
 ;; (setopt vc-dir-save-some-buffers-on-revert t)
@@ -2199,14 +2225,21 @@
 ;; (setopt vc-use-incoming-outgoing-prefixes t)
 
 ;; More options to check in Emacs-31
-;; (minibuffer-nonselected-mode 1)
-;; (minibuffer-depth-indicate-mode 1)
-;; (minibuffer-electric-default-mode 1)
+;; (minibuffer-nonselected-mode +1)
+;; (minibuffer-depth-indicate-mode +1)
+;; (minibuffer-electric-default-mode +1)
 ;; (treesit-auto-install-grammar 'ask)
 ;; (treesit-enabled-modes t)
 
 ;; Hide minor mode lighters
 ;; mode-line-collapse-minor-modes
+
+;; Rotate windows
+;; (window-layout-rotate-clockwise)
+
+;; Modify 'exchange-point-and-mark' so that it doesn't
+;; activate the mark if it is not already active
+;; (exchange-point-and-mark-highlight-region nil)
 
 ;; End:
 

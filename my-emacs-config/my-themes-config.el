@@ -2,7 +2,6 @@
 
 ;; ;; doom-themes
 ;; (use-package doom-themes
-;;   :ensure t
 ;;   :defer t
 ;;   :custom
 ;;   ;; Global settings (defaults)
@@ -87,12 +86,10 @@
 ;;   :vc (:url "https://github.com/nashamri/spacemacs-theme"
 ;;        :rev :newest
 ;;        :branch "master")
-;;   :ensure t
 ;;   :defer t)
 
 ;; ;; catppuccin-theme
 ;; (use-package catppuccin-theme
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (setq catppuccin-flavor 'mocha) ;; Values: 'frappe, 'latte, 'macchiato, 'mocha
@@ -101,7 +98,6 @@
 
 ;; ;; kanagawa-themes
 ;; (use-package kanagawa-themes
-;;   :ensure t
 ;;   :defer t)
 
 ;; ;; everforest-theme
@@ -109,51 +105,43 @@
 ;;   :vc (:url "https://github.com/Theory-of-Everything/everforest-emacs"
 ;;        :rev :newest
 ;;        :branch "master2")
-;;   :ensure t
 ;;   :defer t)
 
 ;; ;; zenburn-theme.el
 ;; (use-package zenburn-theme
 ;;   :vc (:url "https://github.com/bbatsov/zenburn-emacs"
 ;;        :rev :newest
-;;        :branch "master")
-;;   :ensure t)
+;;        :branch "master"))
 
 ;; ;; morning-star-theme.el
 ;; (use-package morning-star-theme
 ;;   :vc (:url "https://github.com/Alexander-Miller/morning-star-theme"
 ;;        :rev :newest
-;;        :branch "master")
-;;   :ensure t)
+;;        :branch "master"))
 
 ;; ;; nordic-night-theme
-;; (use-package nordic-night-theme
-;;   :ensure t)
+;; (use-package nordic-night-theme)
 
 ;; ;; tokyo-night
-;; (use-package tokyo-night
-;;   :ensure t)
+;; (use-package tokyo-night)
 
 ;; ;; doric-themes
 ;; (use-package doric-themes
 ;;   :vc (:url "https://github.com/protesilaos/doric-themes"
 ;;        :rev :newest
-;;        :branch "main")
-;;   :ensure t)
+;;        :branch "main"))
 
 ;; ;; ef-themes
 ;; (use-package ef-themes
 ;;   :vc (:url "https://github.com/protesilaos/ef-themes"
 ;;        :rev :newest
-;;        :branch "main")
-;;   :ensure t)
+;;        :branch "main"))
 
 ;; ;; modus-themes
 ;; (use-package modus-themes
-;;   :vc (:url "https://github.com/protesilaos/ef-themes"
+;;   :vc (:url "https://github.com/protesilaos/modus-themes"
 ;;        :rev :newest
-;;        :branch "main")
-;;   :ensure t)
+;;        :branch "main"))
 
 ;; End:
 

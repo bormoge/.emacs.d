@@ -30,7 +30,6 @@
 
 ;; Dashboard to display projects and bookmarks
 (use-package dashboard
-  :ensure t
   :custom
   (dashboard-center-content t)
   (dashboard-display-icons-p t) ;; display icons on both GUI and terminal
@@ -52,7 +51,6 @@
 
 ;; doom-modeline, a modified version of the modeline
 (use-package doom-modeline
-  :ensure t
   :hook (after-init . doom-modeline-mode)
   :custom ;; Does this package have more options than treemacs?
   (doom-modeline-support-imenu t)
@@ -149,7 +147,6 @@
 
 ;; Used to highlight lines changed
 (use-package diff-hl
-  :ensure t
   ;; :init
   ;; (global-diff-hl-mode +1)
   :hook (
@@ -172,7 +169,6 @@
   )
 
 (use-package projectile
-  :ensure t
   :defer t
   :bind
   (:map projectile-mode-map
@@ -189,7 +185,6 @@
 
 ;; magit: Package used as a git front end.
 (use-package magit
-  :ensure t
   :defer t
   :commands (magit-status magit-dispatch)
   )
@@ -237,7 +232,6 @@
 
 ;; Modes for .gitattributes, .gitconfig, and .gitignore files.
 (use-package git-modes
-  :ensure t
   :defer t
   )
 
@@ -245,7 +239,6 @@
 
 ;; YASnippet for shortcuts
 (use-package yasnippet
-  :ensure t
   :bind (:map yas-minor-mode-map
               ;; ("TAB" . nil)
               ("s-<0x10081247> <tab>" . yas-expand)
@@ -264,7 +257,6 @@
   )
 
 (use-package yasnippet-capf
-  :ensure t
   :after cape
   )
 
@@ -272,7 +264,6 @@
 
 ;; Focus on selected text
 (use-package focus
-  :ensure t
   :defer t
   :config
   ;; Focus (elements it can focus: org-element, paragraph, sentence, sexp, symbol, word)
@@ -282,7 +273,6 @@
 
 ;; avy
 (use-package avy
-  :ensure t
   ;; Mapping keys for avy
   :bind (:map global-map
               ("s-: t"   . avy-goto-char-timer)
@@ -302,7 +292,6 @@
 
 ;; ledger-mode
 (use-package ledger-mode
-  :ensure t
   :defer t
   :config
   (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
@@ -311,21 +300,18 @@
 
 ;; hledger-mode
 (use-package hledger-mode
-  :ensure t
   :defer t
   :if (executable-find "hledger")
   )
 
 ;; flymake-hledger
 (use-package flymake-hledger
-  :ensure t
   :defer t
   :after (flymake hledger)
   )
 
 ;; Directory-specific environments (direnv)
 (use-package envrc
-  :ensure t
   :bind (:map global-map
               ("C-c e" . envrc-command-map)
               )
@@ -334,14 +320,12 @@
 
 ;; gnu-elpa-keyring-update
 (use-package gnu-elpa-keyring-update
-  :ensure t
   ;; ref: https://elpa.gnu.org/packages/gnu-elpa-keyring-update.html
   ;; ref: https://emacs.stackexchange.com/a/53142
   )
 
 ;; Client for `undo'
 (use-package vundo
-  :ensure t
   :defer t
   ;; Map the `undo' function onto C-x M-u
   :bind (:map global-map
@@ -354,7 +338,6 @@
 
 ;; Mode for markdown
 (use-package markdown-mode
-  :ensure t
   :defer t
   :mode
   (("README\\.md\\'" . gfm-mode)
@@ -380,7 +363,6 @@
 ;; https://devdocs.io/
 (use-package devdocs
   :defer t
-  :ensure t
   :bind (:map global-map
               ("s-d l" . devdocs-lookup)
               ("s-d i" . devdocs-install)
@@ -393,17 +375,14 @@
   (devdocs-data-dir (expand-file-name "devdocs" user-emacs-directory))
   )
 
-;; When using NixOS, install nix-mode and nix-ts-mode
+;; When using NixOS, load nix-mode and nix-ts-mode
 (when (my/nixos-p)
-  (use-package nix-mode
-    :ensure t)
+  (use-package nix-mode)
 
-  (use-package nix-ts-mode
-    :ensure t))
+  (use-package nix-ts-mode))
 
 ;; helpful: alternative to help commands (C-h).
 (use-package helpful
-  :ensure t
   :defer
   :bind (:map global-map
               ("C-h s-f" . helpful-callable)
@@ -420,7 +399,6 @@
 
 ;; puni: set of deletion commands.
 (use-package puni
-  :ensure t
   :defer t
   :bind (:map puni-mode-map
               ("s-<backspace>" . puni-splice)
@@ -436,7 +414,6 @@
 
 ;; form-feed: show FORM-FEED characters as long lines.
 (use-package form-feed
-  :ensure t
   :hook ((prog-mode . form-feed-mode)
          (text-mode . form-feed-mode)
          (org-mode . form-feed-mode)
@@ -445,7 +422,6 @@
 
 ;; ligature: enable font ligatures
 (use-package ligature
-  :ensure t
   :hook ((prog-mode . ligature-mode))
   :config
   ;; Enable all Iosevka ligatures in programming modes
@@ -457,7 +433,6 @@
 
 ;; dockerfile-mode: major mode for Dockerfile files
 (use-package dockerfile-mode
-  :ensure t
   :defer t
   :custom
   ;; You can change the binary to use with
@@ -471,7 +446,6 @@
 
 ;; affe: asynchronous fuzzy finder
 (use-package affe
-  :ensure t
   :defer t
   :bind ((:map global-map
                ("s-s f" . affe-find)
@@ -490,7 +464,6 @@
 ;;;; elfeed
 
 (use-package elfeed
-  :ensure t
   :bind ((:map global-map
                ("s-<0x10081247> s-E e" . elfeed)
                :map elfeed-search-mode-map
@@ -553,7 +526,6 @@
 
 ;; nerd-icons
 (use-package nerd-icons
-  :ensure t
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
   :config
@@ -568,13 +540,11 @@
   )
 
 (use-package nerd-icons-dired
-  :ensure t
   :after (dired nerd-icons)
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-completion
-  :ensure t
   :after (marginalia)
   :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
   :config
@@ -582,31 +552,26 @@
   )
 
 (use-package nerd-icons-corfu
-  :ensure t
   :after (corfu)
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter)
   )
 
 (use-package nerd-icons-ibuffer
-  :ensure t
   :after (ibuffer)
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
 (use-package nerd-icons-grep
-  :ensure t
   :init
   (nerd-icons-grep-mode)
   )
 
 (use-package nerd-icons-xref
-  :ensure t
   :init
   (nerd-icons-xref-mode)
   )
 
 (use-package tab-line-nerd-icons
-  :ensure t
   :init
   (tab-line-nerd-icons-global-mode)
   )
@@ -619,7 +584,6 @@
 
 ;; Corfu
 (use-package corfu
-  :ensure t
   :defer t
   :hook
   (((
@@ -674,7 +638,6 @@
 
 ;; Cape
 (use-package cape
-  :ensure t
   :demand t
   :hook
   (completion-at-point-functions . cape-history)
@@ -718,7 +681,6 @@
 
 ;; Vertico
 (use-package vertico
-  :ensure t
   :defer nil
   :bind (:map vertico-map
               ("<tab>" . minibuffer-complete)
@@ -759,7 +721,6 @@
 
 ;; Consult
 (use-package consult
-  :ensure t
   :demand t
   ;; Replace bindings. Lazily loaded by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
@@ -886,7 +847,6 @@
   )
 
 (use-package consult-dir
-  :ensure t
   ;; :after (consult)
   :custom
   (consult-dir-sources
@@ -907,19 +867,16 @@
   )
 
 (use-package consult-eglot
-  :ensure t
   :after (consult eglot)
   :bind ("M-g e g" . consult-eglot-symbols)
   )
 
 (use-package consult-eglot-embark
-  :ensure t
   :defer t
   :after (consult eglot embark)
   )
 
 (use-package consult-yasnippet
-  :ensure t
   :after (consult yasnippet)
   :bind (:map global-map
               ("M-g y y" . consult-yasnippet)
@@ -928,13 +885,11 @@
   )
 
 (use-package consult-symbol
-  :ensure t
   :after (consult)
   :bind ("C-h o" . consult-symbol)
   )
 
 (use-package consult-flyspell
-  :ensure t
   :after (consult flyspell)
   :bind ("M-g s" . consult-flyspell)
   :config
@@ -945,7 +900,6 @@
 
 ;; Marginalia
 (use-package marginalia
-  :ensure t
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle))
   :custom
@@ -957,7 +911,6 @@
 
 ;; Embark
 (use-package embark
-  :ensure t
   :bind
   (("s-, ,"   . embark-act)
    ("s-, s-," . embark-act)
@@ -1016,18 +969,15 @@
   )
 
 (use-package embark-consult
-  :ensure t
   :after (embark consult)
   )
 
 (use-package avy-embark-collect
-  :ensure t
   :after (embark avy)
   )
 
 ;; Orderless
 (use-package orderless
-  :ensure t
   :defer nil
   :custom
   (orderless-style-dispatchers '(orderless-affix-dispatch))
@@ -1035,7 +985,6 @@
 
 ;; Prescient (used as the sorting algorithm of this stack)
 (use-package prescient
-  :ensure t
   :demand t
   :custom
   ;; Works well with `initialism'.
@@ -1054,7 +1003,6 @@
   )
 
 (use-package corfu-prescient
-  :ensure t
   :demand t
   :after (corfu prescient)
   :custom
@@ -1075,7 +1023,6 @@
   )
 
 (use-package vertico-prescient
-  :ensure t
   :demand t
   :after (vertico prescient)
   :custom
@@ -1120,7 +1067,6 @@ For each non-existent cli throw a warning."
 
 ;; LSP, DAP, linter and formatter installer
 (use-package mason
-  :ensure t
   :config
   (mason-ensure
    (lambda ()
@@ -1161,7 +1107,6 @@ For each non-existent cli throw a warning."
             :rev :newest
             :branch "main"
             :vc-backend Git)
-  :ensure t
   :defer t
   )
 
@@ -1171,13 +1116,11 @@ For each non-existent cli throw a warning."
             :rev :newest
             :branch "main"
             :vc-backend Git)
-  :ensure t
   :defer t
   )
 
 ;; Python testing
 (use-package python-pytest
-  :ensure t
   :after (python)
   :bind (:map python-mode-map
               ("s-<0x10081247> s-T p p" . python-pytest)
@@ -1199,7 +1142,6 @@ For each non-existent cli throw a warning."
 ;; Python code coverage
 (use-package python-coverage
   ;; To use this package you need to generate a coverage xml file
-  :ensure t
   :after (python)
   :bind (:map python-mode-map
               ("s-<0x10081247> s-T c m" . python-coverage-overlay-mode)
@@ -1219,7 +1161,6 @@ For each non-existent cli throw a warning."
 
 ;; Note to myself: look how to configure it.
 (use-package apheleia
-  :ensure t
   :bind (
          ("s-<0x10081247> s-A" . 'apheleia-format-buffer)
          )
@@ -1229,7 +1170,6 @@ For each non-existent cli throw a warning."
   )
 
 (use-package disaster
-  :ensure t
   :defer t
   :commands (disaster)
   )
@@ -1242,18 +1182,15 @@ For each non-existent cli throw a warning."
   ) ;; Functions to remember: package-build-archive, package-build-current-recipe, package-build-create-recipe
 
 (use-package package-lint
-  :ensure t
   ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
 
 (use-package package-lint-flymake
-  :ensure t
   )
 
 
 
 ;; json config
 (use-package json-mode
-  :ensure t
   :defer t
   )
 
@@ -1261,26 +1198,22 @@ For each non-existent cli throw a warning."
 
 ;;;; toml config
 (use-package toml-mode
-  :ensure t
   :defer t
   :config
   (require 'tomlparse)
   )
 
 (use-package toml-ts-mode
-  :ensure t
   :defer t
   :config
   (require 'tomlparse)
   )
 
 (use-package toml
-  :ensure t
   :defer t
   )
 
 (use-package tomlparse
-  :ensure t
   :defer t
   )
 
@@ -1288,12 +1221,10 @@ For each non-existent cli throw a warning."
 
 ;;;; yaml config
 (use-package yaml
-  :ensure t
   :defer t
   )
 
 (use-package yaml-mode
-  :ensure t
   :defer t
   )
 
@@ -1303,7 +1234,6 @@ For each non-existent cli throw a warning."
 
 ;; clojure-mode / clojure-ts-mode
 (use-package clojure-mode
-  :ensure t
   :defer t
   :custom
   (clojure-indent-style 'always-align)
@@ -1311,13 +1241,11 @@ For each non-existent cli throw a warning."
   )
 
 (use-package clojure-ts-mode
-  :ensure t
   :defer t
   :commands (clojure-ts-mode)
   )
 
 (use-package cider
-  :ensure t
   :after (clojure-mode)
   :custom
   (cider-preferred-build-tool nil) ;clj
@@ -1341,7 +1269,6 @@ For each non-existent cli throw a warning."
   )
 
 (use-package clj-refactor
-  :ensure t
   :after (clojure-mode)
   :init
   (add-hook 'clojure-mode-hook #'clj-refactor-mode)
@@ -1357,12 +1284,10 @@ For each non-existent cli throw a warning."
 
 ;; Elixir
 ;; (use-package elixir-mode
-;;   :ensure t
 ;;   :defer t
 ;;   )
 
 ;; (use-package mix
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (add-hook 'elixir-mode-hook 'mix-minor-mode)
@@ -1370,7 +1295,6 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package exunit
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (add-hook 'elixir-mode-hook 'exunit-mode)
@@ -1378,7 +1302,6 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package inf-elixir
-;;   :ensure t
 ;;   :defer t
 ;;   :bind (("C-c i i" . 'inf-elixir)
 ;;          ("C-c i p" . 'inf-elixir-project)
@@ -1389,7 +1312,6 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package ob-elixir
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (org-babel-do-load-languages
@@ -1399,13 +1321,11 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package heex-ts-mode
-;;   :ensure t
 ;;   :defer t
 ;;   )
 
 ;; Erlang
 ;; (use-package erlang
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   ;; (setq load-path (cons "/usr/local/otp/lib/tools/emacs" ;;"/usr/local/otp/lib/tools-<ToolsVer>/emacs"
@@ -1417,13 +1337,11 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package erlang-ts
-;;   :ensure t
 ;;   ;; :mode ("\\.erl\\'" . erlang-ts-mode)
 ;;   :defer t
 ;;   )
 
 ;; (use-package edts
-;;   :ensure t
 ;;   :defer t
 ;;   )
 
@@ -1432,7 +1350,6 @@ For each non-existent cli throw a warning."
 ;;        :rev :newest
 ;;        :branch "master"
 ;;        :vc-backend Git)
-;;   :ensure t
 ;;   :defer t
 ;;   )
 
@@ -1440,7 +1357,6 @@ For each non-existent cli throw a warning."
 
 ;; ;;;; typescript-mode config
 ;; (use-package typescript-mode
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (require 'ansi-color)
@@ -1451,7 +1367,6 @@ For each non-existent cli throw a warning."
 
 ;; ;; tide package config
 ;; (use-package tide
-;;   :ensure t
 ;;   :defer t
 ;;   :config
 ;;   (defun my/setup-tide-mode ()
@@ -1475,7 +1390,6 @@ For each non-existent cli throw a warning."
 ;;        :rev :newest
 ;;        :branch "emacs30"
 ;;        :vc-backend Git)
-;;   :ensure t
 ;;   :defer t
 ;;   )
 
@@ -1483,7 +1397,6 @@ For each non-existent cli throw a warning."
 
 ;;;; Rust config
 (use-package rust-mode
-  :ensure t
   :defer t
   :custom
   (rust-mode-treesitter-derive t)
@@ -1491,7 +1404,6 @@ For each non-existent cli throw a warning."
   )
 
 (use-package rustic
-  :ensure t
   :after (rust-mode)
   :custom
   (rustic-lsp-client 'eglot)
@@ -1506,7 +1418,6 @@ For each non-existent cli throw a warning."
 
 ;; AUCTeX
 (use-package auctex
-  :ensure t
   :defer t
   :custom
   (TeX-process-asynchronous t)
@@ -1534,7 +1445,6 @@ For each non-existent cli throw a warning."
 
 ;; pdf-tools
 (use-package pdf-tools
-  :ensure t
   :demand t
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook (
@@ -1547,21 +1457,20 @@ For each non-existent cli throw a warning."
   (pdf-view-display-size 'fit-page) ;; 'fit-width, 'fit-page
   (pdf-annot-activate-created-annotations nil)
   :config
+  (require 'pdf-links)
+  (require 'pdf-annot)
+
   ;; To uninstall use the function `pdf-tools-uninstall'
   ;; For more info about dependencies check ~/.emacs.d/elpa/pdf-tools-1.3.0/server/autobuild
   ;; Dependencies (Fedora Linux): autoconf automake gcc libpng-devel make poppler-devel poppler-glib-devel zlib-devel
   ;; Dependencies (NixOS Linux): automake autoconf pkg-config libpng zlib poppler
   (pdf-tools-install)
-
-  (require 'pdf-links)
-  (require 'pdf-annot)
   )
 
 
 
 ;;;; dape configuration
 (use-package dape
-  :ensure t
   :defer t
   :bind (:map global-map
               ("C-x C-a d" . dape)

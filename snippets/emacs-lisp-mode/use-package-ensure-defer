@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: use-package-ensure-defer
-# key: useped
-# uuid: useped
-# --
-(use-package $0
-  :ensure t
-  :defer t
-  )
