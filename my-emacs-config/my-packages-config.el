@@ -60,7 +60,7 @@
   (doom-modeline-window-width-limit 85)
   (doom-modeline-spc-face-overrides nil)
   (doom-modeline-project-detection 'project)
-  (doom-modeline-buffer-file-name-style 'buffer-name)
+  (doom-modeline-buffer-file-name-style 'file-name-with-project)
   (doom-modeline-icon t)
   (doom-modeline-major-mode-icon t)
   (doom-modeline-major-mode-color-icon t)
@@ -97,7 +97,7 @@
   (doom-modeline-check-icon t)
   (doom-modeline-check-simple-format nil)
   (doom-modeline-number-limit 99)
-  (doom-modeline-project-name t)
+  (doom-modeline-project-name nil)
   (doom-modeline-workspace-name t)
   (doom-modeline-persp-name t)
   (doom-modeline-display-default-persp-name nil)
@@ -154,8 +154,6 @@
          (after-init . diff-hl-flydiff-mode)
          (after-init . diff-hl-margin-mode)
          (dired-mode . diff-hl-dired-mode)
-         ;; Integrate diff-hl with magit.
-         (magit-post-refresh . diff-hl-magit-post-refresh)
          )
   :custom
   (diff-hl-disable-on-remote nil)
@@ -174,9 +172,11 @@
   (:map projectile-mode-map
    ("C-s-<0x10081247> C-s-p" . projectile-command-map)
    ("C-s-<0x10081247> C-s-p C-f" . projectile-consult-find-file)
+   ("C-s-<0x10081247> C-s-p s-r" . projectile-remove-known-project)
    )
   :custom
   (projectile-enable-caching nil)
+  (projectile-ignored-projects `(,lisp-directory))
   :init
   (projectile-mode +1)
   )
@@ -192,6 +192,8 @@
 (use-package magit-mode
   :defer t
   :after magit
+  ;; Integrate diff-hl with magit.
+  :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :custom
   (magit-refresh-status-buffer t)
   (magit-display-buffer-function #'magit-display-buffer-traditional)
@@ -221,6 +223,13 @@
    'magit-insert-tracked-files
    nil
    'append)
+  )
+
+(use-package magit-log
+  :defer t
+  :after magit
+  :custom
+  (magit-log-section-commit-count 20)
   )
 
 (use-package git-commit
@@ -293,9 +302,10 @@
 ;; ledger-mode
 (use-package ledger-mode
   :defer t
-  :config
-  (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
+  :hook (ledger-mode . ledger-flymake-enable)
   :if (executable-find "ledger")
+  ;; :config
+  ;; (add-hook 'ledger-mode-hook #'ledger-flymake-enable)
   )
 
 ;; hledger-mode
@@ -470,6 +480,8 @@
                ("s-<0x10081247> s-E u" . elfeed-update)
                (";" . my/elfeed-search-set-separator-date-format)
                ("t" . nil)
+               ("<remap> <next-line>" . my/elfeed-next-line)
+               ("<remap> <previous-line>" . my/elfeed-previous-line)
                :map elfeed-show-mode-map
                ("m" . nil) ;; Unbind `elfeed-show-compose-mail'.
                ("TAB" . shr-next-link)
@@ -508,6 +520,42 @@
 
   (keymap-set elfeed-show-mode-map "Q" "u q")
 
+  ;; (defun my/elfeed-next-line (&optional arg)
+  ;;   (interactive "p")
+  ;;   (let ((col (current-column)))
+  ;;     (if (<= (count-lines (point-min) (point-max)) (line-number-at-pos))
+  ;;         (goto-char (point-min))
+  ;;       (forward-line arg))
+  ;;     (move-to-column col)
+  ;;     ))
+
+  (defun my/elfeed-next-line (&optional arg)
+    (interactive "p")
+    (if (<= (count-lines (point-min) (point-max)) (line-number-at-pos))
+        (goto-char (point-min))
+      (line-move arg))
+    )
+
+  ;; (defun my/elfeed-previous-line (&optional arg)
+  ;;   (interactive "p")
+  ;;   (let ((col (current-column)))
+  ;;     (if (<= (line-number-at-pos) 1)
+  ;;         (progn
+  ;;           (goto-char (point-max))
+  ;;           (forward-line -1))
+  ;;       (forward-line (- arg)))
+  ;;     (move-to-column col)
+  ;;     ))
+
+  (defun my/elfeed-previous-line (&optional arg)
+    (interactive "p")
+    (if (<= (line-number-at-pos) 1)
+        (progn
+          (goto-char (point-max))
+          (line-move -1))
+      (line-move (- arg)))
+    )
+
   ;; (dolist (face '(elfeed-search-tag-face
   ;;                 elfeed-search-date-face
   ;;                 elfeed-search-feed-face
@@ -526,6 +574,8 @@
 
 ;; nerd-icons
 (use-package nerd-icons
+  :hook (after-setting-font . (lambda ()
+                                       (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
   :config
@@ -535,8 +585,6 @@
 
   ;; (advice-add 'set-frame-font :after
   ;;             (lambda (&rest _) (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
-  (add-hook 'after-setting-font-hook (lambda ()
-                                       (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
   )
 
 (use-package nerd-icons-dired
@@ -547,8 +595,8 @@
 (use-package nerd-icons-completion
   :after (marginalia)
   :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
-  :config
-  (nerd-icons-completion-mode)
+  :init
+  (nerd-icons-completion-mode +1)
   )
 
 (use-package nerd-icons-corfu
@@ -659,7 +707,7 @@
                 ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
                 (list #'cape-file
                       (cape-capf-sort (cape-capf-super #'yasnippet-capf
-                                                       #'elisp-completion-at-point
+                                                       ;; #'elisp-completion-at-point
                                                        #'cape-elisp-block
                                                        #'cape-elisp-symbol
                                                        ))
@@ -692,7 +740,7 @@
               ("s-b" . vertico-buffer-mode)
               )
   :init
-  (vertico-mode)
+  (vertico-mode +1)
   :custom
   (vertico-scroll-margin 2) ;; Different scroll margin
   (vertico-count 12) ;; Show more candidates
@@ -904,7 +952,8 @@
               ("M-A" . marginalia-cycle))
   :custom
   (marginalia-max-relative-age 1209600) ;; Can be set to 1209600 or 0
-  (marginalia-align 'center) ;; Can be set right, left, or center
+  (marginalia-align 'left) ;; Can be set right, left, or center
+  (marginalia-field-width 60)
   :init
   (marginalia-mode)
   )
@@ -938,8 +987,8 @@
     )
 
   ;; Show the Embark target at point via Eldoc
-  ;;(add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-  ;;(setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+  ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
@@ -981,6 +1030,7 @@
   :defer nil
   :custom
   (orderless-style-dispatchers '(orderless-affix-dispatch))
+  (orderless-matching-styles '(orderless-literal orderless-regexp))
   )
 
 ;; Prescient (used as the sorting algorithm of this stack)
@@ -1270,8 +1320,9 @@ For each non-existent cli throw a warning."
 
 (use-package clj-refactor
   :after (clojure-mode)
-  :init
-  (add-hook 'clojure-mode-hook #'clj-refactor-mode)
+  :hook (clojure-mode . clj-refactor-mode)
+  ;; :init
+  ;; (add-hook 'clojure-mode-hook #'clj-refactor-mode)
   :config
   (cljr-add-keybindings-with-prefix "s-w")
   )

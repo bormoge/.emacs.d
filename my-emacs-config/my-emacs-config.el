@@ -58,6 +58,7 @@
   ;; Any package not in this list will be uninstalled by `package-autoremove'.
   (package-selected-packages
    '(
+     affe
      apheleia
      auctex
      avy
@@ -83,9 +84,6 @@
      disaster
      dockerfile-mode
      doom-modeline
-     doom-themes
-     doric-themes
-     ef-themes
      elfeed
      embark
      embark-consult
@@ -105,7 +103,6 @@
      marginalia
      markdown-mode
      mason
-     morning-star-theme
      nerd-icons
      nerd-icons-completion
      nerd-icons-corfu
@@ -129,21 +126,17 @@
      python-pytest
      rust-mode
      rustic
-     spacemacs-theme
      tab-line-nerd-icons
      toml
      toml-mode
      tomlparse
      vertico
      vertico-prescient
-     vscode-dark-plus-theme
      vundo
      yaml
      yaml-mode
      yasnippet
      yasnippet-capf
-     zenburn-emacs
-     affe
      ))
 
   ;; By default, operate on the current package at point
@@ -221,6 +214,8 @@
   (delete-pair-blink-delay 0)
   ;; Show boundaries around buffer edges
   (indicate-buffer-boundaries t) ;; '((bottom . left) (t . nil))
+  ;; Show unused screen lines after the buffer end
+  (indicate-empty-lines t)
   ;; Limit history length
   (history-length 150)
   ;; Delete duplicates in history variables
@@ -252,8 +247,12 @@
   (select-active-regions t)
   ;; Maximum height for resizing mini-windows (the minibuffer and the echo area)
   (max-mini-window-height 0.38)
+  ;; Allow mini-windows to be grow or shrink.
+  (resize-mini-windows t) ;; default: 'grow-only
   ;; Restore window configurations on exit from minibuffer.
   (read-minibuffer-restore-windows t)
+  ;; Don't ignore case when reading a buffer name.
+  (read-buffer-completion-ignore-case nil)
 
   :config
   ;; Disable compact font caches
@@ -379,6 +378,10 @@
   (indent-tabs-mode nil)
   ;; Share goto-line history between all buffers.
   (goto-line-history-local nil)
+  ;; How fringe indicators are shown for wrapped lines in `visual-line-mode'.
+  (visual-line-fringe-indicators '(nil nil)) ;; alt: '(left-curly-arrow right-curly-arrow)
+  ;; Don't rotate `kill-ring-yank-pointer'
+  (yank-from-kill-ring-rotate nil)
 
   :config
   ;; Enable Transient Mark Mode
@@ -619,24 +622,28 @@
   ;; More detailed completions
   (completions-detailed t)
   (completion-auto-help t)
-  (completions-max-height nil)
+  (completions-max-height 20) ;; default: nil
   (completion-cycle-threshold nil)
   (completions-format 'horizontal)
-  (completions-sort #'prescient-completion-sort) ;;default: alphabetical
+  (completions-sort #'prescient-completion-sort) ;; default: alphabetical
   (completions-group nil)
   (completion-auto-select nil)
-  (completions-max-height nil) ;; 12
   (completion-show-help t)
   ;; See also `completion-styles-alist'.
+  ;; (Emacs-31) Check the rewritten 'flex' completion style
   (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
   (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)) ;;basic
+  (completion-category-overrides '((file (styles partial-completion)) ;; basic
                                    (eglot (styles orderless))
                                    (eglot-capf (styles orderless))))
   (completion-eager-update t) ;; Emacs-31
   (completion-eager-display t) ;; Emacs-31
   (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
-  (completion-in-region-function #'consult-completion-in-region) ;;default: #'completion--in-region
+  (completion-in-region-function #'consult-completion-in-region) ;; default: #'completion--in-region
+  ;; When t, 'flex' completion rejects spaces in search pattern (incompatible with `orderless' style dispatchers)
+  (completion-flex-nospace nil)
+  ;; When t, reading a file name completion ignores case.
+  (read-file-name-completion-ignore-case nil)
   )
 
 ;; Enable right click menu
@@ -746,6 +753,7 @@
   :custom
   (which-func-update-delay 0.5)
   (which-func-display 'header)
+  (which-func-modes '(prog-mode org-mode))
   :config
   (which-function-mode +1)
   )
@@ -773,6 +781,11 @@
   (setq native-comp-jit-compilation t)
   )
 
+(use-package eww
+  :defer t
+  :hook (eww-mode . my/set-variables-for-specific-modes)
+  )
+
 
 
 ;; Dired config
@@ -797,6 +810,7 @@
   (dired-clean-confirm-killing-deleted-buffers t)
   (dired-auto-revert-buffer nil)
   (dired-clean-up-buffers-too t)
+  (dired-use-ls-dired t)
   :config
   (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
 
@@ -1055,13 +1069,15 @@
   (enable-remote-dir-locals nil)
   (enable-local-eval 'maybe)
   (safe-local-variable-values
-   '((eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
+   '((flymake-show-diagnostics-at-end-of-line . short)
+     (eval when (featurep 'package-lint-flymake) (package-lint-flymake-setup))))
   (auto-save-visited-interval 480)
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
   (view-read-only t)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory)))) ;; :all
+  (insert-directory-program "ls")
   :config
   (defun my/delete-trailing-whitespace ()
     "Call `delete-trailing-whitespace' unless the buffer is read-only."
@@ -1143,6 +1159,7 @@
   ;; Use real function / variables names when customizing
   (custom-unlispify-tag-names nil)
   (custom-raised-buttons t)
+  (custom-file nil) ;; alt: (expand-file-name "my-emacs-config/my-emacs-custom-file.el" user-emacs-directory)
   )
 
 (use-package uniquify
@@ -1306,12 +1323,15 @@
 
 (use-package cc-mode
   :defer t
+  :bind
+  (:map c-mode-map
+        ("s-d s" . disaster)
+        :map c++-mode-map
+        ("s-d s" . disaster)
+   )
   :custom
   ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
   (c-basic-offset 4)
-  :config
-  (bind-key (kbd "s-d s") 'disaster 'c-mode-map)
-  (bind-key (kbd "s-d s") 'disaster 'c++-mode-map)
   )
 
 (use-package custom
@@ -1432,13 +1452,13 @@
     ) . hs-minor-mode)
   :bind (:map hs-minor-mode-map
               ("C-c @ C-h" . nil)
-              ("C-c @ C-e" . nil)
-              ("C-c @ C-d" . nil)
-              ("C-c @ C-t" . nil)
-              ("C-c @ C-a" . nil)
-              ("C-c @ C-c" . nil)
-              ("C-c @ C-l" . nil)
-              ("C-c @ C-s" . nil)
+              ;; ("C-c @ C-e" . nil)
+              ;; ("C-c @ C-d" . nil)
+              ;; ("C-c @ C-t" . nil)
+              ;; ("C-c @ C-a" . nil)
+              ;; ("C-c @ C-c" . nil)
+              ;; ("C-c @ C-l" . nil)
+              ;; ("C-c @ C-s" . nil)
               ("C-c @ h" . hs-hide-block)
               ("C-c @ e" . hs-toggle-hiding)
               ("C-c @ d" . hs-hide-block)
@@ -1478,9 +1498,22 @@
 
 (use-package icomplete
   :defer t
+  :bind
+  (:map icomplete-minibuffer-map
+        ("M-<right>" . icomplete-forward-completions)
+        ("M-<left>" . icomplete-backward-completions)
+        ("RET" . icomplete-ret)
+   )
   :custom
-  (icomplete-compute-delay 0.15)
+  ;; Check `icomplete--fido-mode-setup' for more details on
+  ;; how to configure `icomplete-mode' in a similar way to `fido-mode'.
+  (icomplete-compute-delay 0) ;; default: 0.15
   (icomplete-in-buffer nil)
+  (icomplete-tidy-shadowed-file-names t)
+  (icomplete-show-matches-on-no-input t)
+  (icomplete-hide-common-prefix nil)
+  :config
+  (setq icomplete-scroll t) ;; alt: (not (null icomplete-vertical-mode))
   )
 
 (use-package xref
@@ -1502,6 +1535,8 @@
           image-mode
           magit-diff-mode
           diff-mode
+          emacs-lisp-compilation-mode
+          eww-mode
           )
          ;; Disable hl-line for some modes
          . (lambda () (setq-local global-hl-line-mode nil)))
@@ -1515,8 +1550,11 @@
 (use-package project
   ;; Use demand to load the package automatically
   :demand t
+  :bind-keymap
+  ("s-<0x10081247> s-p" . project-prefix-map)
   :bind (:map global-map
               ("s-<0x10081247> s-?" . project-other-window-command)
+              ("C-x p R" . project-forget-project)
               )
   :custom
   ;; Show project name on mode-line
@@ -1531,8 +1569,6 @@
      "shell.nix"
      ))
   (project-compilation-buffer-name-function nil)
-  :config
-  (bind-key (kbd "s-<0x10081247> s-P") (kbd "C-x p") 'key-translation-map)
   )
 
 ;; Electric packages
@@ -1632,6 +1668,12 @@
   (transient-default-level 4) ;; default: 4
   )
 
+(use-package outline
+  :defer t
+  :bind-keymap
+  ("s-q" . outline-mode-prefix-map)
+  )
+
 
 
 ;; Abbrev config
@@ -1701,6 +1743,7 @@
   :custom
   (org-startup-indented nil)
   (org-startup-folded 'overview)
+  ;; Set `truncate-lines' specifically on `org-mode'
   (org-startup-truncated t)
   (org-fontify-todo-headline t)
   (org-fontify-done-headline t)
@@ -1772,6 +1815,8 @@
   ;;       (c . t)
   ;;       (R . t)
   ;;       (sqlite . t)))))
+  ;;
+  ;; (org-babel-load-file)
   )
 
 (use-package org-agenda
@@ -2178,12 +2223,15 @@
   (setq-local show-trailing-whitespace nil)
   (setq-local word-wrap t)
 
-  (let* ((do-truncate '(minibuffer-mode
+  (let* ((do-truncate '(
                         completion-list-mode
                         elfeed-show-mode
                         elfeed-search-mode
                         ))
-         (dont-truncate '(help-mode
+         (dont-truncate '(
+                          minibuffer-mode
+                          help-mode
+                          eww-mode
                           ))
          )
     (if (derived-mode-p do-truncate)
@@ -2199,6 +2247,19 @@
             )
         )))
   )
+
+;; Examples of how to modify header-line and tab-line, for future reference.
+
+;; (setq header-line-format `(("" which-func-format " ") ("" doom-modeline-tab-bar-string " ")))
+;; (setq tab-line-format '((:eval (tab-line-format)) (:eval (doom-modeline-tab-bar-format-global))))
+;; (setq-default
+;;  tab-line-format
+;;  '((:eval
+;;     ;; (propertize
+;;     ;;  (format-mode-line (doom-modeline-tab-bar-format-global)) 'face '(:background "#8282d7"))
+;;     (doom-modeline-tab-bar-format-global)
+;;     )
+;;    (:eval " ") (:eval (tab-line-format))))
 
 
 
@@ -2240,6 +2301,9 @@
 ;; Modify 'exchange-point-and-mark' so that it doesn't
 ;; activate the mark if it is not already active
 ;; (exchange-point-and-mark-highlight-region nil)
+
+;; Ignore projects
+;; project-list-exclude
 
 ;; End:
 
