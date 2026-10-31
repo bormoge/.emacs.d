@@ -6,6 +6,7 @@
   :custom
   (guava-themes-visible-bell-duration 0.15)
   (guava-themes-visible-bell-idle-delay 0.0)
+  (guava-themes-boxed-mode-line t)
   (ring-bell-function #'guava-themes-change-visible-bell)
   (visible-bell t)
   :config

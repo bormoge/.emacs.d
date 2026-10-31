@@ -113,6 +113,7 @@
   (doom-modeline-gnus t)
   (doom-modeline-gnus-timer 2)
   (doom-modeline-gnus-excluded-groups nil)
+  (doom-modeline-display-tab-bar-string 'active)
   (doom-modeline-irc t)
   (doom-modeline-irc-stylize #'doom-modeline-shorten-irc) ;;'identity
   (doom-modeline-battery t)
@@ -355,8 +356,8 @@
    ("\\.markdown\\'" . gfm-mode))
   :bind (:map markdown-mode-map
               ("C-c C-e" . markdown-do))
-  :init (setq markdown-command "pandoc")
   :custom
+  (markdown-command "pandoc")
   (markdown-enable-wiki-links nil)
   (markdown-italic-underscore nil)
   (markdown-asymmetric-header t)
@@ -419,23 +420,37 @@
           tex-mode
           eval-expression-minibuffer-setup
           text-mode
-          org-mode) . puni-mode)
+          org-mode
+          markdown-mode
+          eglot--managed-mode
+          ) . puni-mode)
   )
 
 ;; form-feed: show FORM-FEED characters as long lines.
 (use-package form-feed
-  :hook ((prog-mode . form-feed-mode)
-         (text-mode . form-feed-mode)
-         (org-mode . form-feed-mode)
-         )
+  :hook ((prog-mode
+          org-mode
+          text-mode
+          eglot--managed-mode
+          ) . form-feed-mode)
   )
 
 ;; ligature: enable font ligatures
 (use-package ligature
-  :hook ((prog-mode . ligature-mode))
+  :hook ((prog-mode
+          org-mode
+          markdown-mode
+          eglot--managed-mode
+          ;; text-mode
+          ) . ligature-mode)
   :config
   ;; Enable all Iosevka ligatures in programming modes
-  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+  (ligature-set-ligatures '(prog-mode
+                            org-mode
+                            markdown-mode
+                            eglot--managed-mode
+                            )
+                          '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
                                        "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
                                        "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
                                        ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
@@ -476,6 +491,7 @@
 (use-package elfeed
   :bind ((:map global-map
                ("s-<0x10081247> s-E e" . elfeed)
+               ("s-<0x10081247> s-E t" . elfeed-tree)
                :map elfeed-search-mode-map
                ("s-<0x10081247> s-E u" . elfeed-update)
                (";" . my/elfeed-search-set-separator-date-format)
@@ -486,6 +502,8 @@
                ("m" . nil) ;; Unbind `elfeed-show-compose-mail'.
                ("TAB" . shr-next-link)
                ("s-<tab>" . elfeed-show-next-link)
+               :map elfeed-tree-mode-map
+               ("s-<0x10081247> s-E u" . elfeed-update)
                ))
   :hook ((elfeed-search-mode . my/set-variables-for-specific-modes)
          (elfeed-show-mode . my/set-variables-for-specific-modes)
@@ -495,6 +513,8 @@
   (elfeed-feeds (read (my/read-file-contents (expand-file-name "rss.txt" user-emacs-directory))))
   (elfeed-db-directory (expand-file-name "elfeed" user-emacs-directory))
   (elfeed-search-filter "+unread") ;; default: "@6months +unread"
+  (elfeed-tree-filter "") ;; default: "@6months"
+  (elfeed-tree-style 'box)
   (elfeed-show-entry-switch #'switch-to-buffer);; #'pop-to-buffer
   (elfeed-search-separator-date-format "%A, %d/%m/%Y") ;;(%A, %d/%m/%Y) (%m/%Y) (Week %W, %m/%Y)
   (elfeed-show-date-format "%A, %d/%m/%Y %T %Z")
@@ -519,6 +539,7 @@
       (elfeed-search-update :force)))
 
   (keymap-set elfeed-show-mode-map "Q" "u q")
+  (keymap-set elfeed-show-mode-map "U" "u q")
 
   ;; (defun my/elfeed-next-line (&optional arg)
   ;;   (interactive "p")
@@ -635,9 +656,9 @@
   :defer t
   :hook
   (((
-     org-mode
      prog-mode
      eglot--managed-mode
+     org-mode
      ) . corfu-mode))
   :bind
   (:map global-map
@@ -707,7 +728,7 @@
                 ;; cape-capf-sort delegates sorting to the UI (by default cape-capf-super uses `identity' as the sort function)
                 (list #'cape-file
                       (cape-capf-sort (cape-capf-super #'yasnippet-capf
-                                                       ;; #'elisp-completion-at-point
+                                                       #'elisp-completion-at-point
                                                        #'cape-elisp-block
                                                        #'cape-elisp-symbol
                                                        ))
@@ -746,8 +767,6 @@
   (vertico-count 12) ;; Show more candidates
   (vertico-resize t) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
-  :config
-  (vertico-mouse-mode +1)
   )
 
 ;; List of vertico extensions found in https://github.com/minad/vertico.
@@ -840,7 +859,6 @@
   ;; register formatting, adds thin separator lines, register sorting and hides
   ;; the window mode line.
   (advice-add #'register-preview :override #'consult-register-window)
-  (setq register-preview-delay 0.5)
 
   ;; Configure other variables and modes in the :config section,
   ;; after lazily loading the package.
@@ -873,6 +891,9 @@
   (consult-async-input-debounce 0.05) ;; default: 0.2
   (consult-async-input-throttle 0.1) ;; default: 0.5
   (consult-async-refresh-delay 0.05) ;; default: 0.2
+  ;; Optionally configure the narrowing key.
+  ;; Both < and C-+ work reasonably well.
+  (consult-narrow-key "<") ;; "C-+"
   :config
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
@@ -885,43 +906,18 @@
    ;; :preview-key "M-."
    :preview-key '(:debounce 0.4 any))
 
-  ;; Optionally configure the narrowing key.
-  ;; Both < and C-+ work reasonably well.
-  (setq consult-narrow-key "<") ;; "C-+"
-
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   ;; (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
   )
 
-(use-package consult-dir
-  ;; :after (consult)
-  :custom
-  (consult-dir-sources
-   '(consult-dir--source-default
-     consult-dir--source-project
-     consult-dir--source-recentf
-     consult-dir--source-tramp-local
-     consult-dir--source-bookmark
-     ))
-  (consult-dir-sort-candidates nil)
-  :bind ((:map vertico-map ;; minibuffer-local-completion-map
-               ("C-x M-d" . consult-dir)
-               ("C-x M-j" . consult-dir-jump-file)
-               :map global-map
-               ("C-x M-d" . consult-dir)
-               ))
-  :commands (consult-dir consult-dir-jump-file)
-  )
-
 (use-package consult-eglot
-  :after (consult eglot)
   :bind ("M-g e g" . consult-eglot-symbols)
   )
 
 (use-package consult-eglot-embark
   :defer t
-  :after (consult eglot embark)
+  :hook (eglot--managed-mode . consult-eglot-embark-mode)
   )
 
 (use-package consult-yasnippet
@@ -930,11 +926,6 @@
               ("M-g y y" . consult-yasnippet)
               ("M-g y v" . consult-yasnippet-visit-snippet-file)
               )
-  )
-
-(use-package consult-symbol
-  :after (consult)
-  :bind ("C-h o" . consult-symbol)
   )
 
 (use-package consult-flyspell
@@ -955,7 +946,7 @@
   (marginalia-align 'left) ;; Can be set right, left, or center
   (marginalia-field-width 60)
   :init
-  (marginalia-mode)
+  (marginalia-mode +1)
   )
 
 ;; Embark
@@ -1216,7 +1207,6 @@ For each non-existent cli throw a warning."
          )
   :config
   (add-to-list 'apheleia-mode-alist '(toml-ts-mode . tombi))
-  (add-to-list 'apheleia-formatters '(tombi "tombi" "format"))
   )
 
 (use-package disaster
@@ -1235,6 +1225,20 @@ For each non-existent cli throw a warning."
   ) ;; Functions to remember: package-lint-flymake-setup, flymake-show-buffer-diagnostics, package-lint-current-buffer
 
 (use-package package-lint-flymake
+  )
+
+(use-package idle-highlight-mode
+  :hook ((prog-mode
+          org-mode
+          text-mode
+          eglot--managed-mode
+          )
+         . idle-highlight-mode)
+  :custom
+  (idle-highlight-exceptions nil)
+  (idle-highlight-exceptions-face '(font-lock-keyword-face font-lock-string-face))
+  (idle-highlight-exceptions-syntax "^w_")
+  (idle-highlight-idle-time 0.7)
   )
 
 

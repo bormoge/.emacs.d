@@ -69,11 +69,9 @@
      clojure-mode
      clojure-ts-mode
      consult
-     consult-dir
      consult-eglot
      consult-eglot-embark
      consult-flyspell
-     consult-symbol
      consult-yasnippet
      corfu
      corfu-prescient
@@ -96,6 +94,8 @@
      guava-themes
      helpful
      hledger-mode
+     hyperbole
+     idle-highlight-mode
      json-mode
      ledger-mode
      ligature
@@ -203,8 +203,7 @@
   (undo-limit 160000) ;(* 13 160000)
   (undo-strong-limit 240000) ;(* 13 240000)
   (undo-outer-limit 24000000) ;(* 13 24000000)
-  ;; Disable fontification during user input to reduce lag in large buffers.
-  (redisplay-skip-fontification-on-input t)
+  ;; Column that serves as limit for line-wrapping
   (fill-column 80)
   ;; Optimize scrolling
   (fast-but-imprecise-scrolling t)
@@ -253,6 +252,9 @@
   (read-minibuffer-restore-windows t)
   ;; Don't ignore case when reading a buffer name.
   (read-buffer-completion-ignore-case nil)
+  (print-length nil)
+  ;; Use system tooltips
+  (use-system-tooltips t)
 
   :config
   ;; Disable compact font caches
@@ -269,6 +271,9 @@
     (setq pgtk-wait-for-event-timeout 0.001))
 
   (setq completion-ignore-case nil)
+
+  ;; Disable fontification during user input to reduce lag in large buffers.
+  (setq redisplay-skip-fontification-on-input t)
   )
 
 
@@ -409,8 +414,13 @@
 
 ;; Show number of the lines
 (use-package display-line-numbers
+  ;; :hook ((
+  ;;         text-mode
+  ;;         org-mode
+  ;;         prog-mode
+  ;;         eglot--managed-mode
+  ;;         ) . display-line-numbers-mode)
   :custom
-  (display-line-numbers t)
   (display-line-numbers-type t)
   (display-line-numbers-width nil)
   (display-line-numbers-minor-tick 25)
@@ -459,7 +469,7 @@
   (global-tab-line-mode +1)
   )
 
-;; Enable menu-bar
+;; Disable menu-bar
 (use-package menu-bar
   :defer t
   :custom
@@ -471,6 +481,8 @@
 ;; Disable tool-bar
 (use-package tool-bar
   :defer t
+  :custom
+  (tool-bar-always-show-default nil)
   :config
   (tool-bar-mode -1)
   (modifier-bar-mode -1)
@@ -486,7 +498,7 @@
   (tooltip-mode +1)
   )
 
-;; Enable Vertical Scroll Bar
+;; Disable Vertical Scroll Bar
 (use-package scroll-bar
   :defer t
   :config
@@ -505,11 +517,13 @@
 (use-package desktop
   :defer t
   :custom
+  (desktop-save t)
+  (desktop-load-locked-desktop 'ask)
   (desktop-restore-eager t)
   (desktop-auto-save-timeout 30)
-  :config
-  (add-to-list 'desktop-path (expand-file-name "desktop-sessions/" user-emacs-directory))
-  (setq desktop-dirname (expand-file-name "desktop-sessions/" user-emacs-directory))
+  (desktop-path `(,(expand-file-name "desktop-sessions/" user-emacs-directory) "~/.emacs.d/" "~")) ;; default: '("~/.emacs.d/" "~")
+  (desktop-base-file-name ".emacs.desktop")
+  (desktop-base-lock-name ".emacs.desktop.lock")
   :commands (desktop-save desktop-read desktop-remove)
   )
 
@@ -533,7 +547,7 @@
   (display-time-default-load-average nil)
   (display-time-format "%H:%M %a %d-%m-%Y")
   :config
-  (display-time-mode t)
+  (display-time-mode +1)
   )
 
 
@@ -646,12 +660,12 @@
   (read-file-name-completion-ignore-case nil)
   )
 
-;; Enable right click menu
 (use-package mouse
   :custom
   (mouse-yank-at-point nil)
   :config
-  (context-menu-mode +1)
+  ;; Disable right click menu
+  (context-menu-mode -1)
   )
 
 
@@ -753,7 +767,7 @@
   :custom
   (which-func-update-delay 0.5)
   (which-func-display 'header)
-  (which-func-modes '(prog-mode org-mode))
+  (which-func-modes '(prog-mode org-mode markdown-mode))
   :config
   (which-function-mode +1)
   )
@@ -781,9 +795,40 @@
   (setq native-comp-jit-compilation t)
   )
 
+;; Emacs Web Wowser (web browser)
 (use-package eww
   :defer t
   :hook (eww-mode . my/set-variables-for-specific-modes)
+  )
+
+;; Speedbar (tree-like directory / file displayer)
+(use-package speedbar
+  :defer t
+  :custom
+  (speedbar-use-images t)
+  (speedbar-show-unknown-files t)
+  (speedbar-use-imenu-flag t)
+  (speedbar-smart-directory-expand-flag t)
+  (speedbar-hide-button-brackets-flag nil)
+  (speedbar-verbosity-level 1)
+  (speedbar-vc-do-check t)
+  (speedbar-obj-do-check t)
+  (speedbar-update-flag t)
+  (speedbar-select-frame-method 'attached)
+  (speedbar-frame-parameters '((minibuffer) (width . 120) (border-width . 0) (menu-bar-lines . 0)
+                               (tool-bar-lines . 0) (tab-bar-lines . 0) (unsplittable . t) (left-fringe . 0)))
+  )
+
+(use-package dframe
+  :defer t
+  :custom
+  (dframe-have-timer-flag t)
+  )
+
+(use-package ffap
+  :defer t
+  :custom
+  (ffap-machine-p-known 'accept)
   )
 
 
@@ -899,6 +944,8 @@
   )
 
 (use-package register
+  :custom
+  (register-preview-delay 0.5)
   :config
   (defun my/clear-register ()
     "Remove all elements in `register-alist'"
@@ -993,7 +1040,7 @@
   (lazy-highlight-initial-delay 0.25)
   (lazy-highlight-no-delay-length 3)
   (isearch-allow-scroll nil)
-  (isearch-allow-motion nil)
+  (isearch-allow-motion t)
   (search-invisible 'open)
   (isearch-hide-immediately t)
   )
@@ -1051,7 +1098,7 @@
   (auto-save-no-message nil)
   ;; Backup directory
   (backup-directory-alist `(("." . "~/.emacs_backup_files")))
-  ;;(backup-directory-alist `(("." . ,(expand-file-name (concat user-emacs-directory ".emacs_backup_files")))))
+  ;; alt: (backup-directory-alist `(("." . ,(expand-file-name (concat user-emacs-directory ".emacs_backup_files")))))
   ;; Backup by copying instead of renaming original file
   (backup-by-copying t)
   ;; More than one backup
@@ -1078,6 +1125,7 @@
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory)))) ;; :all
   (insert-directory-program "ls")
+  (auto-mode-case-fold t)
   :config
   (defun my/delete-trailing-whitespace ()
     "Call `delete-trailing-whitespace' unless the buffer is read-only."
@@ -1429,6 +1477,7 @@
                   diff-hl-mode
                   form-feed-mode
                   display-fill-column-indicator-mode
+                  idle-highlight-mode
                   ;; indent-bars-mode
                   ;; highlight-numbers-mode
                   ;; git-gutter-mode
@@ -1447,6 +1496,7 @@
   ((
     prog-mode
     eglot--managed-mode
+    markdown-mode
     ;; text-mode
     ;; org-mode
     ) . hs-minor-mode)
@@ -1576,12 +1626,17 @@
   :custom
   (electric-pair-inhibit-predicate #'electric-pair-default-inhibit)
   :config
-  (add-to-list 'electric-pair-pairs '(123 . 125) 'append)
-  (electric-pair-mode 1))
+  (add-to-list 'electric-pair-pairs '(123 . 125) 'append) ;; {}
+  ;; (add-to-list 'electric-pair-pairs '(39 . 39) 'append) ;; ''
+  (electric-pair-mode +1)
+  )
 
 (use-package electric
+  :custom
+  (electric-quote-replace-double nil)
+  (electric-quote-context-sensitive nil)
   :config
-  (electric-indent-mode 1)
+  (electric-indent-mode +1)
   )
 
 ;; Automatically show available commands
@@ -1591,7 +1646,7 @@
   :config
   (which-key-setup-side-window-right-bottom)
   ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
-  (which-key-mode 1)
+  (which-key-mode +1)
   )
 
 (use-package shr
@@ -1674,6 +1729,10 @@
   ("s-q" . outline-mode-prefix-map)
   )
 
+(use-package Info
+  :hook (Info-mode . my/set-variables-for-specific-modes)
+  )
+
 
 
 ;; Abbrev config
@@ -1716,6 +1775,7 @@
   (((
      prog-mode
      eglot--managed-mode
+     markdown-mode
      ) . flymake-mode))
   :bind (:map flymake-mode-map
               ("H-f l" . flymake-switch-to-log-buffer)
@@ -1757,6 +1817,7 @@
   (org-todo-repeat-to-state nil)
   (org-log-into-drawer nil)
   (org-startup-with-inline-images nil)
+  (org-directory "~/.emacs.d/org-notes")
   ;;(org-return-follows-link nil)
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
   ;;(org-hierarchical-todo-statistics t)
@@ -1766,18 +1827,15 @@
   ;;(org-use-effective-time nil)
   ;;(org-element-use-cache t)
   ;;(org-reverse-note-order nil)
-
   ;;(org-confirm-babel-evaluate t)
   ;;(org-src-fontify-natively t)
   ;;(org-src-tab-acts-natively t)
-
   ;;(org-clock-clocked-in-display 'mode-line)
   ;;(org-habit-show-habits t)
   ;;(org-edit-src-content-indentation 2)
   ;;(org-cycle-include-plain-lists t)
   ;;(org-fold-core-style 'overlays)
   ;;(org-archive-location "%s_archive::") ;;"archive/%s_archive::"
-  ;;(org-directory "~/.emacs.d/org-notes")
   ;;(org-id-link-to-org-use-id nil
   ;;(org-log-states-order-reversed t)
   ;;(org-log-note-clock-out nil)
@@ -2232,6 +2290,7 @@
                           minibuffer-mode
                           help-mode
                           eww-mode
+                          Info-mode
                           ))
          )
     (if (derived-mode-p do-truncate)
