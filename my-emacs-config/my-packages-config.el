@@ -182,6 +182,20 @@
   (projectile-mode +1)
   )
 
+;; (use-package hyperbole
+;;   ;; :bind
+;;   ;; (:map global-map
+;;   ;;       ("C-h A" . hkey-help)
+;;   ;;       ("M-o" . hkey-operate)
+;;   ;;       ("M-RET" . hkey-either)
+;;   ;;       ("<mouse-3>" . hyperbole)
+;;   ;;  )
+;;   :custom
+;;   (hkey-init nil)
+;;   ;; :init
+;;   ;; (hyperbole-mode +1)
+;;   )
+
 
 
 ;; magit: Package used as a git front end.

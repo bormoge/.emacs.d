@@ -321,16 +321,7 @@
                  (body-function . select-window)))
   )
 
-;; Enable syntax highlighting
-(use-package font-core
-  :config
-  (global-font-lock-mode t)
-  )
-
-(use-package font-lock
-  :custom
-  (font-lock-maximum-decoration t) ;; e.g. '((t . 2)), '((c-mode . t) (c++-mode . 2) (t . 1))
-  )
+
 
 ;; Package for miscellaneous features
 (use-package simple
@@ -393,49 +384,99 @@
   (transient-mark-mode +1)
   )
 
-(use-package subr
-  :defer t
-  ;; Enable auto-save-mode only when the buffer is associated with a file.
-  :hook (after-change-major-mode . my/auto-save-mode-check-if-buffer-is-file)
+
+
+(use-package minibuffer
+  :custom
+  (minibuffer-visible-completions nil)
+  ;; More detailed completions
+  (completions-detailed t)
+  (completion-auto-help t)
+  (completions-max-height 20) ;; default: nil
+  (completion-cycle-threshold nil)
+  (completions-format 'horizontal)
+  (completions-sort #'prescient-completion-sort) ;; default: alphabetical
+  (completions-group nil)
+  (completion-auto-select nil)
+  (completion-show-help t)
+  ;; See also `completion-styles-alist'.
+  ;; (Emacs-31) Check the rewritten 'flex' completion style
+  (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)) ;; basic
+                                   (eglot (styles orderless))
+                                   (eglot-capf (styles orderless))))
+  (completion-eager-update t) ;; Emacs-31
+  (completion-eager-display t) ;; Emacs-31
+  (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
+  (completion-in-region-function #'consult-completion-in-region) ;; default: #'completion--in-region
+  ;; When t, 'flex' completion rejects spaces in search pattern (incompatible with `orderless' style dispatchers)
+  (completion-flex-nospace nil)
+  ;; When t, reading a file name completion ignores case.
+  (read-file-name-completion-ignore-case nil)
+  )
+
+(use-package completion-preview
+  :bind (:map completion-preview-active-mode-map
+              ("s-<up>" . completion-preview-prev-candidate)
+              ("s-<down>" . completion-preview-next-candidate)
+              )
+  :custom
+  ;; The time before `completion-preview' appears.
+  (completion-preview-idle-delay 0.5)
+  ;; The minimum amount of letters needed for `completion-preview' to appear.
+  (completion-preview-minimum-symbol-length 2)
+  (completion-preview-exact-match-only nil)
+  (completion-preview-commands '(self-insert-command
+                                 insert-char
+                                 delete-backward-char
+                                 backward-delete-char-untabify
+                                 analyze-text-conversion
+                                 completion-preview-complete
+                                 ;; completion-preview-insert-word
+                                 ))
   :init
-  (defun my/auto-save-mode-check-if-buffer-is-file ()
-    (if (buffer-file-name)
-        (auto-save-mode +1)
-      (auto-save-mode -1))
-    )
-  )
-
-(use-package visual-wrap
-  :custom
-  (visual-wrap-extra-indent 0)
+  (global-completion-preview-mode +1)
   :config
-  (global-visual-wrap-prefix-mode +1)
+  ;; Set the completion-styles of completion-preview-mode
+  (setq completion-preview-completion-styles completion-styles)
+  ;; Same sort function I use on corfu and vertico.
+  (setq completion-preview-sort-function #'prescient-completion-sort) ;; identity
+  ;; Note: change `completion-preview-sort-function' to a custom variable (Emacs-31)
   )
 
-;; Show number of the lines
-(use-package display-line-numbers
-  ;; :hook ((
-  ;;         text-mode
-  ;;         org-mode
-  ;;         prog-mode
-  ;;         eglot--managed-mode
-  ;;         ) . display-line-numbers-mode)
+(use-package ido
+  :defer t
   :custom
-  (display-line-numbers-type t)
-  (display-line-numbers-width nil)
-  (display-line-numbers-minor-tick 25)
-  (display-line-numbers-major-tick 100)
-  (display-line-numbers-width-start t)
-  (display-line-numbers-grow-only nil)
+  (ido-enable-flex-matching nil)
+  (ido-everywhere nil)
+  (ido-use-filename-at-point t)
+  (ido-create-new-buffer 'always)
+  (ido-file-extensions-order nil)
+  (ido-ignore-extensions t)
+  )
+
+(use-package icomplete
+  :defer t
+  :bind
+  (:map icomplete-minibuffer-map
+        ("M-<right>" . icomplete-forward-completions)
+        ("M-<left>" . icomplete-backward-completions)
+        ("RET" . icomplete-ret)
+   )
+  :custom
+  ;; Check `icomplete--fido-mode-setup' for more details on
+  ;; how to configure `icomplete-mode' in a similar way to `fido-mode'.
+  (icomplete-compute-delay 0) ;; default: 0.15
+  (icomplete-in-buffer nil)
+  (icomplete-tidy-shadowed-file-names t)
+  (icomplete-show-matches-on-no-input t)
+  (icomplete-hide-common-prefix nil)
   :config
-  (global-display-line-numbers-mode +1)
+  (setq icomplete-scroll t) ;; alt: (not (null icomplete-vertical-mode))
   )
 
-;; Enable use of system clipboard
-(use-package select
-  :custom
-  (select-enable-clipboard t)
-  )
+
 
 ;; Tab Bars
 (use-package tab-bar
@@ -505,51 +546,6 @@
   (scroll-bar-mode -1)
   )
 
-;; Replace a selected area with typed text
-(use-package delsel
-  :custom
-  (delete-selection-temporary-region nil)
-  :config
-  (delete-selection-mode +1)
-  )
-
-;; Add directory to desktop-path
-(use-package desktop
-  :defer t
-  :custom
-  (desktop-save t)
-  (desktop-load-locked-desktop 'ask)
-  (desktop-restore-eager t)
-  (desktop-auto-save-timeout 30)
-  (desktop-path `(,(expand-file-name "desktop-sessions/" user-emacs-directory) "~/.emacs.d/" "~")) ;; default: '("~/.emacs.d/" "~")
-  (desktop-base-file-name ".emacs.desktop")
-  (desktop-base-lock-name ".emacs.desktop.lock")
-  :commands (desktop-save desktop-read desktop-remove)
-  )
-
-;; Display warnings depending of level
-(use-package warnings
-  :custom
-  (warning-minimum-level :warning)
-  )
-
-;; Disables docstring warnings
-(use-package bytecomp
-  :custom
-  (byte-compile-warnings
-   '(not docstrings))
-  )
-
-;; Display time and date on the minibuffer (neat stuff)
-(use-package time
-  :custom
-  (display-time-day-and-date t)
-  (display-time-default-load-average nil)
-  (display-time-format "%H:%M %a %d-%m-%Y")
-  :config
-  (display-time-mode +1)
-  )
-
 
 
 ;; Bookmarks
@@ -611,61 +607,6 @@
   (advice-add 'save-place-find-file-hook :after
               (lambda (&rest _)
                 (when buffer-file-name (ignore-errors (recenter)))))
-  )
-
-
-
-;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
-(use-package autorevert
-  :custom
-  (global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
-  (auto-revert-remote-files nil)
-  (auto-revert-verbose t)
-  (auto-revert-interval 5)
-  (auto-revert-avoid-polling nil)
-  (auto-revert-stop-on-user-input nil)
-  (global-auto-revert-non-file-buffers t)
-  (auto-revert-check-vc-info nil)
-  :config
-  (global-auto-revert-mode +1)
-  )
-
-(use-package minibuffer
-  :custom
-  (minibuffer-visible-completions nil)
-  ;; More detailed completions
-  (completions-detailed t)
-  (completion-auto-help t)
-  (completions-max-height 20) ;; default: nil
-  (completion-cycle-threshold nil)
-  (completions-format 'horizontal)
-  (completions-sort #'prescient-completion-sort) ;; default: alphabetical
-  (completions-group nil)
-  (completion-auto-select nil)
-  (completion-show-help t)
-  ;; See also `completion-styles-alist'.
-  ;; (Emacs-31) Check the rewritten 'flex' completion style
-  (completion-styles '(orderless partial-completion flex basic)) ;; partial-completion / '(orderless basic)
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)) ;; basic
-                                   (eglot (styles orderless))
-                                   (eglot-capf (styles orderless))))
-  (completion-eager-update t) ;; Emacs-31
-  (completion-eager-display t) ;; Emacs-31
-  (completion-pcm-leading-wildcard t) ;; Emacs-31: partial-completion behaves like substring
-  (completion-in-region-function #'consult-completion-in-region) ;; default: #'completion--in-region
-  ;; When t, 'flex' completion rejects spaces in search pattern (incompatible with `orderless' style dispatchers)
-  (completion-flex-nospace nil)
-  ;; When t, reading a file name completion ignores case.
-  (read-file-name-completion-ignore-case nil)
-  )
-
-(use-package mouse
-  :custom
-  (mouse-yank-at-point nil)
-  :config
-  ;; Disable right click menu
-  (context-menu-mode -1)
   )
 
 
@@ -732,345 +673,6 @@
   )
 
 
-
-;; EditorConfig (https://editorconfig.org/)
-;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
-(use-package editorconfig
-  :config
-  (editorconfig-mode t)
-  )
-
-;; eldoc config
-(use-package eldoc
-  :bind
-  (:map global-map
-        ;; Define easy key for eldoc documentation
-        ("s-. ." . eldoc)
-        )
-  :custom
-  (eldoc-idle-delay 0.7) ;; default: 0.5
-  (eldoc-echo-area-display-truncation-message nil)
-  (eldoc-echo-area-prefer-doc-buffer t)
-  (eldoc-documentation-strategy #'eldoc-documentation-default)
-  :config
-  (global-eldoc-mode +1)
-  )
-
-;; Display battery status on mode-line
-(use-package battery
-  :config
-  (display-battery-mode +1)
-  )
-
-;; Display name of a "function" (depends of the context)
-(use-package which-func
-  :custom
-  (which-func-update-delay 0.5)
-  (which-func-display 'header)
-  (which-func-modes '(prog-mode org-mode markdown-mode))
-  :config
-  (which-function-mode +1)
-  )
-
-(use-package compile
-  ;; Add key for compile
-  :bind (:map global-map
-              ("s-<0x10081247> s-C" . compile))
-  :custom
-  ;; Follow the compilation buffer
-  (compilation-scroll-output t) ;; 'first-error
-  (compilation-ask-about-save t)
-  (compilation-always-kill t)
-  (compilation-max-output-line-length nil)
-  (compilation-buffer-name-function #'compilation--default-buffer-name)
-  :commands (compile)
-  )
-
-;; Native compilation for Emacs
-(use-package comp
-  :custom
-  (native-comp-speed 2)
-  (native-comp-async-report-warnings-errors t)
-  :config
-  (setq native-comp-jit-compilation t)
-  )
-
-;; Emacs Web Wowser (web browser)
-(use-package eww
-  :defer t
-  :hook (eww-mode . my/set-variables-for-specific-modes)
-  )
-
-;; Speedbar (tree-like directory / file displayer)
-(use-package speedbar
-  :defer t
-  :custom
-  (speedbar-use-images t)
-  (speedbar-show-unknown-files t)
-  (speedbar-use-imenu-flag t)
-  (speedbar-smart-directory-expand-flag t)
-  (speedbar-hide-button-brackets-flag nil)
-  (speedbar-verbosity-level 1)
-  (speedbar-vc-do-check t)
-  (speedbar-obj-do-check t)
-  (speedbar-update-flag t)
-  (speedbar-select-frame-method 'attached)
-  (speedbar-frame-parameters '((minibuffer) (width . 120) (border-width . 0) (menu-bar-lines . 0)
-                               (tool-bar-lines . 0) (tab-bar-lines . 0) (unsplittable . t) (left-fringe . 0)))
-  )
-
-(use-package dframe
-  :defer t
-  :custom
-  (dframe-have-timer-flag t)
-  )
-
-(use-package ffap
-  :defer t
-  :custom
-  (ffap-machine-p-known 'accept)
-  )
-
-
-
-;; Dired config
-(use-package dired
-  :defer t
-  :bind (:map dired-mode-map
-              ("M-<" . dired-beginning-of-buffer) ;; Replace `beginning-of-buffer'.
-              ("M->" . dired-end-of-buffer) ;; Replace `end-of-buffer'.
-              ("s-<0x10081247> s-!" . my/dired-sort-by-name)
-              ("s-<0x10081247> s-\"" . my/dired-sort-by-size)
-              ("s-<0x10081247> s-#" . my/dired-sort-by-date)
-              ("s-<0x10081247> s-$" . my/dired-sort-by-extension)
-              )
-  :custom
-  (dired-listing-switches "-alh --group-directories-first")
-  (dired-kill-when-opening-new-dired-buffer t)
-  (dired-recursive-deletes 'always)
-  (dired-recursive-copies 'always)
-  (dired-free-space 'first)
-  (dired-dwim-target t)
-  (dired-vc-rename-file t)
-  (dired-clean-confirm-killing-deleted-buffers t)
-  (dired-auto-revert-buffer nil)
-  (dired-clean-up-buffers-too t)
-  (dired-use-ls-dired t)
-  :config
-  (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
-
-  (defun dired-end-of-buffer ()
-    (interactive)
-    (goto-char (point-max))
-    (dired-next-line -1))
-
-  (defun dired-beginning-of-buffer ()
-    (interactive)
-    (goto-char (point-min))
-    (dired-next-line 3))
-
-  (defun my/dired-sort-by-name (arg)
-    "Sort Dired buffer alphabetically by name."
-    (interactive "P")
-    (if (not arg)
-        (dired-sort-other "-alh --group-directories-first")
-      (dired-sort-other "-alhr --group-directories-first")))
-
-  (defun my/dired-sort-by-size (arg)
-    "Sort Dired buffer by file size."
-    (interactive "P")
-    (if (not arg)
-        (dired-sort-other "-alhS --group-directories-first")
-      (dired-sort-other "-alhSr --group-directories-first")))
-
-  (defun my/dired-sort-by-date (arg)
-    "Sort Dired buffer by last modification date."
-    (interactive "P")
-    (if (not arg)
-        (dired-sort-other "-alht --group-directories-first")
-      (dired-sort-other "-alhtr --group-directories-first")))
-
-  (defun my/dired-sort-by-extension (arg)
-    "Sort Dired buffer by file extension."
-    (interactive "P")
-    (if (not arg)
-        (dired-sort-other "-alhX --group-directories-first")
-      (dired-sort-other "-alhXr --group-directories-first")))
-  )
-
-(use-package find-dired
-  :bind (:map global-map
-              ("H-f d" . find-name-dired))
-  )
-
-(use-package wdired
-  :defer t
-  :custom
-  (wdired-create-parent-directories t)
-  )
-
-(use-package dired-aux
-  :defer t
-  :bind (:map dired-mode-map
-              ("s-w" . dired-do-async-shell-command))
-  :custom
-  (dired-create-destination-dirs 'ask)
-  (dired-create-destination-dirs-on-trailing-dirsep t)
-  )
-
-
-
-;; grep config
-(use-package grep
-  ;; Set key for grep
-  :bind (:map global-map
-              ("H-x g" . grep))
-  :custom
-  ;; This setting is a pre-requirement for nerd-icons-grep, so an
-  ;; icon can be displayed near each heading
-  (grep-use-headings t)
-  (grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
-  (grep-highlight-matches 'auto-detect)
-  (grep-scroll-output t)
-  )
-
-;; Rectangle mode config
-(use-package rect
-  :defer t
-  :bind
-  (:map rectangle-mark-mode-map
-        ("s-a" . string-rectangle))
-  :defer t
-  )
-
-(use-package register
-  :custom
-  (register-preview-delay 0.5)
-  :config
-  (defun my/clear-register ()
-    "Remove all elements in `register-alist'"
-    (interactive)
-    (setq register-alist nil))
-  )
-
-(use-package jit-lock
-  :custom
-  (jit-lock-defer-time nil) ;; default: nil
-  )
-
-(use-package descr-text
-  :bind (:map global-map
-              ("C-h M-c" . describe-char)
-              )
-  :custom
-  ;; Control how you want to show info using `what-cursor-position'
-  (describe-char-unidata-list t)
-  )
-
-;; Calc config
-(use-package calc
-  :defer t
-  :bind (:map global-map
-              ;; Open full-calc
-              ("<Calculator>" . full-calc)
-              )
-  :config
-  (setq calc-group-digits t)
-  :commands (full-calc)
-  )
-
-;; Highlight pairs of parentheses
-(use-package paren
-  :custom
-  (show-paren-style 'mixed) ;; default: 'parenthesis
-  (show-paren-when-point-inside-paren t)
-  (show-paren-when-point-in-periphery t)
-  (show-paren-highlight-openparen t)
-  (show-paren-delay 0.15) ;; default: 0.125
-  :config
-  (show-paren-mode +1)
-  )
-
-(use-package completion-preview
-  :bind (:map completion-preview-active-mode-map
-              ("s-<up>" . completion-preview-prev-candidate)
-              ("s-<down>" . completion-preview-next-candidate)
-              )
-  :custom
-  ;; The time before `completion-preview' appears.
-  (completion-preview-idle-delay 0.5)
-  ;; The minimum amount of letters needed for `completion-preview' to appear.
-  (completion-preview-minimum-symbol-length 2)
-  (completion-preview-exact-match-only nil)
-  (completion-preview-commands '(self-insert-command
-                                 insert-char
-                                 delete-backward-char
-                                 backward-delete-char-untabify
-                                 analyze-text-conversion
-                                 completion-preview-complete
-                                 ;; completion-preview-insert-word
-                                 ))
-  :init
-  (global-completion-preview-mode)
-  :config
-  ;; Set the completion-styles of completion-preview-mode
-  (setq completion-preview-completion-styles completion-styles)
-  ;; Same sort function I use on corfu and vertico.
-  (setq completion-preview-sort-function #'prescient-completion-sort) ;; identity
-  ;; Note: change `completion-preview-sort-function' to a custom variable (Emacs-31)
-  )
-
-(use-package isearch
-  ;; HACK: instead of setting case-fold-search to nil, which also affects regex,
-  ;; I set isearch-case-fold-search to yes or nil when starting or ending
-  ;; isearch-mode.
-  :hook ((isearch-mode . (lambda ()
-                           (setq-local isearch-case-fold-search 'yes)))
-         (isearch-mode-end . (lambda ()
-                               (setq-local isearch-case-fold-search nil))))
-  :custom
-  (isearch-lax-whitespace t)
-  (isearch-regexp-lax-whitespace nil)
-  ;; Count the number of instances and show that number on the minibuffer.
-  (isearch-lazy-count t)
-  (lazy-count-prefix-format "(%s/%s) ")
-  (lazy-count-suffix-format " (%s/%s)")
-  (isearch-lazy-highlight t)
-  (isearch-wrap-pause t)
-  (lazy-highlight-initial-delay 0.25)
-  (lazy-highlight-no-delay-length 3)
-  (isearch-allow-scroll nil)
-  (isearch-allow-motion t)
-  (search-invisible 'open)
-  (isearch-hide-immediately t)
-  )
-
-;; recentf configuration
-(use-package recentf
-  :custom
-  (recentf-save-file (expand-file-name "recentf" user-emacs-directory))
-  (recentf-max-saved-items 50)
-  (recentf-max-menu-items 20)
-  (recentf-auto-cleanup 'mode) ;; default: 'mode
-  (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
-  (recentf-exclude `("/tmp/" "/ssh:" "/nix/store/" "/dev/shm/" ,(concat package-user-dir "/.*-autoloads\\.el\\'")))
-  :bind
-  (:map recentf-mode-map
-        ("s-<0x10081247> s-R" . recentf-open))
-  :config
-  (recentf-mode +1)
-  )
-
-(use-package replace
-  :bind (:map global-map
-              ("H-r" . replace-string)
-              ;; Replace string
-              ("M-s M-r s" . query-replace)
-              ;; Replace regexp
-              ("M-s M-r r" . query-replace-regexp)
-              ;; Delete lines containing a specific string
-              ("M-°" . flush-lines)
-              ))
 
 (defun my/read-file-contents (filename)
   "Return the contents of FILENAME as a string."
@@ -1154,249 +756,7 @@
   (auto-save-visited-mode -1)
   )
 
-(use-package message
-  :custom
-  (message-kill-buffer-query t)
-  )
-
-(use-package page
-  :bind (:map global-map
-              ;; To use this, use C-q C-l to put form-feeds on the buffers.
-              ("s-<prior>" . backward-page)
-              ("s-<next>" . forward-page)
-              )
-  )
-
-(use-package windmove
-  ;; Set keys for changing window focus
-  :bind (:map global-map
-              ("s-<left>" . windmove-left)
-              ("s-<right>" . windmove-right)
-              ("s-<up>" . windmove-up)
-              ("s-<down>" . windmove-down)
-              ))
-
-(use-package mwheel
-  :custom
-  (mouse-wheel-progressive-speed t))
-
-;; Some security config from minimal-emacs.d
-(use-package gnutls
-  :defer t
-  :custom
-  (gnutls-verify-error t) ;; Prompts user if there are certificate issues
-  (gnutls-min-prime-bits 3072) ;; Stronger GnuTLS encryption
-  )
-
-(use-package tls
-  :defer t
-  :custom
-  (tls-checktrust t)  ; Ensure SSL/TLS connections undergo trust verification
-  )
-
-(use-package nsm
-  :defer t
-  :custom
-  (network-security-level 'high)
-  )
-
-(use-package cus-edit
-  :custom
-  ;; Exiting a custom buffer kills it
-  (custom-buffer-done-kill t)
-  ;; Use real function / variables names when customizing
-  (custom-unlispify-tag-names nil)
-  (custom-raised-buttons t)
-  (custom-file nil) ;; alt: (expand-file-name "my-emacs-config/my-emacs-custom-file.el" user-emacs-directory)
-  )
-
-(use-package uniquify
-  :custom
-  (uniquify-buffer-name-style 'post-forward-angle-brackets)
-  (uniquify-after-kill-buffer-p t)
-  (uniquify-separator nil)
-  (uniquify-ignore-buffers-re nil) ;; "^\\*"
-  )
-
-(use-package whitespace
-  :bind (:map global-map
-              ("H-x s-w" . whitespace-mode)
-              ("H-x s-s" . global-whitespace-mode)
-              )
-  :custom
-  (whitespace-line-column nil) ;; Use `fill-column' as the value of `whitespace-line-column'.
-  )
-
-(use-package epg-config
-  :custom
-  ;; Directs gpg-agent to use the minibuffer for passphrase entry.
-  (epg-pinentry-mode 'loopback)
-  )
-
-(use-package auth-source
-  :custom
-  (auth-source-do-cache t)
-  ;; Use GPG to encrypt the authinfo file. For more information check `(auth)Help for users' on the Emacs auth-source manual.
-  (auth-sources (list "~/.authinfo.gpg"))
-  (auth-source-cache-expiry 3600)
-  )
-
-(use-package imenu
-  :custom
-  (imenu-auto-rescan t)
-  (imenu-max-item-length 160)
-  )
-
-(use-package comint
-  :custom
-  (comint-prompt-read-only t)
-  (comint-buffer-maximum-size 4096)
-  )
-
-(use-package ansi-color
-  :custom
-  (ansi-color-for-comint-mode t)
-  ;; :config
-  ;; (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
-  )
-
-(use-package newcomment
-  :custom
-  (comment-multi-line t)
-  (comment-empty-lines t)
-  )
-
-(use-package paragraphs
-  :defer t
-  :custom
-  (sentence-end nil)
-  (sentence-end-double-space t)
-  (sentence-end-without-period nil)
-  (sentence-end-base "[.?!…‽][]\"'”’)}»›]*")
-  )
-
-(use-package fill
-  :defer t
-  :custom
-  (colon-double-space nil)
-  )
-
-(use-package apropos
-  :custom
-  (apropos-do-all t)
-  )
-
-(use-package help
-  :hook (help-mode . my/set-variables-for-specific-modes)
-  :custom
-  (help-enable-completion-autoload nil)
-  (help-enable-autoload nil)
-  (help-enable-symbol-autoload nil)
-  ;; When created, change focus to Help buffer
-  (help-window-select t)
-  ;; Reuse Help window in contexts other than another Help buffer
-  (help-window-keep-selected t)
-  )
-
-(use-package ispell
-  :defer t
-  ;; :if (executable-find "aspell")
-  :custom
-  (ispell-silently-savep t)
-  (ispell-help-in-bufferp 'electric)
-  (ispell-program-name "aspell") ;; alt: hunspell
-  (ispell-extra-args nil) ;'("--sug-mode=ultra" "--lang=en_US" "--dont-run-together")
-
-  ;; Doesn't seem to work on NixOS
-  ;; (ispell-dictionary "en_US")
-
-  ;; If t, supress Ispell messages
-  (ispell-quietly nil)
-  :init
-  ;; This sets the starting language of aspell.
-  (setenv "ASPELL_CONF" "lang en_US" t)
-  ;; If you want to use a different language you need to first change the
-  ;; environment variable and then restart aspell.
-  ;; (ispell-kill-ispell)
-  )
-
-(use-package flyspell
-  :defer t
-  ;; :if (executable-find "aspell")
-  :bind (:map global-map
-              ("s-<0x10081247> s-F f" . flyspell-mode)
-              ("s-<0x10081247> s-F p" . flyspell-prog-mode)
-              )
-  :custom
-  (flyspell-issue-message-flag t)
-  (flyspell-issue-welcome-flag t)
-  )
-
-(use-package text-mode
-  :defer t
-  :custom
-  (text-mode-ispell-word-completion nil)
-  )
-
-;; Commands to repeat other commands.
-(use-package repeat
-  :defer t
-  :bind (:map global-map
-              ("s-<" . repeat)
-              ("s->" . repeat-mode)
-              ("s-z" . describe-repeat-maps)
-              )
-  :commands (repeat repeat-mode describe-repeat-maps)
-  )
-
-(use-package python
-  :defer t
-  :bind ((:map python-mode-map
-               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
-               )
-         (:map python-ts-mode-map
-               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
-               )
-         )
-  :custom
-  (python-fill-docstring-style 'pep-257)
-  (python-indent-offset 4)
-  )
-
-(use-package etags-regen
-  :defer t
-  :config
-  (etags-regen-mode -1)
-  )
-
-(use-package cc-mode
-  :defer t
-  :bind
-  (:map c-mode-map
-        ("s-d s" . disaster)
-        :map c++-mode-map
-        ("s-d s" . disaster)
-   )
-  :custom
-  ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
-  (c-basic-offset 4)
-  )
-
-(use-package custom
-  :custom
-  (custom-safe-themes t)
-  )
-
-(use-package misc
-  :bind (:map global-map
-              ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
-              ("M-Z" . zap-up-to-char)
-              ("s-y" . duplicate-dwim)
-              )
-  :custom
-  (duplicate-line-final-position 1)
-  (duplicate-region-final-position 1)
-  )
+
 
 ;; Shout-out to jamescherti's article "Preventing Emacs from Freezing on Files with Very Long Lines".
 ;; jamescherti dot com / prevent-emacs-freeze-so-long-files-very-long-lines
@@ -1490,247 +850,91 @@
   (global-so-long-mode +1)
   )
 
-(use-package hideshow
+
+
+;; Dired config
+(use-package dired
   :defer t
-  :hook
-  ((
-    prog-mode
-    eglot--managed-mode
-    markdown-mode
-    ;; text-mode
-    ;; org-mode
-    ) . hs-minor-mode)
-  :bind (:map hs-minor-mode-map
-              ("C-c @ C-h" . nil)
-              ;; ("C-c @ C-e" . nil)
-              ;; ("C-c @ C-d" . nil)
-              ;; ("C-c @ C-t" . nil)
-              ;; ("C-c @ C-a" . nil)
-              ;; ("C-c @ C-c" . nil)
-              ;; ("C-c @ C-l" . nil)
-              ;; ("C-c @ C-s" . nil)
-              ("C-c @ h" . hs-hide-block)
-              ("C-c @ e" . hs-toggle-hiding)
-              ("C-c @ d" . hs-hide-block)
-              ("C-c @ t" . hs-hide-all)
-              ("C-c @ a" . hs-show-all)
-              ("C-c @ c" . hs-toggle-hiding)
-              ("C-c @ l" . hs-hide-level)
-              ("C-c @ s" . hs-show-block)
-              ("s-<tab>" . hs-toggle-hiding)
-              ;; ("s-<iso-lefttab> <backspace>" . hs-hide-all)
-              ;; ("s-<iso-lefttab> s-<iso-lefttab>" . hs-show-all)
+  :bind (:map dired-mode-map
+              ("M-<" . dired-beginning-of-buffer) ;; Replace `beginning-of-buffer'.
+              ("M->" . dired-end-of-buffer) ;; Replace `end-of-buffer'.
+              ("s-<0x10081247> s-!" . my/dired-sort-by-name)
+              ("s-<0x10081247> s-\"" . my/dired-sort-by-size)
+              ("s-<0x10081247> s-#" . my/dired-sort-by-date)
+              ("s-<0x10081247> s-$" . my/dired-sort-by-extension)
               )
   :custom
-  ;; Emacs-31
-  (hs-display-lines-hidden t)
-  (hs-show-indicators t)
-  )
-
-(use-package emacs-lock
-  :defer t
-  :bind
-  (:map global-map
-        ("C-x s-q" . emacs-lock-mode)
-        )
-  )
-
-(use-package ido
-  :defer t
-  :custom
-  (ido-enable-flex-matching nil)
-  (ido-everywhere nil)
-  (ido-use-filename-at-point t)
-  (ido-create-new-buffer 'always)
-  (ido-file-extensions-order nil)
-  (ido-ignore-extensions t)
-  )
-
-(use-package icomplete
-  :defer t
-  :bind
-  (:map icomplete-minibuffer-map
-        ("M-<right>" . icomplete-forward-completions)
-        ("M-<left>" . icomplete-backward-completions)
-        ("RET" . icomplete-ret)
-   )
-  :custom
-  ;; Check `icomplete--fido-mode-setup' for more details on
-  ;; how to configure `icomplete-mode' in a similar way to `fido-mode'.
-  (icomplete-compute-delay 0) ;; default: 0.15
-  (icomplete-in-buffer nil)
-  (icomplete-tidy-shadowed-file-names t)
-  (icomplete-show-matches-on-no-input t)
-  (icomplete-hide-common-prefix nil)
+  (dired-listing-switches "-alh --group-directories-first")
+  (dired-kill-when-opening-new-dired-buffer t)
+  (dired-recursive-deletes 'always)
+  (dired-recursive-copies 'always)
+  (dired-free-space 'first)
+  (dired-dwim-target t)
+  (dired-vc-rename-file t)
+  (dired-clean-confirm-killing-deleted-buffers t)
+  (dired-auto-revert-buffer nil)
+  (dired-clean-up-buffers-too t)
+  (dired-use-ls-dired t)
   :config
-  (setq icomplete-scroll t) ;; alt: (not (null icomplete-vertical-mode))
+  (setq dired-deletion-confirmer #'yes-or-no-p) ;#'y-or-n-p
+
+  (defun dired-end-of-buffer ()
+    (interactive)
+    (goto-char (point-max))
+    (dired-next-line -1))
+
+  (defun dired-beginning-of-buffer ()
+    (interactive)
+    (goto-char (point-min))
+    (dired-next-line 3))
+
+  (defun my/dired-sort-by-name (arg)
+    "Sort Dired buffer alphabetically by name."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alh --group-directories-first")
+      (dired-sort-other "-alhr --group-directories-first")))
+
+  (defun my/dired-sort-by-size (arg)
+    "Sort Dired buffer by file size."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alhS --group-directories-first")
+      (dired-sort-other "-alhSr --group-directories-first")))
+
+  (defun my/dired-sort-by-date (arg)
+    "Sort Dired buffer by last modification date."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alht --group-directories-first")
+      (dired-sort-other "-alhtr --group-directories-first")))
+
+  (defun my/dired-sort-by-extension (arg)
+    "Sort Dired buffer by file extension."
+    (interactive "P")
+    (if (not arg)
+        (dired-sort-other "-alhX --group-directories-first")
+      (dired-sort-other "-alhXr --group-directories-first")))
   )
 
-(use-package xref
-  :custom
-  ;; Use Consult to select xref locations with preview
-  ;; alt value: #'xref-show-definitions-completing-read
-  (xref-show-xrefs-function #'consult-xref) ;; default: xref--show-xref-buffer
-  ;; alt value: #'xref-show-definitions-completing-read
-  (xref-show-definitions-function #'consult-xref) ;;default: xref-show-definitions-buffer
-  )
-
-;; Highlight cursor line
-(use-package hl-line
-  :hook ((eshell-mode
-          shell-mode
-          term-mode
-          comint-mode
-          cfrs-input-mode
-          image-mode
-          magit-diff-mode
-          diff-mode
-          emacs-lisp-compilation-mode
-          eww-mode
-          )
-         ;; Disable hl-line for some modes
-         . (lambda () (setq-local global-hl-line-mode nil)))
-  :custom
-  (global-hl-line-sticky-flag nil)
-  :config
-  (global-hl-line-mode t)
-  )
-
-;; Project manager
-(use-package project
-  ;; Use demand to load the package automatically
-  :demand t
-  :bind-keymap
-  ("s-<0x10081247> s-p" . project-prefix-map)
+(use-package find-dired
   :bind (:map global-map
-              ("s-<0x10081247> s-?" . project-other-window-command)
-              ("C-x p R" . project-forget-project)
-              )
-  :custom
-  ;; Show project name on mode-line
-  (project-mode-line t)
-  (project-vc-extra-root-markers
-   '(
-     ".dir-locals.el"
-     ".envrc"
-     ".editorconfig"
-     "flake.nix"
-     "flake.lock"
-     "shell.nix"
-     ))
-  (project-compilation-buffer-name-function nil)
+              ("H-f d" . find-name-dired))
   )
 
-;; Electric packages
-(use-package elec-pair
-  :custom
-  (electric-pair-inhibit-predicate #'electric-pair-default-inhibit)
-  :config
-  (add-to-list 'electric-pair-pairs '(123 . 125) 'append) ;; {}
-  ;; (add-to-list 'electric-pair-pairs '(39 . 39) 'append) ;; ''
-  (electric-pair-mode +1)
-  )
-
-(use-package electric
-  :custom
-  (electric-quote-replace-double nil)
-  (electric-quote-context-sensitive nil)
-  :config
-  (electric-indent-mode +1)
-  )
-
-;; Automatically show available commands
-(use-package which-key
-  :custom
-  (which-key-idle-delay 5.0)
-  :config
-  (which-key-setup-side-window-right-bottom)
-  ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
-  (which-key-mode +1)
-  )
-
-(use-package shr
-  :custom
-  (shr-use-colors t)
-  (shr-use-fonts t)
-  (shr-max-image-proportion 0.4)
-  )
-
-(use-package url-queue
-  :custom
-  (url-queue-timeout 30)
-  )
-
-(use-package shell
-  ;; Set keys for shell
-  :bind (:map global-map
-              ("H-s s b" . shell)
-              ))
-
-(use-package eshell
-  ;; Set keys for eshell
-  :bind (:map global-map
-              ("H-s e b" . eshell)
-              ("H-s e c" . eshell-command)
-              ))
-
-(use-package term
-  ;; Set keys for term
-  :bind (:map global-map
-              ("H-s t b" . term)
-              ))
-
-(use-package sort
-  :bind (:map global-map
-              ;; Delete duplicate lines using Hyper + ALT + <backspace>
-              ("H-M-<backspace>" . delete-duplicate-lines)
-              ;; Alphabetically sort lines in region.
-              ("H-x s" . sort-lines)
-              ))
-
-(use-package ibuffer
-  :bind (:map global-map
-              ;; Define key for ibuffer
-              ("C-x M-b" . ibuffer)
-              )
-  :custom
-  (ibuffer-default-sorting-mode 'recency)
-  )
-
-(use-package tabify
-  :bind (:map global-map
-              ;; Convert tabs to spaces or spaces to tabs
-              ("H-x s-<tab>" . tabify)
-              ("H-x s-<backspace>" . untabify)
-              ("H-x s-<iso-lefttab>" . untabify)
-              ))
-
-(use-package find-func
-  :bind (:map global-map
-              ("C-h M-l" . find-library)
-              ))
-
-(use-package help-fns
-  :bind (:map global-map
-              ("C-h M-k" . describe-keymap)
-              ("C-h M-f" . describe-face)
-              )
-  )
-
-(use-package transient
+(use-package wdired
   :defer t
   :custom
-  (transient-default-level 4) ;; default: 4
+  (wdired-create-parent-directories t)
   )
 
-(use-package outline
+(use-package dired-aux
   :defer t
-  :bind-keymap
-  ("s-q" . outline-mode-prefix-map)
-  )
-
-(use-package Info
-  :hook (Info-mode . my/set-variables-for-specific-modes)
+  :bind (:map dired-mode-map
+              ("s-w" . dired-do-async-shell-command))
+  :custom
+  (dired-create-destination-dirs 'ask)
+  (dired-create-destination-dirs-on-trailing-dirsep t)
   )
 
 
@@ -2177,6 +1381,805 @@
   (add-to-list 'eglot-server-programs
                '((yaml-mode yaml-ts-mode) .
                  ("yaml-language-server" "--stdio")))
+  )
+
+
+
+;; Enable syntax highlighting
+(use-package font-core
+  :config
+  (global-font-lock-mode t)
+  )
+
+(use-package font-lock
+  :custom
+  (font-lock-maximum-decoration t) ;; e.g. '((t . 2)), '((c-mode . t) (c++-mode . 2) (t . 1))
+  )
+
+(use-package subr
+  :defer t
+  ;; Enable auto-save-mode only when the buffer is associated with a file.
+  :hook (after-change-major-mode . my/auto-save-mode-check-if-buffer-is-file)
+  :init
+  (defun my/auto-save-mode-check-if-buffer-is-file ()
+    (if (buffer-file-name)
+        (auto-save-mode +1)
+      (auto-save-mode -1)))
+  )
+
+(use-package visual-wrap
+  :custom
+  (visual-wrap-extra-indent 0)
+  :config
+  (global-visual-wrap-prefix-mode +1)
+  )
+
+;; Show number of the lines
+(use-package display-line-numbers
+  :hook ((
+          text-mode
+          org-mode
+          prog-mode
+          eglot--managed-mode
+          ) . display-line-numbers-mode)
+  :custom
+  (display-line-numbers-type t)
+  (display-line-numbers-width nil)
+  (display-line-numbers-minor-tick 25)
+  (display-line-numbers-major-tick 100)
+  (display-line-numbers-width-start t)
+  (display-line-numbers-grow-only nil)
+  )
+
+;; Enable use of system clipboard
+(use-package select
+  :custom
+  (select-enable-clipboard t)
+  )
+
+;; Replace a selected area with typed text
+(use-package delsel
+  :custom
+  (delete-selection-temporary-region nil)
+  :config
+  (delete-selection-mode +1)
+  )
+
+(use-package desktop
+  :defer t
+  :custom
+  (desktop-save t)
+  (desktop-load-locked-desktop 'ask)
+  (desktop-restore-eager t)
+  (desktop-auto-save-timeout 30)
+  (desktop-path `(,(expand-file-name "desktop-sessions/" user-emacs-directory) "~/.emacs.d/" "~")) ;; default: '("~/.emacs.d/" "~")
+  (desktop-base-file-name ".emacs.desktop")
+  (desktop-base-lock-name ".emacs.desktop.lock")
+  :commands (desktop-save desktop-read desktop-remove)
+  )
+
+;; Display warnings depending of level
+(use-package warnings
+  :custom
+  (warning-minimum-level :warning)
+  )
+
+;; Disable docstring warnings
+(use-package bytecomp
+  :custom
+  (byte-compile-warnings
+   '(not docstrings))
+  )
+
+;; Display time and date on the minibuffer (neat stuff)
+(use-package time
+  :custom
+  (display-time-day-and-date t)
+  (display-time-default-load-average nil)
+  (display-time-format "%H:%M %a %d-%m-%Y")
+  :config
+  (display-time-mode +1)
+  )
+
+;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
+(use-package autorevert
+  :custom
+  (global-auto-revert-ignore-modes '(doc-view-mode pdf-view-mode))
+  (auto-revert-remote-files nil)
+  (auto-revert-verbose t)
+  (auto-revert-interval 5)
+  (auto-revert-avoid-polling nil)
+  (auto-revert-stop-on-user-input nil)
+  (global-auto-revert-non-file-buffers t)
+  (auto-revert-check-vc-info nil)
+  :config
+  (global-auto-revert-mode +1)
+  )
+
+(use-package mouse
+  :custom
+  (mouse-yank-at-point nil)
+  :config
+  ;; Disable right click menu
+  (context-menu-mode -1)
+  )
+
+;; EditorConfig (https://editorconfig.org/)
+;; You can also use .dir-locals.el and .dir-locals-2.el, both alongside and as alternatives to .editorconfig files
+(use-package editorconfig
+  :config
+  (editorconfig-mode t)
+  )
+
+;; eldoc config
+(use-package eldoc
+  :bind
+  (:map global-map
+        ;; Define easy key for eldoc documentation
+        ("s-. ." . eldoc)
+        )
+  :custom
+  (eldoc-idle-delay 0.7) ;; default: 0.5
+  (eldoc-echo-area-display-truncation-message nil)
+  (eldoc-echo-area-prefer-doc-buffer t)
+  (eldoc-documentation-strategy #'eldoc-documentation-default)
+  :config
+  (global-eldoc-mode +1)
+  )
+
+;; Display battery status on mode-line
+(use-package battery
+  :config
+  (display-battery-mode +1)
+  )
+
+;; Display name of a "function" (depends of the context)
+(use-package which-func
+  :custom
+  (which-func-update-delay 0.5)
+  (which-func-display 'header)
+  (which-func-modes '(prog-mode org-mode markdown-mode))
+  :config
+  (which-function-mode +1)
+  )
+
+(use-package compile
+  ;; Add key for compile
+  :bind (:map global-map
+              ("s-<0x10081247> s-C" . compile))
+  :custom
+  ;; Follow the compilation buffer
+  (compilation-scroll-output t) ;; 'first-error
+  (compilation-ask-about-save t)
+  (compilation-always-kill t)
+  (compilation-max-output-line-length nil)
+  (compilation-buffer-name-function #'compilation--default-buffer-name)
+  :commands (compile)
+  )
+
+;; Native compilation for Emacs
+(use-package comp
+  :custom
+  (native-comp-speed 2)
+  (native-comp-async-report-warnings-errors t)
+  :config
+  (setq native-comp-jit-compilation t)
+  )
+
+;; Emacs Web Wowser (web browser)
+(use-package eww
+  :defer t
+  :hook (eww-mode . my/set-variables-for-specific-modes)
+  )
+
+;; Speedbar (tree-like directory / file displayer)
+(use-package speedbar
+  :defer t
+  :custom
+  (speedbar-use-images t)
+  (speedbar-show-unknown-files t)
+  (speedbar-use-imenu-flag t)
+  (speedbar-smart-directory-expand-flag t)
+  (speedbar-hide-button-brackets-flag nil)
+  (speedbar-verbosity-level 1)
+  (speedbar-vc-do-check t)
+  (speedbar-obj-do-check t)
+  (speedbar-update-flag t)
+  (speedbar-select-frame-method 'attached)
+  (speedbar-frame-parameters '((minibuffer) (width . 120) (border-width . 0) (menu-bar-lines . 0)
+                               (tool-bar-lines . 0) (tab-bar-lines . 0) (unsplittable . t) (left-fringe . 0)))
+  )
+
+(use-package dframe
+  :defer t
+  :custom
+  (dframe-have-timer-flag t)
+  )
+
+(use-package ffap
+  :defer t
+  :custom
+  (ffap-machine-p-known 'accept)
+  )
+
+;; grep config
+(use-package grep
+  ;; Set key for grep
+  :bind (:map global-map
+              ("H-x g" . grep))
+  :custom
+  ;; This setting is a pre-requirement for nerd-icons-grep, so an
+  ;; icon can be displayed near each heading
+  (grep-use-headings t)
+  (grep-command "grep --color=auto -nH --null -r -i ") ;; Original: "grep --color=auto -nH --null -e "
+  (grep-highlight-matches 'auto-detect)
+  (grep-scroll-output t)
+  )
+
+;; Rectangle mode config
+(use-package rect
+  :defer t
+  :bind
+  (:map rectangle-mark-mode-map
+        ("s-a" . string-rectangle))
+  :defer t
+  )
+
+(use-package register
+  :custom
+  (register-preview-delay 0.5)
+  :config
+  (defun my/clear-register ()
+    "Remove all elements in `register-alist'"
+    (interactive)
+    (setq register-alist nil))
+  )
+
+(use-package jit-lock
+  :custom
+  (jit-lock-defer-time nil) ;; default: nil
+  )
+
+(use-package descr-text
+  :bind (:map global-map
+              ("C-h M-c" . describe-char)
+              )
+  :custom
+  ;; Control how you want to show info using `what-cursor-position'
+  (describe-char-unidata-list t)
+  )
+
+;; Calc config
+(use-package calc
+  :defer t
+  :bind (:map global-map
+              ;; Open full-calc
+              ("<Calculator>" . full-calc)
+              )
+  :config
+  (setq calc-group-digits t)
+  :commands (full-calc)
+  )
+
+;; Highlight pairs of parentheses
+(use-package paren
+  :custom
+  (show-paren-style 'mixed) ;; default: 'parenthesis
+  (show-paren-when-point-inside-paren t)
+  (show-paren-when-point-in-periphery t)
+  (show-paren-highlight-openparen t)
+  (show-paren-delay 0.15) ;; default: 0.125
+  :config
+  (show-paren-mode +1)
+  )
+
+(use-package isearch
+  ;; HACK: instead of setting case-fold-search to nil, which also affects regex,
+  ;; I set isearch-case-fold-search to yes or nil when starting or ending
+  ;; isearch-mode.
+  :hook ((isearch-mode . (lambda ()
+                           (setq-local isearch-case-fold-search 'yes)))
+         (isearch-mode-end . (lambda ()
+                               (setq-local isearch-case-fold-search nil))))
+  :custom
+  (isearch-lax-whitespace t)
+  (isearch-regexp-lax-whitespace nil)
+  ;; Count the number of instances and show that number on the minibuffer.
+  (isearch-lazy-count t)
+  (lazy-count-prefix-format "(%s/%s) ")
+  (lazy-count-suffix-format " (%s/%s)")
+  (isearch-lazy-highlight t)
+  (isearch-wrap-pause t)
+  (lazy-highlight-initial-delay 0.25)
+  (lazy-highlight-no-delay-length 3)
+  (isearch-allow-scroll nil)
+  (isearch-allow-motion t)
+  (search-invisible 'open)
+  (isearch-hide-immediately t)
+  )
+
+;; recentf configuration
+(use-package recentf
+  :custom
+  (recentf-save-file (expand-file-name "recentf" user-emacs-directory))
+  (recentf-max-saved-items 50)
+  (recentf-max-menu-items 20)
+  (recentf-auto-cleanup 'mode) ;; default: 'mode
+  (recentf-filename-handlers '(abbreviate-file-name)) ;; default: '(abbreviate-file-name)
+  (recentf-exclude `("/tmp/" "/ssh:" "/nix/store/" "/dev/shm/" ,(concat package-user-dir "/.*-autoloads\\.el\\'")))
+  :bind
+  (:map recentf-mode-map
+        ("s-<0x10081247> s-R" . recentf-open))
+  :config
+  (recentf-mode +1)
+  )
+
+(use-package replace
+  :bind (:map global-map
+              ("H-r" . replace-string)
+              ;; Replace string
+              ("M-s M-r s" . query-replace)
+              ;; Replace regexp
+              ("M-s M-r r" . query-replace-regexp)
+              ;; Delete lines containing a specific string
+              ("M-°" . flush-lines)
+              ))
+
+(use-package message
+  :custom
+  (message-kill-buffer-query t)
+  )
+
+(use-package page
+  :bind (:map global-map
+              ;; To use this, use C-q C-l to put form-feeds on the buffers.
+              ("s-<prior>" . backward-page)
+              ("s-<next>" . forward-page)
+              )
+  )
+
+(use-package windmove
+  ;; Set keys for changing window focus
+  :bind (:map global-map
+              ("s-<left>" . windmove-left)
+              ("s-<right>" . windmove-right)
+              ("s-<up>" . windmove-up)
+              ("s-<down>" . windmove-down)
+              ))
+
+(use-package mwheel
+  :custom
+  (mouse-wheel-progressive-speed t)
+  )
+
+;; Some security config from minimal-emacs.d
+(use-package gnutls
+  :defer t
+  :custom
+  (gnutls-verify-error t) ;; Prompts user if there are certificate issues
+  (gnutls-min-prime-bits 3072) ;; Stronger GnuTLS encryption
+  )
+
+(use-package tls
+  :defer t
+  :custom
+  (tls-checktrust t)  ; Ensure SSL/TLS connections undergo trust verification
+  )
+
+(use-package nsm
+  :defer t
+  :custom
+  (network-security-level 'high)
+  )
+
+(use-package cus-edit
+  :custom
+  ;; Exiting a custom buffer kills it
+  (custom-buffer-done-kill t)
+  ;; Use real function / variables names when customizing
+  (custom-unlispify-tag-names nil)
+  (custom-raised-buttons t)
+  (custom-file nil) ;; alt: (expand-file-name "my-emacs-config/my-emacs-custom-file.el" user-emacs-directory)
+  )
+
+(use-package uniquify
+  :custom
+  (uniquify-buffer-name-style 'post-forward-angle-brackets)
+  (uniquify-after-kill-buffer-p t)
+  (uniquify-separator nil)
+  (uniquify-ignore-buffers-re nil) ;; "^\\*"
+  )
+
+(use-package whitespace
+  :bind (:map global-map
+              ("H-x s-w" . whitespace-mode)
+              ("H-x s-s" . global-whitespace-mode)
+              )
+  :custom
+  (whitespace-line-column nil) ;; Use `fill-column' as the value of `whitespace-line-column'.
+  )
+
+(use-package epg-config
+  :custom
+  ;; Directs gpg-agent to use the minibuffer for passphrase entry.
+  (epg-pinentry-mode 'loopback)
+  )
+
+(use-package auth-source
+  :custom
+  (auth-source-do-cache t)
+  ;; Use GPG to encrypt the authinfo file. For more information check `(auth)Help for users' on the Emacs auth-source manual.
+  (auth-sources (list "~/.authinfo.gpg"))
+  (auth-source-cache-expiry 3600)
+  )
+
+(use-package imenu
+  :custom
+  (imenu-auto-rescan t)
+  (imenu-max-item-length 160)
+  )
+
+(use-package comint
+  :custom
+  (comint-prompt-read-only t)
+  (comint-buffer-maximum-size 4096)
+  )
+
+(use-package ansi-color
+  :custom
+  (ansi-color-for-comint-mode t)
+  ;; :config
+  ;; (set-face-attribute 'ansi-color-blue nil :foreground "deep sky blue" :background "deep sky blue")
+  )
+
+(use-package newcomment
+  :custom
+  (comment-multi-line t)
+  (comment-empty-lines t)
+  )
+
+(use-package paragraphs
+  :defer t
+  :custom
+  (sentence-end nil)
+  (sentence-end-double-space t)
+  (sentence-end-without-period nil)
+  (sentence-end-base "[.?!…‽][]\"'”’)}»›]*")
+  )
+
+(use-package fill
+  :defer t
+  :custom
+  (colon-double-space nil)
+  )
+
+(use-package apropos
+  :custom
+  (apropos-do-all t)
+  )
+
+(use-package help
+  :hook (help-mode . my/set-variables-for-specific-modes)
+  :custom
+  (help-enable-completion-autoload nil)
+  (help-enable-autoload nil)
+  (help-enable-symbol-autoload nil)
+  ;; When created, change focus to Help buffer
+  (help-window-select t)
+  ;; Reuse Help window in contexts other than another Help buffer
+  (help-window-keep-selected t)
+  )
+
+(use-package ispell
+  :defer t
+  ;; :if (executable-find "aspell")
+  :custom
+  (ispell-silently-savep t)
+  (ispell-help-in-bufferp 'electric)
+  (ispell-program-name "aspell") ;; alt: hunspell
+  (ispell-extra-args nil) ;'("--sug-mode=ultra" "--lang=en_US" "--dont-run-together")
+
+  ;; Doesn't seem to work on NixOS
+  ;; (ispell-dictionary "en_US")
+
+  ;; If t, supress Ispell messages
+  (ispell-quietly nil)
+  :init
+  ;; This sets the starting language of aspell.
+  (setenv "ASPELL_CONF" "lang en_US" t)
+  ;; If you want to use a different language you need to first change the
+  ;; environment variable and then restart aspell.
+  ;; (ispell-kill-ispell)
+  )
+
+(use-package flyspell
+  :defer t
+  ;; :if (executable-find "aspell")
+  :bind (:map global-map
+              ("s-<0x10081247> s-F f" . flyspell-mode)
+              ("s-<0x10081247> s-F p" . flyspell-prog-mode)
+              )
+  :custom
+  (flyspell-issue-message-flag t)
+  (flyspell-issue-welcome-flag t)
+  )
+
+(use-package text-mode
+  :defer t
+  :custom
+  (text-mode-ispell-word-completion nil)
+  )
+
+;; Commands to repeat other commands.
+(use-package repeat
+  :defer t
+  :bind (:map global-map
+              ("s-<" . repeat)
+              ("s->" . repeat-mode)
+              ("s-z" . describe-repeat-maps)
+              )
+  :commands (repeat repeat-mode describe-repeat-maps)
+  )
+
+(use-package python
+  :defer t
+  :bind ((:map python-mode-map
+               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+               )
+         (:map python-ts-mode-map
+               ("s-<0x10081247> s-¡ f" . python-fill-paragraph)
+               )
+         )
+  :custom
+  (python-fill-docstring-style 'pep-257)
+  (python-indent-offset 4)
+  )
+
+(use-package etags-regen
+  :defer t
+  :config
+  (etags-regen-mode -1)
+  )
+
+(use-package cc-mode
+  :defer t
+  :bind
+  (:map c-mode-map
+        ("s-d s" . disaster)
+        :map c++-mode-map
+        ("s-d s" . disaster)
+   )
+  :custom
+  ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
+  (c-basic-offset 4)
+  )
+
+(use-package custom
+  :custom
+  (custom-safe-themes t)
+  )
+
+(use-package misc
+  :bind (:map global-map
+              ;; ("s-<0x10081247> s-Z" . zap-up-to-char)
+              ("M-Z" . zap-up-to-char)
+              ("s-y" . duplicate-dwim)
+              )
+  :custom
+  (duplicate-line-final-position 1)
+  (duplicate-region-final-position 1)
+  )
+
+(use-package hideshow
+  :defer t
+  :hook
+  ((
+    prog-mode
+    eglot--managed-mode
+    markdown-mode
+    ;; text-mode
+    ;; org-mode
+    ) . hs-minor-mode)
+  :bind (:map hs-minor-mode-map
+              ("C-c @ C-h" . nil)
+              ;; ("C-c @ C-e" . nil)
+              ;; ("C-c @ C-d" . nil)
+              ;; ("C-c @ C-t" . nil)
+              ;; ("C-c @ C-a" . nil)
+              ;; ("C-c @ C-c" . nil)
+              ;; ("C-c @ C-l" . nil)
+              ;; ("C-c @ C-s" . nil)
+              ("C-c @ h" . hs-hide-block)
+              ("C-c @ e" . hs-toggle-hiding)
+              ("C-c @ d" . hs-hide-block)
+              ("C-c @ t" . hs-hide-all)
+              ("C-c @ a" . hs-show-all)
+              ("C-c @ c" . hs-toggle-hiding)
+              ("C-c @ l" . hs-hide-level)
+              ("C-c @ s" . hs-show-block)
+              ("s-<tab>" . hs-toggle-hiding)
+              ;; ("s-<iso-lefttab> <backspace>" . hs-hide-all)
+              ;; ("s-<iso-lefttab> s-<iso-lefttab>" . hs-show-all)
+              )
+  :custom
+  ;; Emacs-31
+  (hs-display-lines-hidden t)
+  (hs-show-indicators t)
+  )
+
+(use-package emacs-lock
+  :defer t
+  :bind
+  (:map global-map
+        ("C-x s-q" . emacs-lock-mode)
+        )
+  )
+
+(use-package xref
+  :custom
+  ;; Use Consult to select xref locations with preview
+  ;; alt value: #'xref-show-definitions-completing-read
+  (xref-show-xrefs-function #'consult-xref) ;; default: xref--show-xref-buffer
+  ;; alt value: #'xref-show-definitions-completing-read
+  (xref-show-definitions-function #'consult-xref) ;;default: xref-show-definitions-buffer
+  )
+
+;; Highlight cursor line
+(use-package hl-line
+  :hook ((eshell-mode
+          shell-mode
+          term-mode
+          comint-mode
+          cfrs-input-mode
+          image-mode
+          magit-diff-mode
+          diff-mode
+          emacs-lisp-compilation-mode
+          eww-mode
+          )
+         ;; Disable hl-line for some modes
+         . (lambda () (setq-local global-hl-line-mode nil)))
+  :custom
+  (global-hl-line-sticky-flag nil)
+  :config
+  (global-hl-line-mode t)
+  )
+
+;; Project manager
+(use-package project
+  ;; Use demand to load the package automatically
+  :demand t
+  :bind-keymap
+  ("s-<0x10081247> s-p" . project-prefix-map)
+  :bind (:map global-map
+              ("s-<0x10081247> s-?" . project-other-window-command)
+              ("C-x p R" . project-forget-project)
+              )
+  :custom
+  ;; Show project name on mode-line
+  (project-mode-line t)
+  (project-vc-extra-root-markers
+   '(
+     ".dir-locals.el"
+     ".envrc"
+     ".editorconfig"
+     "flake.nix"
+     "flake.lock"
+     "shell.nix"
+     ))
+  (project-compilation-buffer-name-function nil)
+  )
+
+;; Electric packages
+(use-package elec-pair
+  :custom
+  (electric-pair-inhibit-predicate #'electric-pair-default-inhibit)
+  :config
+  (add-to-list 'electric-pair-pairs '(123 . 125) 'append) ;; {}
+  ;; (add-to-list 'electric-pair-pairs '(39 . 39) 'append) ;; ''
+  (electric-pair-mode +1)
+  )
+
+(use-package electric
+  :custom
+  (electric-quote-replace-double nil)
+  (electric-quote-context-sensitive nil)
+  :config
+  (electric-indent-mode +1)
+  )
+
+;; Automatically show available commands
+(use-package which-key
+  :custom
+  (which-key-idle-delay 5.0)
+  :config
+  (which-key-setup-side-window-right-bottom)
+  ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
+  (which-key-mode +1)
+  )
+
+(use-package shr
+  :custom
+  (shr-use-colors t)
+  (shr-use-fonts t)
+  (shr-max-image-proportion 0.4)
+  )
+
+(use-package url-queue
+  :custom
+  (url-queue-timeout 30)
+  )
+
+(use-package shell
+  ;; Set keys for shell
+  :bind (:map global-map
+              ("H-s s b" . shell)
+              ))
+
+(use-package eshell
+  ;; Set keys for eshell
+  :bind (:map global-map
+              ("H-s e b" . eshell)
+              ("H-s e c" . eshell-command)
+              ))
+
+(use-package term
+  ;; Set keys for term
+  :bind (:map global-map
+              ("H-s t b" . term)
+              ))
+
+(use-package sort
+  :bind (:map global-map
+              ;; Delete duplicate lines using Hyper + ALT + <backspace>
+              ("H-M-<backspace>" . delete-duplicate-lines)
+              ;; Alphabetically sort lines in region.
+              ("H-x s" . sort-lines)
+              ))
+
+(use-package ibuffer
+  :bind (:map global-map
+              ;; Define key for ibuffer
+              ("C-x M-b" . ibuffer)
+              )
+  :custom
+  (ibuffer-default-sorting-mode 'recency)
+  )
+
+(use-package tabify
+  :bind (:map global-map
+              ;; Convert tabs to spaces or spaces to tabs
+              ("H-x s-<tab>" . tabify)
+              ("H-x s-<backspace>" . untabify)
+              ("H-x s-<iso-lefttab>" . untabify)
+              ))
+
+(use-package find-func
+  :bind (:map global-map
+              ("C-h M-l" . find-library)
+              ))
+
+(use-package help-fns
+  :bind (:map global-map
+              ("C-h M-k" . describe-keymap)
+              ("C-h M-f" . describe-face)
+              )
+  )
+
+(use-package transient
+  :defer t
+  :custom
+  (transient-default-level 4) ;; default: 4
+  )
+
+(use-package outline
+  :defer t
+  :bind-keymap
+  ("s-q" . outline-mode-prefix-map)
+  )
+
+(use-package Info
+  :hook (Info-mode . my/set-variables-for-specific-modes)
   )
 
 
