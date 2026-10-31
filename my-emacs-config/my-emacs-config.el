@@ -978,7 +978,7 @@
   :hook
   (((
      prog-mode
-     eglot--managed-mode
+     eglot-managed-mode
      markdown-mode
      ) . flymake-mode))
   :bind (:map flymake-mode-map
@@ -1420,7 +1420,10 @@
           text-mode
           org-mode
           prog-mode
-          eglot--managed-mode
+          eglot-managed-mode
+          Info-mode
+          elfeed-search-mode
+          elfeed-show-mode
           ) . display-line-numbers-mode)
   :custom
   (display-line-numbers-type t)
@@ -1975,7 +1978,7 @@
   :hook
   ((
     prog-mode
-    eglot--managed-mode
+    eglot-managed-mode
     markdown-mode
     ;; text-mode
     ;; org-mode

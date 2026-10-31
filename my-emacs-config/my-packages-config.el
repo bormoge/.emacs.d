@@ -436,7 +436,7 @@
           text-mode
           org-mode
           markdown-mode
-          eglot--managed-mode
+          eglot-managed-mode
           ) . puni-mode)
   )
 
@@ -445,7 +445,7 @@
   :hook ((prog-mode
           org-mode
           text-mode
-          eglot--managed-mode
+          eglot-managed-mode
           ) . form-feed-mode)
   )
 
@@ -454,7 +454,7 @@
   :hook ((prog-mode
           org-mode
           markdown-mode
-          eglot--managed-mode
+          eglot-managed-mode
           ;; text-mode
           ) . ligature-mode)
   :config
@@ -671,7 +671,7 @@
   :hook
   (((
      prog-mode
-     eglot--managed-mode
+     eglot-managed-mode
      org-mode
      ) . corfu-mode))
   :bind
@@ -931,7 +931,7 @@
 
 (use-package consult-eglot-embark
   :defer t
-  :hook (eglot--managed-mode . consult-eglot-embark-mode)
+  :hook (eglot-managed-mode . consult-eglot-embark-mode)
   )
 
 (use-package consult-yasnippet
@@ -1245,7 +1245,7 @@ For each non-existent cli throw a warning."
   :hook ((prog-mode
           org-mode
           text-mode
-          eglot--managed-mode
+          eglot-managed-mode
           )
          . idle-highlight-mode)
   :custom
