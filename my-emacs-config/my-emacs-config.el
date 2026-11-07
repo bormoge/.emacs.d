@@ -36,21 +36,23 @@
   (package-archives
    '(
      ("melpa-snapshots"     . "https://snapshots.melpa.org/packages/")
-     ("gnu"                 . "https://elpa.gnu.org/packages/")
-     ("nongnu"              . "https://elpa.nongnu.org/nongnu/")
+     ("elpa-gnu"            . "https://elpa.gnu.org/packages/")
+     ("elpa-nongnu"         . "https://elpa.nongnu.org/nongnu/")
      ("melpa-releases"      . "https://releases.melpa.org/packages/")
-     ("gnu-devel"           . "https://elpa.gnu.org/devel/")
+     ("elpa-gnu-devel"      . "https://elpa.gnu.org/devel/")
+     ("elpa-nongnu-devel"   . "https://elpa.nongnu.org/nongnu-devel/")
      ;; ("melpa"               . "https://melpa.org/packages/")
      ;; ("melpa-stable"        . "https://stable.melpa.org/packages/")
      ))
   ;; Set the priorities of package repositories.
   (package-archive-priorities
    '(
-     ("melpa-snapshots"     . 7)
-     ("gnu"                 . 6)
-     ("nongnu"              . 5)
-     ("melpa-releases"      . 4)
-     ("gnu-devel"           . 3)
+     ("melpa-snapshots"     . 8)
+     ("elpa-gnu"            . 7)
+     ("elpa-nongnu"         . 6)
+     ("melpa-releases"      . 5)
+     ("elpa-gnu-devel"      . 4)
+     ("elpa-nongnu-devel"   . 3)
      ;; ("melpa"               . 2)
      ;; ("melpa-stable"        . 1)
      ))
@@ -152,11 +154,55 @@
   (package-status-column-width 11)
   )
 
+(use-package package-vc
+  :custom
+  (package-vc-selected-packages
+   '(
+     (hyperbole     :url "https://github.com/rswgnu/hyperbole.git"
+                    :rev :newest ;; :last-release ;; "dca2c6f"
+                    :branch "master"
+                    :vc-backend Git)
+     (pgmacs        :url "https://github.com/emarsden/pgmacs.git"
+                    :rev :newest
+                    :branch "main"
+                    :vc-backend Git)
+     (package-build :url "https://github.com/melpa/package-build.git"
+                    :rev :newest
+                    :branch "master"
+                    :vc-backend Git)
+     ))
+  )
+
+;; Install all packages at once.
+;; This is a replacement (sort of) to use-package's :require keyword.
+(defvar my/install-all-packages nil)
+
+(defun my/list-missing-packages (packages)
+    "Return a list of PACKAGES that are not installed on Emacs."
+    (delq nil
+          (mapcar (lambda (p)
+                    (if (package-installed-p p nil) nil p))
+                  packages)))
+
+(when my/install-all-packages
+  (let* ((all-packages package-selected-packages)
+         (some-packages (seq-remove (lambda (p) (memq p '(guava-themes))) all-packages))
+         (missing-packages (my/list-missing-packages some-packages)))
+    (when missing-packages
+      (progn
+        (package-refresh-contents)
+        (dolist (p missing-packages)
+          (package-install p))))
+    ))
+
+
+
 
 
 (use-package emacs
   :bind (:map global-map
               ("s-<0x10081247> s-D" . delete-pair)
+              ("C-x s-k"            . kill-buffer)
               )
   :hook (minibuffer-setup . my/set-variables-for-specific-modes)
   :custom
@@ -187,8 +233,10 @@
   (visible-bell t)
   ;; Scroll settings
   (scroll-conservatively 100000)
-  (scroll-margin 6)
+  (scroll-margin 0)
   (scroll-step 1)
+  (hscroll-margin 5)
+  (hscroll-step 0)
   ;; When scrolling preserve cursor position
   (scroll-preserve-screen-position t)
   ;; Short yes or no answer
@@ -327,14 +375,11 @@
 (use-package simple
   :bind (:map global-map
               ("C-x k"                . kill-current-buffer)
-              ("C-x s-k"              . kill-buffer)
               ("H-x s-q"              . indent-tabs-mode)
               ("H-x s-e"              . delete-trailing-whitespace)
               ("H-w"                  . count-words)
               ("C-S-/"                . undo-only)
               ("s-<0x10081247> s-¡ p" . auto-fill-mode)
-              ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
-              ("s-<0x10081247> s-¡ f" . fill-paragraph)
               ("H-s s c"              . shell-command)
               )
   :hook (completion-list-mode . my/set-variables-for-specific-modes)
@@ -438,8 +483,6 @@
   :init
   (global-completion-preview-mode +1)
   :config
-  ;; Set the completion-styles of completion-preview-mode
-  (setq completion-preview-completion-styles completion-styles)
   ;; Same sort function I use on corfu and vertico.
   (setq completion-preview-sort-function #'prescient-completion-sort) ;; identity
   ;; Note: change `completion-preview-sort-function' to a custom variable (Emacs-31)
@@ -460,8 +503,8 @@
   :defer t
   :bind
   (:map icomplete-minibuffer-map
-        ("M-<right>" . icomplete-forward-completions)
-        ("M-<left>" . icomplete-backward-completions)
+        ("S-<right>" . icomplete-forward-completions)
+        ("S-<left>" . icomplete-backward-completions)
         ("RET" . icomplete-ret)
    )
   :custom
@@ -614,14 +657,20 @@
 (use-package vc
   :defer t
   :custom
-  (vc-git-diff-switches '("--histogram")) ;; default: t
-  (vc-git-print-log-follow nil)
+  (vc-diff-switches nil)
   (vc-command-messages nil)
   (vc-find-revision-no-save nil)
   ;; Deduce vc on all buffers
   (vc-deduce-backend-nonvc-modes t) ;; default: '(dired-mode shell-mode eshell-mode compilation-mode)
   :config
   (setq vc-log-short-style '(directory file))
+  )
+
+(use-package vc-git
+  :defer t
+  :custom
+  (vc-git-diff-switches '("-u" "--histogram")) ;; default: t
+  (vc-git-print-log-follow nil)
   )
 
 (use-package vc-dir
@@ -798,6 +847,7 @@
 
                   ;; Regex and Custom Highlighting
                   auto-composition-mode
+                  idle-highlight-mode
                   ;; easy-escape-minor-mode
                   ;; highlight-defined-mode
                   ;; highlight-indent-guides-mode
@@ -837,7 +887,6 @@
                   diff-hl-mode
                   form-feed-mode
                   display-fill-column-indicator-mode
-                  idle-highlight-mode
                   ;; indent-bars-mode
                   ;; highlight-numbers-mode
                   ;; git-gutter-mode
@@ -919,7 +968,9 @@
 
 (use-package find-dired
   :bind (:map global-map
-              ("H-f d" . find-name-dired))
+              ("H-f d" . find-name-dired)
+              ("C-x M-d" . find-name-dired)
+              )
   )
 
 (use-package wdired
@@ -969,6 +1020,73 @@
   (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode)
   (add-to-list 'dabbrev-ignored-buffer-modes 'tags-table-mode)
+  )
+
+
+
+(use-package hideshow
+  :defer t
+  ;; :hook
+  ;; ((
+  ;;   prog-mode
+  ;;   eglot-managed-mode
+  ;;   markdown-mode
+  ;;   ;; text-mode
+  ;;   ;; org-mode
+  ;;   ) . hs-minor-mode)
+  :bind (:map hs-minor-mode-map
+              ("C-c @ C-h" . nil)
+              ;; ("C-c @ C-e" . nil)
+              ;; ("C-c @ C-d" . nil)
+              ;; ("C-c @ C-t" . nil)
+              ;; ("C-c @ C-a" . nil)
+              ;; ("C-c @ C-c" . nil)
+              ;; ("C-c @ C-l" . nil)
+              ;; ("C-c @ C-s" . nil)
+              ("C-c @ h" . hs-hide-block)
+              ("C-c @ e" . hs-toggle-hiding)
+              ("C-c @ d" . hs-hide-block)
+              ("C-c @ t" . hs-hide-all)
+              ("C-c @ a" . hs-show-all)
+              ("C-c @ c" . hs-toggle-hiding)
+              ("C-c @ l" . hs-hide-level)
+              ("C-c @ s" . hs-show-block)
+              ;; ("s-<tab>" . hs-toggle-hiding)
+              ;; ("s-<iso-lefttab> <backspace>" . hs-hide-all)
+              ;; ("s-<iso-lefttab> s-<iso-lefttab>" . hs-show-all)
+              )
+  :custom
+  ;; Emacs-31
+  (hs-display-lines-hidden t)
+  (hs-show-indicators t)
+  )
+
+(use-package outline
+  :defer t
+  :hook
+  ((
+    prog-mode
+    eglot-managed-mode
+    markdown-mode
+    ;; text-mode
+    ;; org-mode
+    ) . outline-minor-mode)
+  :bind-keymap
+  ("s-q" . outline-mode-prefix-map)
+  :bind
+  (:map outline-minor-mode-map
+        ("s-<tab>" . outline-toggle-children)
+        ("s-|" . outline-cycle)
+        :map
+        outline-mode-prefix-map
+        ("s-<tab>" . outline-toggle-children)
+        ("C-<tab>" . outline-cycle-buffer)
+        ("s-q" . outline-cycle)
+        )
+  )
+
+(use-package foldout
+  :after outline
   )
 
 
@@ -1726,11 +1844,14 @@
               ("M-s M-r r" . query-replace-regexp)
               ;; Delete lines containing a specific string
               ("M-°" . flush-lines)
+              ("M-¬" . keep-lines)
               ))
 
 (use-package message
+  :defer t
   :custom
   (message-kill-buffer-query t)
+  (message-directory "~/Mail/") ;; alt: '(expand-file-name "Mail" user-emacs-directory)
   )
 
 (use-package page
@@ -1852,8 +1973,19 @@
 
 (use-package fill
   :defer t
+  :bind
+  (:map global-map
+        ("s-<0x10081247> s-¡ f" . fill-paragraph)
+   )
   :custom
   (colon-double-space nil)
+  )
+
+(use-package display-fill-column-indicator
+  :bind
+  (:map global-map
+        ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
+   )
   )
 
 (use-package apropos
@@ -1887,6 +2019,11 @@
 
   ;; If t, supress Ispell messages
   (ispell-quietly nil)
+
+  ;; Search "plain text word list"
+  (ispell-complete-word-dict (expand-file-name "dictionaries/words.txt" user-emacs-directory))
+  ;; (ispell-alternate-dictionary (expand-file-name "dictionaries/words.txt" user-emacs-directory))
+
   :init
   ;; This sets the starting language of aspell.
   (setenv "ASPELL_CONF" "lang en_US" t)
@@ -1910,7 +2047,7 @@
 (use-package text-mode
   :defer t
   :custom
-  (text-mode-ispell-word-completion nil)
+  (text-mode-ispell-word-completion #'completion-at-point)
   )
 
 ;; Commands to repeat other commands.
@@ -1973,49 +2110,14 @@
   (duplicate-region-final-position 1)
   )
 
-(use-package hideshow
-  :defer t
-  :hook
-  ((
-    prog-mode
-    eglot-managed-mode
-    markdown-mode
-    ;; text-mode
-    ;; org-mode
-    ) . hs-minor-mode)
-  :bind (:map hs-minor-mode-map
-              ("C-c @ C-h" . nil)
-              ;; ("C-c @ C-e" . nil)
-              ;; ("C-c @ C-d" . nil)
-              ;; ("C-c @ C-t" . nil)
-              ;; ("C-c @ C-a" . nil)
-              ;; ("C-c @ C-c" . nil)
-              ;; ("C-c @ C-l" . nil)
-              ;; ("C-c @ C-s" . nil)
-              ("C-c @ h" . hs-hide-block)
-              ("C-c @ e" . hs-toggle-hiding)
-              ("C-c @ d" . hs-hide-block)
-              ("C-c @ t" . hs-hide-all)
-              ("C-c @ a" . hs-show-all)
-              ("C-c @ c" . hs-toggle-hiding)
-              ("C-c @ l" . hs-hide-level)
-              ("C-c @ s" . hs-show-block)
-              ("s-<tab>" . hs-toggle-hiding)
-              ;; ("s-<iso-lefttab> <backspace>" . hs-hide-all)
-              ;; ("s-<iso-lefttab> s-<iso-lefttab>" . hs-show-all)
-              )
-  :custom
-  ;; Emacs-31
-  (hs-display-lines-hidden t)
-  (hs-show-indicators t)
-  )
-
 (use-package emacs-lock
   :defer t
   :bind
   (:map global-map
         ("C-x s-q" . emacs-lock-mode)
         )
+  :custom
+  (emacs-lock-default-locking-mode 'all)
   )
 
 (use-package xref
@@ -2056,7 +2158,7 @@
   ("s-<0x10081247> s-p" . project-prefix-map)
   :bind (:map global-map
               ("s-<0x10081247> s-?" . project-other-window-command)
-              ("C-x p R" . project-forget-project)
+              ("C-x p s-r" . project-forget-project)
               )
   :custom
   ;; Show project name on mode-line
@@ -2175,14 +2277,20 @@
   (transient-default-level 4) ;; default: 4
   )
 
-(use-package outline
-  :defer t
-  :bind-keymap
-  ("s-q" . outline-mode-prefix-map)
-  )
-
 (use-package Info
   :hook (Info-mode . my/set-variables-for-specific-modes)
+  )
+
+(use-package autoinsert
+  :custom
+  (auto-insert #'not-modified)
+  :config
+  (auto-insert-mode +1)
+  )
+
+(use-package composite
+  :init
+  (global-auto-composition-mode +1)
   )
 
 
