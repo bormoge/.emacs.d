@@ -113,7 +113,7 @@
   (doom-modeline-gnus t)
   (doom-modeline-gnus-timer 2)
   (doom-modeline-gnus-excluded-groups nil)
-  (doom-modeline-display-tab-bar-string 'active)
+  (doom-modeline-display-tab-bar-string nil)
   (doom-modeline-irc t)
   (doom-modeline-irc-stylize #'doom-modeline-shorten-irc) ;;'identity
   (doom-modeline-battery t)
@@ -141,9 +141,9 @@
 
   :config
   (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)
-  (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
+  ;; (add-to-list 'tab-bar-format 'tab-bar-format-align-right 'append)
   ;; alt: (add-to-list 'tab-bar-format 'tab-bar-format-global 'append)
-  (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
+  ;; (add-to-list 'tab-bar-format 'doom-modeline-tab-bar-format-global 'append)
   )
 
 ;; Used to highlight lines changed
@@ -157,14 +157,13 @@
          (dired-mode . diff-hl-dired-mode)
          )
   :custom
+  (diff-hl-global-modes '(not image-mode pdf-view-mode))
   (diff-hl-disable-on-remote nil)
   (diff-hl-update-async 'thread) ;; default: nil, alt (Emacs-31): t
-  (diff-hl-flydiff-delay 0.2)
+  (diff-hl-flydiff-delay 0.3)
   (diff-hl-show-staged-changes t)
+  (diff-hl-highlight-reference-function #'diff-hl-highlight-on-fringe-flat)
   (diff-hl-draw-borders t)
-  (diff-hl-global-modes '(not
-                          image-mode
-                          pdf-view-mode))
   )
 
 (use-package projectile
@@ -331,7 +330,6 @@
 
 ;; flymake-hledger
 (use-package flymake-hledger
-  :defer t
   :after (flymake hledger)
   )
 
@@ -518,6 +516,8 @@
                ("s-<tab>" . elfeed-show-next-link)
                :map elfeed-tree-mode-map
                ("s-<0x10081247> s-E u" . elfeed-update)
+               :map elfeed--header-button-map
+               ("<header-line> <mouse-1>" . ignore)
                ))
   :hook ((elfeed-search-mode . my/set-variables-for-specific-modes)
          (elfeed-show-mode . my/set-variables-for-specific-modes)
@@ -625,7 +625,8 @@
 (use-package nerd-icons-dired
   :after (dired nerd-icons)
   :hook
-  (dired-mode . nerd-icons-dired-mode))
+  (dired-mode . nerd-icons-dired-mode)
+  )
 
 (use-package nerd-icons-completion
   :after (marginalia)
@@ -673,6 +674,7 @@
      prog-mode
      eglot-managed-mode
      org-mode
+     markdown-mode
      ) . corfu-mode))
   :bind
   (:map global-map
@@ -694,6 +696,8 @@
   (corfu-preselect 'first)
   (corfu-preview-current 'insert)
   (corfu-quit-no-match 'separator)
+  (corfu-count 10)
+  (corfu-scroll-margin 2)
   :config
   ;; https://github.com/minad/corfu#transfer-completion-to-the-minibuffer
   (defun my/corfu-move-to-minibuffer ()
@@ -735,6 +739,9 @@
   (emacs-lisp-mode . my/emacs-lisp-mode-capf)
   (org-mode . my/org-mode-capf)
   :bind ("C-c p" . cape-prefix-map) ;; Press C-c p C-h to see a list of keys binded to C-c p
+  :custom
+  ;; Search "plain text word list"
+  (cape-dict-file (expand-file-name "dictionaries/words.txt" user-emacs-directory)) ;; default: /usr/share/dict/words
   :init
   (defun my/emacs-lisp-mode-capf ()
     (setq-local completion-at-point-functions
@@ -777,7 +784,7 @@
   :init
   (vertico-mode +1)
   :custom
-  (vertico-scroll-margin 2) ;; Different scroll margin
+  (vertico-scroll-margin 0) ;; Different scroll margin
   (vertico-count 12) ;; Show more candidates
   (vertico-resize t) ;; Grow and shrink the Vertico minibuffer. Other values: t, grow-only
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
@@ -805,64 +812,65 @@
   :demand t
   ;; Replace bindings. Lazily loaded by `use-package'.
   :bind (;; C-c bindings in `mode-specific-map'
-         ("C-c M-x" . consult-mode-command)
-         ("C-c h" . consult-history)
-         ("C-c k" . consult-kmacro)
-         ("C-c m" . consult-man)
-         ("C-c i" . consult-info)
-         ("C-c r" . consult-recent-file)
-         ([remap Info-search] . consult-info)
+         ("C-c M-x"            . consult-mode-command)
+         ("C-c h"              . consult-history)
+         ("C-c k"              . consult-kmacro)
+         ("C-c m"              . consult-man)
+         ("C-c i"              . consult-info)
+         ("C-c r"              . consult-recent-file)
+         ([remap Info-search]  . consult-info)
          ;; C-x bindings in `ctl-x-map'
-         ("C-x M-:" . consult-complex-command)     ;; orig. repeat-complex-command
-         ("C-x b" . consult-buffer)                ;; orig. switch-to-buffer
-         ("C-x 4 b" . consult-buffer-other-window) ;; orig. switch-to-buffer-other-window
-         ("C-x 5 b" . consult-buffer-other-frame)  ;; orig. switch-to-buffer-other-frame
-         ("C-x t b" . consult-buffer-other-tab)    ;; orig. switch-to-buffer-other-tab
-         ("C-x r b" . consult-bookmark)            ;; orig. bookmark-jump
+         ("C-x M-:"            . consult-complex-command)       ;; orig. repeat-complex-command
+         ("C-x b"              . consult-buffer)                ;; orig. switch-to-buffer
+         ("C-x 4 b"            . consult-buffer-other-window)   ;; orig. switch-to-buffer-other-window
+         ("C-x 5 b"            . consult-buffer-other-frame)    ;; orig. switch-to-buffer-other-frame
+         ("C-x t b"            . consult-buffer-other-tab)      ;; orig. switch-to-buffer-other-tab
+         ("C-x r b"            . consult-bookmark)              ;; orig. bookmark-jump
          ("s-<0x10081247> s-K" . consult-bookmark)
-         ("C-x p b" . consult-project-buffer)      ;; orig. project-switch-to-buffer
+         ("C-x p b"            . consult-project-buffer)        ;; orig. project-switch-to-buffer
          ;; Custom M-# bindings for fast register access
-         ("M-#" . consult-register-load)
-         ;;("M-'" . consult-register-store)          ;; orig. abbrev-prefix-mark (unrelated)
-         ("C-M-?" . consult-register-store)
-         ("C-M-¡" . consult-register)
+         ("M-#"                . consult-register-load)
+         ;;("M-'" . consult-register-store)                     ;; orig. abbrev-prefix-mark (unrelated)
+         ("C-M-?"              . consult-register-store)
+         ("C-M-¡"              . consult-register)
          ;; Other custom bindings
-         ("M-y" . consult-yank-pop)                ;; orig. yank-pop
+         ("M-y"                . consult-yank-pop)              ;; orig. yank-pop
          ;; M-g bindings in `goto-map'
-         ("M-g e c" . consult-compile-error)
-         ("M-g r" . consult-grep-match)
-         ("M-g f" . consult-flymake)               ;; Alternative: consult-flycheck
-         ("M-g g" . consult-goto-line)             ;; orig. goto-line
-         ("M-g M-g" . consult-goto-line)           ;; orig. goto-line
-         ("M-g o" . consult-outline)               ;; Alternative: consult-org-heading
-         ("M-g M-o" . consult-org-heading)
+         ("M-g e c"            . consult-compile-error)
+         ("M-g r"              . consult-grep-match)
+         ("M-g f"              . consult-flymake)               ;; Alternative: consult-flycheck
+         ("M-g g"              . consult-goto-line)             ;; orig. goto-line
+         ("M-g M-g"            . consult-goto-line)             ;; orig. goto-line
+         ("M-g o"              . consult-outline)               ;; Alternative: consult-org-heading
+         ("M-g M-o"            . consult-org-heading)
          ("s-<0x10081247> s-O" . consult-org-heading)
-         ("M-g m" . consult-mark)
-         ("M-g k" . consult-global-mark)
-         ("M-g i" . consult-imenu)
-         ("M-g I" . consult-imenu-multi)
+         ("M-g m"              . consult-mark)
+         ("M-g k"              . consult-global-mark)
+         ("M-g i"              . consult-imenu)
+         ("M-g I"              . consult-imenu-multi)
          ;; M-s bindings in `search-map'
-         ("M-s d" . consult-find)                  ;; Alternative: consult-fd
-         ("M-s M-d" . consult-fd)
-         ("M-s c" . consult-locate)
-         ("M-s g" . consult-grep)
-         ("M-s G" . consult-git-grep)
-         ("M-s r" . consult-ripgrep)
-         ("M-s l" . consult-line)
-         ("M-s L" . consult-line-multi)
-         ("M-s k" . consult-keep-lines)
-         ("M-s u" . consult-focus-lines)
+         ("M-s d"              . consult-find)                  ;; Alternative: consult-fd
+         ("M-s M-d"            . consult-fd)
+         ("M-s c"              . consult-locate)
+         ("M-s g"              . consult-grep)
+         ("M-s G"              . consult-git-grep)
+         ("M-s M-g"            . consult-git-grep)
+         ("M-s r"              . consult-ripgrep)
+         ("M-s l"              . consult-line)
+         ("M-s L"              . consult-line-multi)
+         ("M-s k"              . consult-keep-lines)
+         ("M-s u"              . consult-focus-lines)
          ;; Isearch integration
-         ("M-s e" . consult-isearch-history)
+         ("M-s e"              . consult-isearch-history)
          :map isearch-mode-map
-         ("M-e" . consult-isearch-history)         ;; orig. isearch-edit-string
-         ("M-s e" . consult-isearch-history)       ;; orig. isearch-edit-string
-         ("M-s l" . consult-line)                  ;; needed by consult-line to detect isearch
-         ("M-s L" . consult-line-multi)            ;; needed by consult-line to detect isearch
+         ("M-e"                . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s e"              . consult-isearch-history)       ;; orig. isearch-edit-string
+         ("M-s l"              . consult-line)                  ;; needed by consult-line to detect isearch
+         ("M-s L"              . consult-line-multi)            ;; needed by consult-line to detect isearch
          ;; Minibuffer history
          :map minibuffer-local-map
-         ("M-s" . consult-history)                 ;; orig. next-matching-history-element
-         ("M-r" . consult-history)                 ;; orig. previous-matching-history-element
+         ("M-s"                . consult-history)               ;; orig. next-matching-history-element
+         ("M-r"                . consult-history)               ;; orig. previous-matching-history-element
          )
 
   ;; The :init configuration is always executed (Not lazy)
@@ -1054,11 +1062,10 @@
   (prescient-frequency-threshold 0.05) ;; default: 0.05
   (prescient-save-file (file-truename (concat user-emacs-directory "prescient/prescient-save.el")))
   :config
-  (prescient-persist-mode 1)
+  (prescient-persist-mode +1)
   )
 
 (use-package corfu-prescient
-  :demand t
   :after (corfu prescient)
   :custom
   ;; Sorting.
@@ -1078,7 +1085,6 @@
   )
 
 (use-package vertico-prescient
-  :demand t
   :after (vertico prescient)
   :custom
   ;; Sorting.
@@ -1158,7 +1164,7 @@ For each non-existent cli throw a warning."
 
 ;; pgmacs
 (use-package pgmacs
-  :vc (:url "https://github.com/emarsden/pgmacs"
+  :vc (:url "https://github.com/emarsden/pgmacs.git"
             :rev :newest
             :branch "main"
             :vc-backend Git)
@@ -1167,10 +1173,10 @@ For each non-existent cli throw a warning."
 
 ;; pgmacs
 (use-package pg
-  :vc (:url "https://github.com/emarsden/pg-el"
-            :rev :newest
-            :branch "main"
-            :vc-backend Git)
+  ;; :vc (:url "https://github.com/emarsden/pg-el.git"
+  ;;           :rev :newest
+  ;;           :branch "main"
+  ;;           :vc-backend Git)
   :defer t
   )
 
@@ -1229,7 +1235,7 @@ For each non-existent cli throw a warning."
   )
 
 (use-package package-build
-  :vc (:url "https://github.com/melpa/package-build"
+  :vc (:url "https://github.com/melpa/package-build.git"
             :rev :newest
             :branch "master"
             :vc-backend Git)
@@ -1248,6 +1254,10 @@ For each non-existent cli throw a warning."
           eglot-managed-mode
           )
          . idle-highlight-mode)
+  :bind
+  (:map global-map
+        ("H-t" . idle-highlight-mode)
+   )
   :custom
   (idle-highlight-exceptions nil)
   (idle-highlight-exceptions-face '(font-lock-keyword-face font-lock-string-face))
@@ -1415,7 +1425,7 @@ For each non-existent cli throw a warning."
 ;;   )
 
 ;; (use-package ob-erlang
-;;   :vc (:url "https://github.com/B7rian/ob-erlang"
+;;   :vc (:url "https://github.com/B7rian/ob-erlang.git"
 ;;        :rev :newest
 ;;        :branch "master"
 ;;        :vc-backend Git)
@@ -1455,7 +1465,7 @@ For each non-existent cli throw a warning."
 
 ;; ;;;; tsx-mode config
 ;; (use-package tsx-mode
-;;   :vc (:url "https://github.com/orzechowskid/tsx-mode.el"
+;;   :vc (:url "https://github.com/orzechowskid/tsx-mode.el.git"
 ;;        :rev :newest
 ;;        :branch "emacs30"
 ;;        :vc-backend Git)

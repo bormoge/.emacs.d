@@ -534,7 +534,7 @@
   (tab-bar-close-button-show nil)
   :config
   (setq tab-bar-tab-name-ellipsis t)
-  (tab-bar-mode +1)
+  (tab-bar-mode -1)
   (tab-bar-history-mode -1)
   )
 
@@ -1534,7 +1534,7 @@
 
 ;; Show number of the lines
 (use-package display-line-numbers
-  :hook ((
+  :hook (((
           text-mode
           org-mode
           prog-mode
@@ -1543,6 +1543,8 @@
           elfeed-search-mode
           elfeed-show-mode
           ) . display-line-numbers-mode)
+         ;; (display-line-numbers-mode . header-line-indent-mode)
+         )
   :custom
   (display-line-numbers-type t)
   (display-line-numbers-width nil)
@@ -1590,16 +1592,6 @@
   :custom
   (byte-compile-warnings
    '(not docstrings))
-  )
-
-;; Display time and date on the minibuffer (neat stuff)
-(use-package time
-  :custom
-  (display-time-day-and-date t)
-  (display-time-default-load-average nil)
-  (display-time-format "%H:%M %a %d-%m-%Y")
-  :config
-  (display-time-mode +1)
   )
 
 ;; Auto-refresh buffers. If a file was changed on disk, revert changes on buffer.
@@ -1651,7 +1643,17 @@
 ;; Display battery status on mode-line
 (use-package battery
   :config
-  (display-battery-mode +1)
+  (display-battery-mode -1)
+  )
+
+;; Display time and date on the mode-line
+(use-package time
+  :custom
+  (display-time-day-and-date t)
+  (display-time-default-load-average nil)
+  (display-time-format "%H:%M %a %d-%m-%Y")
+  :config
+  (display-time-mode -1)
   )
 
 ;; Display name of a "function" (depends of the context)
@@ -1660,7 +1662,7 @@
   (which-func-update-delay 0.5)
   (which-func-display 'header)
   (which-func-modes '(prog-mode org-mode markdown-mode))
-  :config
+  :init
   (which-function-mode +1)
   )
 
@@ -1790,6 +1792,7 @@
   (show-paren-when-point-in-periphery t)
   (show-paren-highlight-openparen t)
   (show-paren-delay 0.15) ;; default: 0.125
+  (show-paren-ring-bell-on-mismatch nil)
   :config
   (show-paren-mode +1)
   )
@@ -2197,6 +2200,7 @@
 (use-package which-key
   :custom
   (which-key-idle-delay 5.0)
+  (which-key-compute-remaps t)
   :config
   (which-key-setup-side-window-right-bottom)
   ;; `prefix-help-command' becomes `which-key-C-h-dispatch'
@@ -2433,6 +2437,34 @@
 ;;     (doom-modeline-tab-bar-format-global)
 ;;     )
 ;;    (:eval " ") (:eval (tab-line-format))))
+
+;; (defun my/setup-time-and-battery-on-header-line-format ()
+;;   "Set-up `battery-mode-line-string' and `display-time-string' on header-line."
+;;   (let ((dont-set-up '(
+;;                        elfeed-search-mode
+;;                        )))
+;;     (unless (derived-mode-p dont-set-up)
+;;       (when header-line-format
+;;         (add-to-list 'header-line-format '("" battery-mode-line-string " ") nil)
+;;         (add-to-list 'header-line-format '("" display-time-string "") nil)
+;;         ))))
+;;
+;; (add-hook 'after-change-major-mode-hook #'my/setup-time-and-battery-on-header-line-format 90)
+
+(defun my/display-time-and-battery ()
+  "Display the battery and time on the echo area."
+  (interactive)
+  (let ((time-str (current-time-string))
+        (battery-str (if (and battery-echo-area-format battery-status-function)
+		         (battery-format battery-echo-area-format
+				         (funcall battery-status-function))
+		       "Battery status not available")))
+    ;; (message "Time: %s, Battery: %s" time-str battery-str)
+    (message "%s\n%s" time-str battery-str)
+    ))
+
+(bind-key (kbd "s-<0x10081247> s-M") 'my/display-time-and-battery 'global-map)
+(run-at-time t (* 60 10) #'my/display-time-and-battery) ;; Every 10 minutes display time and battery info.
 
 
 
