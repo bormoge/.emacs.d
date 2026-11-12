@@ -609,10 +609,10 @@
   :custom
   (savehist-save-minibuffer-history t)
   (savehist-file (concat user-emacs-directory "savehist"))
-  (savehist-additional-variables '((regexp-search-ring . 149)
+  (savehist-additional-variables '((regexp-search-ring . 99)
                                    (register-alist . 29)
                                    (kill-ring . 29)
-                                   (search-ring . 149)
+                                   (search-ring . 99)
                                    ;; (mark-ring . 0)
                                    ;; (global-mark-ring . 0)
                                    ))
@@ -647,9 +647,6 @@
   (save-place-forget-unreadable-files t)
   :config
   (save-place-mode +1)
-  (advice-add 'save-place-find-file-hook :after
-              (lambda (&rest _)
-                (when buffer-file-name (ignore-errors (recenter)))))
   )
 
 
@@ -1536,7 +1533,6 @@
 (use-package display-line-numbers
   :hook (((
           text-mode
-          org-mode
           prog-mode
           eglot-managed-mode
           Info-mode
@@ -1801,10 +1797,9 @@
   ;; HACK: instead of setting case-fold-search to nil, which also affects regex,
   ;; I set isearch-case-fold-search to yes or nil when starting or ending
   ;; isearch-mode.
-  :hook ((isearch-mode . (lambda ()
-                           (setq-local isearch-case-fold-search 'yes)))
-         (isearch-mode-end . (lambda ()
-                               (setq-local isearch-case-fold-search nil))))
+  :hook ((isearch-mode . my/isearch-mode-begin-with-case-insensitive)
+         (isearch-mode-end . my/isearch-mode-end-with-case-sensitive)
+         )
   :custom
   (isearch-lax-whitespace t)
   (isearch-regexp-lax-whitespace nil)
@@ -1820,6 +1815,11 @@
   (isearch-allow-motion t)
   (search-invisible 'open)
   (isearch-hide-immediately t)
+  :init
+  (defun my/isearch-mode-begin-with-case-insensitive ()
+    (setq-local isearch-case-fold-search 'yes))
+  (defun my/isearch-mode-end-with-case-sensitive ()
+    (setq-local isearch-case-fold-search nil))
   )
 
 ;; recentf configuration
@@ -2134,23 +2134,36 @@
 
 ;; Highlight cursor line
 (use-package hl-line
-  :hook ((eshell-mode
-          shell-mode
-          term-mode
-          comint-mode
-          cfrs-input-mode
-          image-mode
-          magit-diff-mode
-          diff-mode
-          emacs-lisp-compilation-mode
-          eww-mode
-          )
-         ;; Disable hl-line for some modes
-         . (lambda () (setq-local global-hl-line-mode nil)))
+  :hook ((
+          prog-mode
+          eglot-managed-mode
+          text-mode
+          ;; org-mode
+          ;; markdown-mode
+          Info-mode
+          elfeed-search-mode
+          elfeed-show-mode
+          help-mode
+          package-menu-mode
+          ) . hl-line-mode)
   :custom
   (global-hl-line-sticky-flag nil)
-  :config
-  (global-hl-line-mode t)
+  (hl-line-sticky-flag nil)
+  ;; :init
+  ;; (defun my/disable-hl-line-mode ()
+  ;;   (hl-line-mode -1))
+
+  ;; Note for self: avoid hl-line on these modes.
+  ;; eshell-mode
+  ;; shell-mode
+  ;; term-mode
+  ;; comint-mode
+  ;; cfrs-input-mode
+  ;; image-mode
+  ;; magit-diff-mode
+  ;; diff-mode
+  ;; emacs-lisp-compilation-mode
+  ;; eww-mode
   )
 
 ;; Project manager
@@ -2464,7 +2477,7 @@
     ))
 
 (bind-key (kbd "s-<0x10081247> s-M") 'my/display-time-and-battery 'global-map)
-(run-at-time t (* 60 10) #'my/display-time-and-battery) ;; Every 10 minutes display time and battery info.
+(run-at-time t (* 60 30) #'my/display-time-and-battery) ;; Every 10 minutes display time and battery info.
 
 
 

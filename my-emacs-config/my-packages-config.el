@@ -432,8 +432,8 @@
           tex-mode
           eval-expression-minibuffer-setup
           text-mode
-          org-mode
-          markdown-mode
+          ;; org-mode
+          ;; markdown-mode
           eglot-managed-mode
           ) . puni-mode)
   )
@@ -441,8 +441,8 @@
 ;; form-feed: show FORM-FEED characters as long lines.
 (use-package form-feed
   :hook ((prog-mode
-          org-mode
           text-mode
+          ;; org-mode
           eglot-managed-mode
           ) . form-feed-mode)
   )
@@ -609,10 +609,12 @@
 
 ;; nerd-icons
 (use-package nerd-icons
-  :hook (after-setting-font . (lambda ()
-                                       (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append)))
+  :hook (after-setting-font . my/nerd-icons-set-fontset-font)
   :custom
   (nerd-icons-font-family "Symbols Nerd Font Mono")
+  :init
+  (defun my/nerd-icons-set-fontset-font ()
+    (set-fontset-font t 'unicode "Symbols Nerd Font Mono" nil 'append))
   :config
   (when (display-graphic-p)
     (unless (find-font (font-spec :name "Symbols Nerd Font Mono"))
@@ -1249,8 +1251,9 @@ For each non-existent cli throw a warning."
 
 (use-package idle-highlight-mode
   :hook ((prog-mode
-          org-mode
           text-mode
+          ;; org-mode
+          ;; markdown-mode
           eglot-managed-mode
           )
          . idle-highlight-mode)
@@ -1526,9 +1529,6 @@ For each non-existent cli throw a warning."
 (use-package pdf-tools
   :demand t
   :mode ("\\.pdf\\'" . pdf-view-mode)
-  :hook (
-         (pdf-view-mode . (lambda () (display-line-numbers-mode -1)))
-         )
   :custom
   (pdf-info-epdfinfo-program (if (my/nixos-p)
                                  (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-nixos/epdfinfo"))
