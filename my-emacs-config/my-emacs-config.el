@@ -115,6 +115,7 @@
      nix-mode
      nix-ts-mode
      orderless
+     org-modern
      package-build
      package-lint
      package-lint-flymake
@@ -170,6 +171,11 @@
                     :rev :newest
                     :branch "master"
                     :vc-backend Git)
+     (pdf-tools     :url "https://github.com/alberti42/fork-pdf-tools"
+                    :rev :newest
+                    :branch "merged"
+                    :lisp-dir "lisp"
+                    :vc-backend Git)
      ))
   )
 
@@ -178,11 +184,11 @@
 (defvar my/install-all-packages nil)
 
 (defun my/list-missing-packages (packages)
-    "Return a list of PACKAGES that are not installed on Emacs."
-    (delq nil
-          (mapcar (lambda (p)
-                    (if (package-installed-p p nil) nil p))
-                  packages)))
+  "Return a list of PACKAGES that are not installed on Emacs."
+  (delq nil
+        (mapcar (lambda (p)
+                  (if (package-installed-p p nil) nil p))
+                packages)))
 
 (when my/install-all-packages
   (let* ((all-packages package-selected-packages)
@@ -238,7 +244,7 @@
   (hscroll-margin 5)
   (hscroll-step 0)
   ;; When scrolling preserve cursor position
-  (scroll-preserve-screen-position t)
+  (scroll-preserve-screen-position t) ;; alt: 1
   ;; Short yes or no answer
   (use-short-answers t)
   ;; Use mark even when region is inactive
@@ -303,6 +309,10 @@
   (print-length nil)
   ;; Use system tooltips
   (use-system-tooltips t)
+  (window-combination-resize t)
+  (auto-save-interval 300)
+  (line-spacing nil)
+  (wrap-prefix nil)
 
   :config
   ;; Disable compact font caches
@@ -336,6 +346,10 @@
   ;; Change font
   ;; Note that when Emacs is used inside a terminal (-nw) the font used is the same as the terminal's.
   (when (display-graphic-p)
+    ;; (modify-all-frames-parameters
+    ;;  '((right-divider-width   . 0)
+    ;;    (internal-border-width . 0)
+    ;;    (bottom-divider-width  . 0)))
     ;; (set-frame-font "JuliaMono Light 18" nil t)
     (set-frame-font "IoskeleyMonoTerm Nerd Font Light 18" nil t)
     )
@@ -423,10 +437,14 @@
   (visual-line-fringe-indicators '(nil nil)) ;; alt: '(left-curly-arrow right-curly-arrow)
   ;; Don't rotate `kill-ring-yank-pointer'
   (yank-from-kill-ring-rotate nil)
+  (track-eol t)
+  (remote-file-name-inhibit-auto-save nil)
 
   :config
   ;; Enable Transient Mark Mode
   (transient-mark-mode +1)
+  ;; Disable Visual Line Mode
+  (global-visual-line-mode -1)
   )
 
 
@@ -459,6 +477,8 @@
   (completion-flex-nospace nil)
   ;; When t, reading a file name completion ignores case.
   (read-file-name-completion-ignore-case nil)
+  :config
+  (minibuffer-regexp-mode +1)
   )
 
 (use-package completion-preview
@@ -506,7 +526,7 @@
         ("S-<right>" . icomplete-forward-completions)
         ("S-<left>" . icomplete-backward-completions)
         ("RET" . icomplete-ret)
-   )
+        )
   :custom
   ;; Check `icomplete--fido-mode-setup' for more details on
   ;; how to configure `icomplete-mode' in a similar way to `fido-mode'.
@@ -619,34 +639,48 @@
   (savehist-ignored-variables '(recentf-list))
   :config
   (defun my/savehist-save-with-no-properties ()
-    (dolist (var '(kill-ring
-                   search-ring
-                   query-replace-history
-                   regexp-search-ring
-                   file-name-history
-                   bookmark-history
-                   ))
-      (set var
+    (dolist (hist-var '(kill-ring
+                        search-ring
+                        query-replace-history
+                        regexp-search-ring
+                        file-name-history
+                        bookmark-history
+                        ))
+      (set hist-var
            (delete-dups
             (mapcar #'substring-no-properties
-                    (cl-remove-if-not #'stringp (symbol-value var)))))))
+                    (cl-remove-if-not #'stringp (symbol-value hist-var)))))))
 
   (savehist-mode +1)
 
   ;; Override a `savehist-minibuffer-history-variables' element
   ;; with a `savehist-additional-variables' element.
-  (delq 'search-ring savehist-minibuffer-history-variables)
-  (delq 'regexp-search-ring savehist-minibuffer-history-variables)
+  ;; (delq 'search-ring savehist-minibuffer-history-variables)
+  ;; (delq 'regexp-search-ring savehist-minibuffer-history-variables)
   )
 
 ;; Save cursor position.
 (use-package saveplace
+  :demand t
+  :hook (save-place-after-find-file . my/save-place-recenter)
   :custom
   (save-place-file (expand-file-name "saveplace" user-emacs-directory))
   (save-place-limit 600)
   (save-place-forget-unreadable-files t)
   :config
   (save-place-mode +1)
+
+  ;; (defun my/save-place-recenter ()
+  ;;   (when buffer-file-name (ignore-errors (recenter))))
+
+  (defun my/save-place-recenter ()
+    "Force windows to recenter current line (with saved position)."
+    (run-with-timer 0 nil
+                    (lambda (buf)
+                      (when (buffer-live-p buf)
+                        (dolist (win (get-buffer-window-list buf nil t))
+                          (with-selected-window win (recenter)))))
+                    (current-buffer)))
   )
 
 
@@ -770,10 +804,13 @@
   ;; Confirm killing processes on exit
   (confirm-kill-processes t)
   (view-read-only t)
+  (remote-file-name-inhibit-auto-save-visited nil)
   (remote-file-name-inhibit-delete-by-moving-to-trash t)
   (trusted-content (read (my/read-file-contents (expand-file-name "trusted-content.txt" user-emacs-directory)))) ;; :all
   (insert-directory-program "ls")
   (auto-mode-case-fold t)
+  (auto-save-visited-predicate nil)
+
   :config
   (defun my/delete-trailing-whitespace ()
     "Call `delete-trailing-whitespace' unless the buffer is read-only."
@@ -979,7 +1016,9 @@
 (use-package dired-aux
   :defer t
   :bind (:map dired-mode-map
-              ("s-w" . dired-do-async-shell-command))
+              ("s-w" . dired-do-async-shell-command)
+              ("s-%" . dired-do-query-replace-regexp)
+              )
   :custom
   (dired-create-destination-dirs 'ask)
   (dired-create-destination-dirs-on-trailing-dirsep t)
@@ -996,11 +1035,12 @@
 
 ;; Dabbrev config
 (use-package dabbrev
-  :bind (("M-/" . dabbrev-completion)
-         ("C-M-/" . dabbrev-expand)
-         ("C-M-<Ungrab>" . dabbrev-expand)
-         ("C-s-<kp-divide>" . dabbrev-completion)
-         )
+  :bind (:map global-map
+              ("M-/" . dabbrev-completion)
+              ("C-M-/" . dabbrev-expand)
+              ("C-M-<Ungrab>" . dabbrev-completion)
+              ("C-s-<kp-divide>" . dabbrev-expand)
+              )
   :custom
   (dabbrev-upcase-means-case-search t)
   (dabbrev-case-fold-search 'case-fold-search)
@@ -1117,13 +1157,14 @@
 (use-package org
   :defer t
   :bind (:map org-mode-map
-              ("s-o l" . org-toggle-link-display)
+              ("s-o t" . org-toggle-link-display)
               )
   :custom
   (org-startup-indented nil)
   (org-startup-folded 'overview)
   ;; Set `truncate-lines' specifically on `org-mode'
   (org-startup-truncated t)
+  (org-startup-numerated nil)
   (org-fontify-todo-headline t)
   (org-fontify-done-headline t)
   (org-deadline-warning-days 35)
@@ -1137,11 +1178,14 @@
   (org-log-into-drawer nil)
   (org-startup-with-inline-images nil)
   (org-directory "~/.emacs.d/org-notes")
-  ;;(org-return-follows-link nil)
+  (org-auto-align-tags t)
+  (org-special-ctrl-a/e nil)
+  (org-insert-heading-respect-content nil)
+  (org-pretty-entities nil)
+  (org-ellipsis "…")
   ;;(org-src-window-setup 'reorganize-frame ;'current-window)
   ;;(org-hierarchical-todo-statistics t)
   ;;(org-image-actual-width t)
-  ;;(org-pretty-entities nil)
   ;;(org-extend-today-until 0)
   ;;(org-use-effective-time nil)
   ;;(org-element-use-cache t)
@@ -1170,28 +1214,30 @@
   ;;    (seq-filter
   ;;     (lambda (pair)
   ;;       (locate-library (concat "ob-" (symbol-name (car pair)))))
-  ;;     '((emacs-lisp . t)
-  ;;       (shell . t)
-  ;;       (scheme . t)
-  ;;       (python . t)
-  ;;       (ruby . t)
-  ;;       (jupyter . t)
-  ;;       (elixir . t)
-  ;;       (erlang . t)
-  ;;       (haskell . t)
-  ;;       (js . t)
-  ;;       (css . t)
-  ;;       (sql . t)
-  ;;       (gnuplot . t)
-  ;;       (plantuml . t)
-  ;;       (octave . t)
-  ;;       (latex . t)
-  ;;       (ledger . t)
-  ;;       (ocaml . t)
-  ;;       (java . t)
-  ;;       (c . t)
-  ;;       (R . t)
-  ;;       (sqlite . t)))))
+  ;;     '(
+  ;;       ;; (emacs-lisp . t)
+  ;;       ;; (shell . t)
+  ;;       ;; (scheme . t)
+  ;;       ;; (python . t)
+  ;;       ;; (ruby . t)
+  ;;       ;; (jupyter . t)
+  ;;       ;; (elixir . t)
+  ;;       ;; (erlang . t)
+  ;;       ;; (haskell . t)
+  ;;       ;; (js . t)
+  ;;       ;; (css . t)
+  ;;       ;; (sql . t)
+  ;;       ;; (gnuplot . t)
+  ;;       ;; (plantuml . t)
+  ;;       ;; (octave . t)
+  ;;       ;; (latex . t)
+  ;;       ;; (ledger . t)
+  ;;       ;; (ocaml . t)
+  ;;       ;; (java . t)
+  ;;       ;; (c . t)
+  ;;       ;; (R . t)
+  ;;       ;; (sqlite . t)
+  ;;       ))))
   ;;
   ;; (org-babel-load-file)
   )
@@ -1200,7 +1246,7 @@
   :defer t
   :bind (:map global-map
               ("s-<0x10081247> s-U u" . org-agenda)
-              ("s-<0x10081247> s-U l" . org-agenda-list)
+              ("s-<0x10081247> s-U a" . org-agenda-list)
               )
   :custom
   (org-agenda-include-diary t)
@@ -1221,6 +1267,8 @@
      (tags   urgency-down category-keep)
      (search category-keep)))
   (org-agenda-window-setup 'reorganize-frame)
+  (org-agenda-mouse-1-follows-link nil)
+  (org-agenda-tags-column 'auto)
   :commands (org-agenda org-agenda-list)
   )
 
@@ -1281,6 +1329,13 @@
   :custom
   (org-archive-mark-done nil)
   (org-archive-location "%s_archive::") ;; "%s_archive::* Archive"
+  )
+
+(use-package org-keys
+  :custom
+  (org-return-follows-link nil)
+  (org-tab-follows-link nil)
+  (org-mouse-1-follows-link 450)
   )
 
 
@@ -1422,15 +1477,23 @@
   ;; https://github.com/minad/corfu/wiki#continuously-update-the-candidates
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
+  ;; rust-analyzer settings: https://rust-analyzer.github.io/book/configuration.html
   (add-to-list 'eglot-server-programs
                '((rust-mode rust-ts-mode rustic-mode) .
-                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+                 ("rust-analyzer"
+                  :initializationOptions
+                  (:procMacro (:enable t)
+                   :cargo (:buildScripts (:enable t)
+                           :features "all")
+                   ;; :diagnostics (:disabled ["unresolved-proc-macro" "unresolved-macro-call"])
+                   :check (:command "check" ;"clippy" ;:features [] ;features "all"
+                   )))))
 
   ;; You need a Java compiler to use the lsp server JDTLS.
   ;; You also need to concat the absolute path, not relative.
   ;; (setenv "PATH" (concat (expand-file-name "~/.emacs.d/java-lts/jdk-21/bin:") (getenv "PATH")))
 
-  ;; You can find the settings for JDTLS here: marketplace dot visualstudio dot com / items ?itemName=redhat.java
+  ;; JDTLS settings: https://marketplace.visualstudio.com/items?itemName=redhat.java
 
   (add-to-list 'eglot-server-programs
                `((java-mode java-ts-mode) .
@@ -1480,18 +1543,22 @@
   ;;              '((c++-mode c-mode) .
   ;;                ("clangd")))
 
+  ;; nixd settings: https://github.com/nix-community/nixd/blob/main/nixd/docs/configuration.md
   (add-to-list 'eglot-server-programs
                '((nix-mode) .
                  ("nixd"
                   :initializationOptions
                   (:settings
                    (:nixd
-                    (:formatting
-                     (:command "nixfmt")
-                     )
-                    )
-                   )
-                  )))
+                    (:formatting (:command ["nixfmt"])
+                     :options
+                     (:nixos
+                      ;; nixosConfigurations.nixos is supposed to represent your hostname.
+                      (:expr "(builtins.getFlake \"${builtins.getEnv \"HOME\"}/nixos\").nixosConfigurations.nixos.options"))
+                     :home-manager
+                     (:expr "(builtins.getFlake \"${builtins.getEnv \"HOME\"}/nixos\").nixosConfigurations.nixos.options.home-manager.users.type.getSubOptions []")
+                     :diagnostic (:suppress [])
+                     ))))))
 
   (add-to-list 'eglot-server-programs
                '((yaml-mode yaml-ts-mode) .
@@ -1532,13 +1599,14 @@
 ;; Show number of the lines
 (use-package display-line-numbers
   :hook (((
-          text-mode
-          prog-mode
-          eglot-managed-mode
-          Info-mode
-          elfeed-search-mode
-          elfeed-show-mode
-          ) . display-line-numbers-mode)
+           text-mode
+           prog-mode
+           eglot-managed-mode
+           Info-mode
+           elfeed-search-mode
+           elfeed-show-mode
+           dired-mode
+           ) . display-line-numbers-mode)
          ;; (display-line-numbers-mode . header-line-indent-mode)
          )
   :custom
@@ -1718,7 +1786,7 @@
 (use-package ffap
   :defer t
   :custom
-  (ffap-machine-p-known 'accept)
+  (ffap-machine-p-known 'accept) ;; alt: 'reject
   )
 
 ;; grep config
@@ -1872,6 +1940,10 @@
               ("s-<right>" . windmove-right)
               ("s-<up>" . windmove-up)
               ("s-<down>" . windmove-down)
+              ("M-s-<left>" . windmove-swap-states-left)
+              ("M-s-<right>" . windmove-swap-states-right)
+              ("M-s-<up>" . windmove-swap-states-up)
+              ("M-s-<down>" . windmove-swap-states-down)
               ))
 
 (use-package mwheel
@@ -1979,7 +2051,7 @@
   :bind
   (:map global-map
         ("s-<0x10081247> s-¡ f" . fill-paragraph)
-   )
+        )
   :custom
   (colon-double-space nil)
   )
@@ -1988,7 +2060,7 @@
   :bind
   (:map global-map
         ("s-<0x10081247> s-¡ d" . display-fill-column-indicator-mode)
-   )
+        )
   )
 
 (use-package apropos
@@ -2091,7 +2163,7 @@
         ("s-d s" . disaster)
         :map c++-mode-map
         ("s-d s" . disaster)
-   )
+        )
   :custom
   ;; https://superuser.com/questions/23552/how-do-i-make-c-basic-offset-stick-in-emacs
   (c-basic-offset 4)
@@ -2145,6 +2217,7 @@
           elfeed-show-mode
           help-mode
           package-menu-mode
+          dired-mode
           ) . hl-line-mode)
   :custom
   (global-hl-line-sticky-flag nil)
@@ -2245,6 +2318,16 @@
               ("H-s e c" . eshell-command)
               ))
 
+(use-package em-hist
+  :custom
+  (eshell-history-file-name (expand-file-name "history" eshell-directory-name))
+  (eshell-history-size 500)
+  (eshell-hist-ignoredups t)
+  (eshell-save-history-on-exit t)
+  (eshell-history-append nil)
+  (eshell-input-filter #'eshell-input-filter-default)
+  )
+
 (use-package term
   ;; Set keys for term
   :bind (:map global-map
@@ -2301,13 +2384,24 @@
 (use-package autoinsert
   :custom
   (auto-insert #'not-modified)
-  :config
+  :init
   (auto-insert-mode +1)
   )
 
 (use-package composite
   :init
   (global-auto-composition-mode +1)
+  )
+
+(use-package re-builder
+  :defer t
+  :custom
+  (reb-re-syntax 'string) ;; default: 'read
+  )
+
+(use-package dictionary
+  :custom
+  (dictionary-server "dict.org")
   )
 
 
@@ -2404,7 +2498,17 @@
     (kill-new path)
     (message path)))
 
-(bind-key (kbd "H-x w") 'my/copy-current-path-to-kill-ring 'global-map)
+(bind-key (kbd "H-x w w") 'my/copy-current-path-to-kill-ring 'global-map)
+
+
+(defun my/copy-buffer-name-to-kill-ring ()
+  "Copy the name of the current buffer into the `kill-ring'."
+  (interactive)
+  (let ((buf-name (buffer-name)))
+    (kill-new buf-name)
+    (message buf-name)))
+
+(bind-key (kbd "H-x w q") 'my/copy-buffer-name-to-kill-ring 'global-map)
 
 
 (defun my/set-variables-for-specific-modes ()

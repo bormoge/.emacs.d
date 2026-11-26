@@ -14,9 +14,10 @@
       (load-theme 'guava-themes-rubus t) ;; guava-themes-rubus
     (load-theme 'guava-themes-vaccinium t)) ;; guava-themes-vaccinium
   (set-face-attribute 'mode-line nil :font "IoskeleyMonoTerm Nerd Font Light 14")
-  (set-face-attribute 'tab-line nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
-  (set-face-attribute 'tab-line-tab-modified nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
-  (set-face-attribute 'tab-line-tab-special nil :font "IoskeleyMonoTerm Nerd Font Light 14" :weight 'bold)
+  (set-face-attribute 'header-line nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
+  (set-face-attribute 'tab-line nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
+  (set-face-attribute 'tab-line-tab-modified nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
+  (set-face-attribute 'tab-line-tab-special nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
   (set-face-attribute 'tab-bar nil :font "IoskeleyMonoTerm Nerd Font Light 16" :weight 'bold)
   )
 

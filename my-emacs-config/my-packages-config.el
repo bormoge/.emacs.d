@@ -170,10 +170,11 @@
   :defer t
   :bind
   (:map projectile-mode-map
-   ("C-s-<0x10081247> C-s-p" . projectile-command-map)
-   ("C-s-<0x10081247> C-s-p C-f" . projectile-consult-find-file)
-   ("C-s-<0x10081247> C-s-p s-r" . projectile-remove-known-project)
-   )
+        ("C-s-<0x10081247> C-s-p" . projectile-command-map)
+        ("M-S-s-<0x10081247> M-s-p" . projectile-command-map)
+        ("C-s-<0x10081247> C-s-p C-f" . projectile-consult-find-file)
+        ("C-s-<0x10081247> C-s-p s-r" . projectile-remove-known-project)
+        )
   :custom
   (projectile-enable-caching nil)
   (projectile-ignored-projects `(,lisp-directory))
@@ -181,25 +182,36 @@
   (projectile-mode +1)
   )
 
-;; (use-package hyperbole
-;;   ;; :bind
-;;   ;; (:map global-map
-;;   ;;       ("C-h A" . hkey-help)
-;;   ;;       ("M-o" . hkey-operate)
-;;   ;;       ("M-RET" . hkey-either)
-;;   ;;       ("<mouse-3>" . hyperbole)
-;;   ;;  )
-;;   :custom
-;;   (hkey-init nil)
-;;   ;; :init
-;;   ;; (hyperbole-mode +1)
-;;   )
+(use-package hyperbole
+  :vc (:url "https://github.com/rswgnu/hyperbole.git"
+            :rev :newest ;; :last-release ;; "dca2c6f"
+            :branch "master"
+            :vc-backend Git)
+  :defer t
+  ;; :bind
+  ;; (:map global-map
+  ;;       ("C-h A" . hkey-help)
+  ;;       ("M-o" . hkey-operate)
+  ;;       ("M-RET" . hkey-either)
+  ;;       ("<mouse-3>" . hyperbole)
+  ;;  )
+  :custom
+  (hkey-init nil)
+  ;; :init
+  ;; (hyperbole-mode +1)
+  )
 
 
 
 ;; magit: Package used as a git front end.
 (use-package magit
   :defer t
+  :config
+  ;; options:
+  ;; never: Don't use SSH_ASKPASS.
+  ;; prefer: Use SSH_ASKPASS when possible.
+  ;; force: Always use SSH_ASKPASS.
+  (setenv "SSH_ASKPASS_REQUIRE" "prefer")
   :commands (magit-status magit-dispatch)
   )
 
@@ -463,9 +475,9 @@
                             eglot--managed-mode
                             )
                           '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
-                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
-                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
-                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+                            "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                            "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                            ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
   )
 
 ;; dockerfile-mode: major mode for Dockerfile files
@@ -507,13 +519,15 @@
                :map elfeed-search-mode-map
                ("s-<0x10081247> s-E u" . elfeed-update)
                (";" . my/elfeed-search-set-separator-date-format)
-               ("t" . nil)
+               ("t" . nil) ;; Unbind `elfeed-search-set-entry-title'.
+               ("+" . nil) ;; Unbind `elfeed-search-tag'.
+               ("-" . nil) ;; Unbind `elfeed-search-untag'.
+               ("M-s-+" . elfeed-search-tag)
+               ("M-s--" . elfeed-search-untag)
                ("<remap> <next-line>" . my/elfeed-next-line)
                ("<remap> <previous-line>" . my/elfeed-previous-line)
                :map elfeed-show-mode-map
                ("m" . nil) ;; Unbind `elfeed-show-compose-mail'.
-               ("TAB" . shr-next-link)
-               ("s-<tab>" . elfeed-show-next-link)
                :map elfeed-tree-mode-map
                ("s-<0x10081247> s-E u" . elfeed-update)
                :map elfeed--header-button-map
@@ -862,6 +876,7 @@
          ("M-s L"              . consult-line-multi)
          ("M-s k"              . consult-keep-lines)
          ("M-s u"              . consult-focus-lines)
+         ("M-s t"              . consult-theme)
          ;; Isearch integration
          ("M-s e"              . consult-isearch-history)
          :map isearch-mode-map
@@ -918,6 +933,11 @@
   ;; Optionally configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
   (consult-narrow-key "<") ;; "C-+"
+  (consult-themes (mapcar (lambda (suffix) (concat "guava-themes-" suffix))
+                          '("acer" "ceiba" "citrus" "cordyline" "dracaena" "eucalyptus"
+                            "ficus" "jacaranda" "lavandula" "malus" "petunia" "prunus"
+                            "psidium" "pyrus" "rhododendron" "rubus" "solanum"
+                            "vaccinium")))
   :config
   ;; For some commands and buffer sources it is useful to configure the
   ;; :preview-key on a per-command basis using the `consult-customize' macro.
@@ -1251,21 +1271,36 @@ For each non-existent cli throw a warning."
 
 (use-package idle-highlight-mode
   :hook ((prog-mode
-          text-mode
+          ;; text-mode
           ;; org-mode
-          ;; markdown-mode
+          markdown-mode
           eglot-managed-mode
           )
          . idle-highlight-mode)
   :bind
   (:map global-map
         ("H-t" . idle-highlight-mode)
-   )
+        )
   :custom
   (idle-highlight-exceptions nil)
-  (idle-highlight-exceptions-face '(font-lock-keyword-face font-lock-string-face))
+  (idle-highlight-exceptions-face '(font-lock-keyword-face font-lock-string-face org-hide
+                                                           ;; org-level-1 org-level-2 org-level-3 org-level-4
+                                                           ;; org-level-5 org-level-6 org-level-7 org-level-8
+                                                           ))
   (idle-highlight-exceptions-syntax "^w_")
   (idle-highlight-idle-time 0.7)
+  )
+
+(use-package org-modern
+  :after org
+  :hook (
+         (org-mode . org-modern-mode)
+         (org-agenda-finalize . org-modern-agenda)
+         )
+  :bind
+  (:map org-mode-map
+        ("s-o m" . org-modern-mode)
+        )
   )
 
 
@@ -1527,14 +1562,28 @@ For each non-existent cli throw a warning."
 
 ;; pdf-tools
 (use-package pdf-tools
+  :vc (:url "https://github.com/alberti42/fork-pdf-tools" :branch "merged"
+            :lisp-dir "lisp" :rev :newest)
   :demand t
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :custom
-  (pdf-info-epdfinfo-program (if (my/nixos-p)
-                                 (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-nixos/epdfinfo"))
-                               (expand-file-name (concat user-emacs-directory ".cache/epdfinfo-fedora/epdfinfo"))))
+  (pdf-info-epdfinfo-program
+   (let* ((cache-dir (expand-file-name (concat user-emacs-directory ".cache/")))
+          (epdfinfo-nixos-file (concat cache-dir "epdfinfo-nixos/epdfinfo"))
+          (epdfinfo-fedora-file (concat cache-dir "epdfinfo-fedora/epdfinfo")))
+     (if (my/nixos-p)
+         epdfinfo-nixos-file
+       epdfinfo-fedora-file)))
   (pdf-view-display-size 'fit-page) ;; 'fit-width, 'fit-page
   (pdf-annot-activate-created-annotations nil)
+  :init
+  (let* ((cache-dir (expand-file-name (concat user-emacs-directory ".cache/")))
+         (epdfinfo-nixos-dir (concat cache-dir "epdfinfo-nixos/"))
+         (epdfinfo-fedora-dir (concat cache-dir "epdfinfo-fedora/")))
+    (unless (file-directory-p epdfinfo-nixos-dir)
+      (make-directory epdfinfo-nixos-dir))
+    (unless (file-directory-p epdfinfo-fedora-dir)
+      (make-directory epdfinfo-fedora-dir)))
   :config
   (require 'pdf-links)
   (require 'pdf-annot)
